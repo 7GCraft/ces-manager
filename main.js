@@ -17,7 +17,7 @@ function createWindow() {
     });
 
     win.on('closed', () => app.quit());
-    win.loadFile(path.join(__dirname, 'src', 'views/stateInfo.html'));
+    win.loadFile(path.join(__dirname, 'src', 'index.html'));
 }
 
 //Make navbar instead of adding new windows
@@ -73,29 +73,29 @@ function createWindow() {
 // ]
 
 //Check if mac
-if(process.platform == 'darwin'){
-    template.unshift({});
-}
+// if(process.platform == 'darwin'){
+//     template.unshift({});
+// }
 
-//Dev tools if not in prod
-if(process.env.NODE_ENV !== 'production'){
-    template.push({
-        label: 'Dev Tools',
-        submenu: [
-            {
-                label: 'Toggle Dev Tools',
-                accelerator : 'F12',
-                click(item, focusedWindow){
-                    focusedWindow.toggleDevTools();
-                }
-            },
-            {
-                role: 'reload'
-            }
-        ]
-    })
-}
-const menu = Menu.buildFromTemplate(template)
+// //Dev tools if not in prod
+// if(process.env.NODE_ENV !== 'production'){
+//     template.push({
+//         label: 'Dev Tools',
+//         submenu: [
+//             {
+//                 label: 'Toggle Dev Tools',
+//                 accelerator : 'F12',
+//                 click(item, focusedWindow){
+//                     focusedWindow.toggleDevTools();
+//                 }
+//             },
+//             {
+//                 role: 'reload'
+//             }
+//         ]
+//     })
+// }
+//const menu = Menu.buildFromTemplate(template)
 
 app.on('ready', () => {
     createWindow()
