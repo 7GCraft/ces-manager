@@ -20,7 +20,26 @@ function createWindow() {
     win.loadFile(path.join(__dirname, 'src', 'index.html'));
 }
 
-//Make navbar instead of adding new windows
+
+app.on('ready', () => {
+    createWindow()
+    ipcs.initializeIpcMains(win);
+})
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+})
+
+// app.on('activate', () => {
+//     if (BrowserWindow.getAllWindows().length === 0) {
+//         createWindow();
+//     }
+// });
+
+
+//Make navbar instead of adding new windows -- DONE. KEEPING THE CODE BELOW JUST IN CASE
 
 // function addNewWindow(url, title) {
 //     addWindow =  new BrowserWindow({
@@ -96,20 +115,3 @@ function createWindow() {
 //     })
 // }
 //const menu = Menu.buildFromTemplate(template)
-
-app.on('ready', () => {
-    createWindow()
-    ipcs.initializeIpcMains(win);
-})
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-})
-
-// app.on('activate', () => {
-//     if (BrowserWindow.getAllWindows().length === 0) {
-//         createWindow();
-//     }
-// });
