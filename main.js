@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const { title } = require('process');
 const pageRouter = path.join(__dirname, 'src', 'pages.js');
@@ -23,7 +23,7 @@ function createWindow() {
 
 app.on('ready', () => {
     createWindow()
-    ipcs.initializeIpcMains(win);
+    ipcs.initializeIpcMains();
 })
 
 app.on('window-all-closed', () => {

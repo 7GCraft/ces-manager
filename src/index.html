@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test</title>
+    <title>CES Application</title>
     <link rel = "stylesheet" 
     href = "../node_modules/bootstrap/dist/css/bootstrap.min.css" />
 </head>
 
 <body>
   
-    <div class="container my-4">
+    <div class="container my-5">
       <div class="row">
         <div class="col-2">
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -35,12 +35,9 @@
       </div>
 </body>
 <script>
-    // window.$ = window.jquery = require("jquery");
-    // window.popper = require("popper.js");
     require("bootstrap");
-    // require("./renderer.js");
     const fs = require('fs');
-    let fileArr = [];
+
     fs.readdir('src/views/frontPage', function(err, files){
       if (err) 
         console.log(err); 
@@ -66,5 +63,6 @@
         }) 
       }
     });
+
 </script>
 </html>

@@ -1,13 +1,15 @@
 const electron = require('electron');
-const ipc = electron.ipcRenderer;
+const {ipcRenderer} = electron;
 const $ = require('jquery');
 
 console.log("Page Opened");
 
 $(function(){
-    console.log("DOMContentLoaded");
-    ipc.send('stateInfoLoaded', 'SAL');
-    ipc.on("resultSent", function(e, res){
+    console.log('DOMLOADED');
+    
+    ipcRenderer.send("State:loaded");
+    ipcRenderer.on("State:getStateInfo", function(e, res){
+        console.log("MAP FROM DB")
         $('#lblStateName').text(res.StateName);
         $('#lblStateTreasury').text(res.Treasury);
     });

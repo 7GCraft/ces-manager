@@ -5,8 +5,8 @@ $(function(){
     
     console.log("STATELIST loaded");
 
-    ipcRenderer.send('getStateList');
-    ipcRenderer.on('getStateListOK', function(e, res){
+    ipcRenderer.send('StateList:getStateList');
+    ipcRenderer.on('StateList:getStateListOK', function(e, res){
         res.forEach(state => {
             $('#ulStateList').append('<li><a class="states" href="#" data-id="'+state.StateID+'"  onclick=openStatePage(this.getAttribute("data-id"))>'+ state.StateName + '</a></li>')
         });
@@ -15,5 +15,6 @@ $(function(){
 })
 
 function openStatePage(ID){
-    alert(ID)
+    //alert(ID);
+    ipcRenderer.send('StateList:openStatePage', ID);
 }
