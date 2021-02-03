@@ -1,6 +1,7 @@
 const {ipcMain, BrowserWindow} = require('electron');
 const path = require('path');
 const state = require('../services/stateServices');
+const resource = require('../services/resourceTiersServices');
 
 //Test Catching data
 
@@ -12,18 +13,19 @@ const initializeIpcMains = () =>{
     });
 
     stateListBridge();
+    resourceBridge();
 };
-
-
 exports.initializeIpcMains = initializeIpcMains;
 
 function stateListBridge() {
 
+    //Get List of states on program start
     ipcMain.on('StateList:getStateList', function(e){
         let result = state.getListofState();
         e.sender.send('StateList:getStateListOK', result)
     });
 
+    //Get state that was clicked on State List
     ipcMain.on('StateList:openStatePage', function(e, item){
         stateWindow = new BrowserWindow({
             width: 800,
@@ -47,6 +49,14 @@ function stateListBridge() {
         ipcMain.on('State:loaded', function(e){
             e.sender.send("State:getStateInfo", result)
         })
-        
+    });
+}
+
+function resourceBridge(){
+    //Catch from Resource related ipcRenderer calls
+    ipcMain.on('Resource:getAllResourceTiers', function(e){
+        console.log("Resource Tiers");
+        let result = resource.getAllResourceTiers();
+        console.log(result);
     });
 }
