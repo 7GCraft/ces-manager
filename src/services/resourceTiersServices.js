@@ -8,28 +8,6 @@ const knex = require('knex')({
     }
 });
 
-const getAllResourceTiers = async function() {
-    let rawResourceTiers = await knex.select('*').from('ResourceTier')
-    
-    let resourceTiers = [];
-
-    for (let rawResourceTier of rawResourceTiers) {
-        let resourceTier = new ResourceTier(rawResourceTier.resourceTierId, rawResourceTier.name, rawResourceTier.tradePower);
-
-        resourceTiers.push(resourceTier);
-    }
-
-    return resourceTiers;
-};
-
-// const getResourceTier = async function(id) {
-//     let rawResourceTier = await knex.select('*').from('ResourceTier').where('resourceTierId', id);
-
-//     let resourceTier = new ResourceTier(rawResourceTier.resourceTierId, rawResourceTier.name, rawResourceTier.tradePower);
-
-//     return resourceTier;
-// }
-
 const getResourceTiers = async function() {
     let rawResourceTiers = await knex.select('*').from('ResourceTier');
 
@@ -50,14 +28,7 @@ const getResourceTiers = async function() {
         resourceTiers[resource.ResourceTierID - 1].Resources.push(resource);
     }
 
-    // let rawResources = await knex.select('Resource.resourceId', 'Resource.name as resourceName', 'Resource.resourceTierId', 'ResourceTier.name as resourceTierName', 'ResourceTier.tradePower').from('Resource').leftJoin('ResourceTier', 'Resource.resourceTierId', 'ResourceTier.resourceTierId');
-
-    // console.log(rawResources);
-    //console.info(resourceTiers);
     return resourceTiers;
 };
 
-exports.getAllResourceTiers = getResourceTiers;
-// exports.getResourceTier = getResourceTier;
-
-// getResourceTiers();
+exports.getResourceTiers = getResourceTiers;
