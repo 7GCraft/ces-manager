@@ -31,12 +31,46 @@ const getResourceTiers = async function() {
     return resourceTiers;
 };
 
+const updateResourceTiers = async function(resourceTiers) {
+    let updatePromises = [];
+
+    for (let resourceTier of resourceTiers) {
+        let updateResourceTierPromise = knex('ResourceTier')
+            .where({resourceTierId: resourceTier.ResourceTierID})
+            .update({
+                resourceTierId: undefined,
+                name: resourceTier.ResourceTierName,
+                tradePower: resourceTier.ResourceTierTradePower
+            });
+        
+        updatePromises.push(updateResourceTierPromise);
+
+        for (let resource of resourceTier.Resources) {
+            let updateResourcePromise = knex('Resource')
+                .where({resourceId: resource.ResourceID})
+                .update({
+                    resourceId: undefined,
+                    name: resource.ResourceName,
+                    resourceTierID: resource.ResourceTierID
+                });
+            
+            updatePromises.push(updateResourcePromise);
+        }
+    }
+
+    await Promise.all(updatePromises)
+        .catch((e) => {
+            console.log(e);
+        });
+};
+
 const addResource = async function(resource) {
     let resourceName = resource.ResourceName;
     let resourceTierID = resource.ResourceTierID;
 
     await knex.insert({name: resourceName, resourceTierID: resourceTierID}).into('Resource');
-}
+};
 
 exports.getResourceTiers = getResourceTiers;
+exports.updateResourceTiers = updateResourceTiers;
 exports.addResource = addResource;
