@@ -31,4 +31,12 @@ const getResourceTiers = async function() {
     return resourceTiers;
 };
 
+const addResource = async function(resource) {
+    let resourceName = resource.ResourceName;
+    let resourceTierID = resource.ResourceTierID;
+
+    await knex.insert({name: resourceName, resourceTierID: resourceTierID}).into('Resource');
+}
+
 exports.getResourceTiers = getResourceTiers;
+exports.addResource = addResource;
