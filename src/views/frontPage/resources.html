@@ -7,15 +7,20 @@
 <body>
     <template>
         <style>
+            .resourceContainer{
+                text-align: center;
+                float: left;
+                margin-right: 10px;
+            }
             .resourceSortable {
               border: 1px solid #eee;
               width: 142px;
-              min-height: 20px;
+              height: 300px;
+              overflow-x: hidden;
+              overflow-y: auto;
               list-style-type: none;
               margin: 0;
               padding: 5px 0 0 0;
-              float: left;
-              margin-right: 10px;
             }
             .resourceSortable li {
               margin: 0 5px 5px 5px;
@@ -28,24 +33,31 @@
             <h1>Resource Tiers</h1>
 
             <div id="listsOfResourceTiers">
-
+                <!-- <div class="resourceContainer">
+                    <h3>Test 1</h3>
+                    <ul class="resourceSortable"> 
+                        <li ondragover="dragOver(event)"></li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Cras justo odio</li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Dapibus ac facilisis in</li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Morbi leo risus</li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Porta ac consectetur ac</li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Vestibulum at eros</li>
+                    </ul>
+                </div>
+                <div class="resourceContainer">
+                    <h3>Test 2</h3>
+                    <ul class="resourceSortable"> 
+                        <li ondragover="dragOver(event)"></li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Cras justo odio</li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Dapibus ac facilisis in</li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Morbi leo risus</li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Porta ac consectetur ac</li>
+                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Vestibulum at eros</li>
+                    </ul>
+                </div> -->
+                
             </div>
-            <!-- <ul class="resourceSortable"> 
-                <li ondragover="dragOver(event)"></li>
-                <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Cras justo odio</li>
-                <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Dapibus ac facilisis in</li>
-                <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Morbi leo risus</li>
-                <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Porta ac consectetur ac</li>
-                <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Vestibulum at eros</li>
-            </ul>
-            <ul class="resourceSortable" id="sortable2">
-                <li ondragover="dragOver(event)"></li>
-                <li class="ui-state-highlight" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Cras justo odio</li>
-                <li class="ui-state-highlight" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Dapibus ac facilisis in</li>
-                <li class="ui-state-highlight" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Morbi leo risus</li>
-                <li class="ui-state-highlight" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Porta ac consectetur ac</li>
-                <li class="ui-state-highlight" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Vestibulum at eros</li>
-            </ul> -->
+           
         </div>
         <script>
             var _el;

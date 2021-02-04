@@ -3,7 +3,6 @@ const path = require('path');
 const state = require('../services/stateServices');
 const resource = require('../services/resourceTiersServices');
 
-//Test Catching data
 
 const initializeIpcMains = () =>{
         

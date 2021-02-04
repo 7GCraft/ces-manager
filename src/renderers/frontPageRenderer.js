@@ -36,7 +36,12 @@ function getAllResourceTiers(){
     ipcRenderer.on('Resource:getAllResourceTiersOk', function(e, res){
         //console.log(res);
         res.forEach(resourceTier => {
+            $('#listsOfResourceTiers').append('<div class="resourceContainer"><h3>'+ resourceTier.ResourceTierName +'</h3><ul class="resourceSortable" id="ResourceTier'+resourceTier.ResourceTierID+'"><li ondragover="dragOver(event)"></li></ul></div>')
+            console.log(resourceTier.ResourceTierID);
             
+            resourceTier.Resources.forEach(resource => {
+                $('#ResourceTier'+resourceTier.ResourceTierID).append('<li draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)" id="Resource'+resource.ResourceID+'">'+resource.ResourceName+'</li>')
+            });
         });
     });
 }
