@@ -53,10 +53,13 @@ function stateListBridge() {
 }
 
 function resourceBridge(){
-    //Catch from Resource related ipcRenderer calls
+    //Catch from Resource related ipcRenderer calls, then send it back when result is resolved
     ipcMain.on('Resource:getAllResourceTiers', function(e){
         console.log("Resource Tiers");
         let result = resource.getAllResourceTiers();
-        console.log(result);
+        result.then(function(result){
+            e.sender.send('Resource:getAllResourceTiersOk', result);
+            //console.log(result);
+        });
     });
 }

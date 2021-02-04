@@ -4,7 +4,7 @@ const Resource = require('../models/resourceModel')
 const knex = require('knex')({
     client: 'sqlite3',
     connection: {
-        filename: 'D:/GitHub/ces/db/ces.db'
+        filename: 'db/ces.db'
     }
 });
 
@@ -53,7 +53,8 @@ const getResourceTiers = async function() {
     // let rawResources = await knex.select('Resource.resourceId', 'Resource.name as resourceName', 'Resource.resourceTierId', 'ResourceTier.name as resourceTierName', 'ResourceTier.tradePower').from('Resource').leftJoin('ResourceTier', 'Resource.resourceTierId', 'ResourceTier.resourceTierId');
 
     // console.log(rawResources);
-    console.info(resourceTiers);
+    //console.info(resourceTiers);
+    return resourceTiers;
 };
 
 exports.getAllResourceTiers = getResourceTiers;

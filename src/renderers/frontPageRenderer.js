@@ -16,15 +16,29 @@ $(function(){
 function initializeFrontPageIpcRenderers() {
 
     //Load all states into State List
+    getStateList();
+
+    //Test Get All Resource Tiers
+    getAllResourceTiers();
+}
+
+function getStateList(){
     ipcRenderer.send('StateList:getStateList');
     ipcRenderer.on('StateList:getStateListOK', function(e, res){
         res.forEach(state => {
             $('#ulStateList').append('<li><a class="states" href="#" data-id="'+state.StateID+'"  onclick=openStatePage(this.getAttribute("data-id"))>'+ state.StateName + '</a></li>')
         });
     });
+}
 
-    //Test Get All Resource Tiers
+function getAllResourceTiers(){
     ipcRenderer.send('Resource:getAllResourceTiers');
+    ipcRenderer.on('Resource:getAllResourceTiersOk', function(e, res){
+        //console.log(res);
+        res.forEach(resourceTier => {
+            
+        });
+    });
 }
 
 //Called in home.html
