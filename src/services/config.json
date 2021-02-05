@@ -1,0 +1,8 @@
+{
+    "knexConfig": {
+        "client": "sqlite3",
+        "connection": {
+            "filename": "db/ces.db"
+        }
+    }
+}

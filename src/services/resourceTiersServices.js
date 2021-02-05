@@ -1,12 +1,8 @@
 const path = require('path');
 const ResourceTier = require('../models/resourceTierModel');
 const Resource = require('../models/resourceModel')
-const knex = require('knex')({
-    client: 'sqlite3',
-    connection: {
-        filename: 'db/ces.db'
-    }
-});
+const config = require('./config.json');
+const knex = require('knex')(config.knexConfig);
 
 const getResourceTiers = async function() {
     let rawResourceTiers = await knex.select('*').from('ResourceTier');
