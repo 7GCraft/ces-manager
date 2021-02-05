@@ -129,6 +129,24 @@ const updateResource = async function(resource) {
         });
 }
 
+const updateResourceAll = async function(resources) {
+    let updatePromises = [];
+
+    for (let resource of resources) {
+        let updatePromise = knex(constants.TABLE_RESOURCE)
+            .where({resourceId: resource.ResourceID})
+            .update({
+                name: resource.ResourceName,
+                resourceTierId: resource.ResourceTierID
+            });
+
+        updatePromises.push(updatePromise);
+    }
+
+    await Promise.all(updatePromises)
+        .catch(e => console.log(e));
+}
+
 const deleteResourceById = async function(id) {
     await knex(constants.TABLE_RESOURCE)
         .where({resourceId: id})
@@ -141,6 +159,7 @@ exports.updateResourceTier = updateResourceTier;
 exports.updateResourceTierAll = updateResourceTierAll;
 exports.addResource = addResource;
 exports.updateResource = updateResource;
+exports.updateResourceAll = updateResourceAll;
 exports.deleteResourceById = deleteResourceById;
 
 // FOR DEBUGGING
