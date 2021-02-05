@@ -11,6 +11,7 @@
                 text-align: center;
                 float: left;
                 margin-right: 10px;
+                margin-bottom: 20px;
             }
             .resourceSortable {
               border: 1px solid #eee;
@@ -29,36 +30,46 @@
               width: 120px;
             }
         </style>
-        <div class="container template" id="resources-template" data-tab="resources"></div>
+        <div class="template" id="resources-template" data-tab="resources">
+            <div id="resourceMessage">
+
+            </div>
             <h1>Resource Tiers</h1>
 
             <div id="listsOfResourceTiers">
-                <!-- <div class="resourceContainer">
-                    <h3>Test 1</h3>
-                    <ul class="resourceSortable"> 
-                        <li ondragover="dragOver(event)"></li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Cras justo odio</li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Dapibus ac facilisis in</li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Morbi leo risus</li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Porta ac consectetur ac</li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Vestibulum at eros</li>
-                    </ul>
-                </div>
-                <div class="resourceContainer">
-                    <h3>Test 2</h3>
-                    <ul class="resourceSortable"> 
-                        <li ondragover="dragOver(event)"></li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Cras justo odio</li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Dapibus ac facilisis in</li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Morbi leo risus</li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Porta ac consectetur ac</li>
-                        <li class="ui-state-default" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)">Vestibulum at eros</li>
-                    </ul>
-                </div> -->
                 
             </div>
-           
+            
+            <button class="btn btn-primary" id="btnUpdateResources">Save Current Resources</button>
+
+            <button class="btn btn-success" id="btnAddResource" data-toggle="modal" data-target="#mdlAddResource">Add New Resource</button>
+
+            <div class="modal fade" id="mdlAddResource" tabindex="-1" role="dialog" aria-labelledby="mdlAddResourceLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="mdlAddResourceLabel">Add Resource</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="frmAddResource">
+                            <div class="modal-body">
+                                <label for="selResourceTier">Resource Tier </label>
+                                <select name="selResourceTier" id="selResourceTier" class="form-select form-select-sm"></select> <br>
+
+                                <label for="txtResourceName">Resource Name</label>
+                                <input type="text" id="txtResourceName">
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-primary"></input>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
+            
         <script>
             var _el;
 

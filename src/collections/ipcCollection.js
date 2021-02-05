@@ -25,7 +25,7 @@ function stateListBridge() {
     });
 
     //Get state that was clicked on State List
-    ipcMain.on('StateList:openStatePage', function(e, item){
+    ipcMain.on('StateList:openStatePage', function(e, args){
         stateWindow = new BrowserWindow({
             width: 800,
             height: 600,
@@ -42,7 +42,7 @@ function stateListBridge() {
         });
 
         console.log("State Window Opened. Proceeding with Getting State Info");
-        let result = state.getStateInfo(item)
+        let result = state.getStateInfo(args)
         //console.log(item);
         
         ipcMain.on('State:loaded', function(e){
@@ -52,13 +52,39 @@ function stateListBridge() {
 }
 
 function resourceBridge(){
-    //Catch from Resource related ipcRenderer calls, then send it back when result is resolved
-    ipcMain.on('Resource:getAllResourceTiers', function(e){
-        console.log("Resource Tiers");
+    //Catch load request from IpcRenderer, then send it back when result is resolved
+    ipcMain.on('Resource:getAllResourceTiers', (e) => {
         let result = resource.getResourceTierAll();
         result.then(function(result){
             e.sender.send('Resource:getAllResourceTiersOk', result);
             //console.log(result);
         });
+    });
+
+    //Update all resources
+    ipcMain.on("Resource:updateResourceAll", (e, args) => {
+        //console.log(res);
+        let response = resource.updateResourceAll(args);
+        response.then((response) => {
+            if(typeof response == 'undefined'){
+                e.sender.send("Resource:updateResourceAllOk", true);
+            }
+            else{
+                e.sender.send("Resource:updateResourceAllOk", false);
+            }
+        })
+    });
+
+    //Add new Resource
+    ipcMain.on("Resource:addResource", (e, args) => {
+        let response = resource.addResource(args)
+        response.then((response) => {
+            if(typeof response == 'undefined'){
+                e.sender.send("Resource:addResourceOK", true);
+            }
+            else{
+                e.sender.send("Resource:addResourceOK", false);
+            }
+        })
     });
 }

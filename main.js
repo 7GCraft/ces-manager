@@ -5,11 +5,10 @@ const pageRouter = path.join(__dirname, 'src', 'pages.js');
 const ipcs = require(path.join(__dirname, 'src', 'collections', 'ipcCollection.js'));
 
 let win;
-let addWindow;
 
 function createWindow() {
     win = new BrowserWindow({
-        width: 1080,
+        width: 1280,
         height: 720,
         webPreferences: {
             nodeIntegration: true
