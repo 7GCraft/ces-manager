@@ -1,13 +1,14 @@
-const path = require('path');
-const ResourceTier = require('../models/resourceTierModel');
-const Resource = require('../models/resourceModel')
 const config = require('./config.json');
+const constants = config.constants;
 const knex = require('knex')(config.knexConfig);
 
-const getResourceTiers = async function() {
-    let rawResourceTiers = await knex.select('*').from('ResourceTier');
+const ResourceTier = require('../models/resourceTierModel');
+const Resource = require('../models/resourceModel')
 
-    let rawResources = await knex.select('*').from('Resource');
+const getResourceTiers = async function() {
+    let rawResourceTiers = await knex.select('*').from(constants.TABLE_RESOURCE_TIER);
+
+    let rawResources = await knex.select('*').from(constants.TABLE_RESOURCE);
     
     let resourceTiers = [];
 
@@ -31,7 +32,7 @@ const updateResourceTiers = async function(resourceTiers) {
     let updatePromises = [];
 
     for (let resourceTier of resourceTiers) {
-        let updateResourceTierPromise = knex('ResourceTier')
+        let updateResourceTierPromise = knex(constants.TABLE_RESOURCE_TIER)
             .where({resourceTierId: resourceTier.ResourceTierID})
             .update({
                 resourceTierId: undefined,
@@ -42,7 +43,7 @@ const updateResourceTiers = async function(resourceTiers) {
         updatePromises.push(updateResourceTierPromise);
 
         for (let resource of resourceTier.Resources) {
-            let updateResourcePromise = knex('Resource')
+            let updateResourcePromise = knex(constants.TABLE_RESOURCE)
                 .where({resourceId: resource.ResourceID})
                 .update({
                     resourceId: undefined,
@@ -64,9 +65,13 @@ const addResource = async function(resource) {
     let resourceName = resource.ResourceName;
     let resourceTierID = resource.ResourceTierID;
 
-    await knex.insert({name: resourceName, resourceTierID: resourceTierID}).into('Resource');
+    await knex.insert({name: resourceName, resourceTierID: resourceTierID}).into(constants.TABLE_RESOURCE);
 };
 
 exports.getResourceTiers = getResourceTiers;
 exports.updateResourceTiers = updateResourceTiers;
 exports.addResource = addResource;
+
+// FOR DEBUGGING
+// getResourceTiers()
+//     .then(data => console.log(data));

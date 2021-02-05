@@ -4,5 +4,9 @@
         "connection": {
             "filename": "db/ces.db"
         }
+    },
+    "constants": {
+        "TABLE_RESOURCE": "Resource",
+        "TABLE_RESOURCE_TIER": "ResourceTier"
     }
 }
