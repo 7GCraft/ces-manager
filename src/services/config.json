@@ -7,6 +7,11 @@
     },
     "constants": {
         "TABLE_RESOURCE": "Resource",
-        "TABLE_RESOURCE_TIER": "ResourceTier"
+        "TABLE_RESOURCE_TIER": "ResourceTier",
+        "COLUMN_RESOURCE_TIER_ID": "resourceTierId"
+    },
+    "paths": {
+        "resourceModel": "../models/resourceModel",
+        "resourceTierModel": "../models/resourceTierModel"
     }
 }
