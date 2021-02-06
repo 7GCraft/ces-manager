@@ -81,6 +81,8 @@ const updateResourceTier = async function(resourceTier) {
     .catch(e => {
         console.log(e);
     });
+
+    return true;
 }
 
 const updateResourceTierAll = async function(resourceTiers) {
@@ -112,12 +114,16 @@ const updateResourceTierAll = async function(resourceTiers) {
         .catch(e => {
             console.log(e);
         });
+    
+    return true;
 };
 
 const addResource = async function(resource) {
     await knex
         .insert({name: resource.ResourceName, resourceTierID: resource.ResourceTierID})
         .into(constants.TABLE_RESOURCE);
+    
+    return true;
 };
 
 const updateResource = async function(resource) {
@@ -127,6 +133,8 @@ const updateResource = async function(resource) {
             name: resource.ResourceName,
             resourceTierId: resource.ResourceTierID
         });
+    
+    return true;
 }
 
 const updateResourceAll = async function(resources) {
@@ -145,12 +153,16 @@ const updateResourceAll = async function(resources) {
 
     await Promise.all(updatePromises)
         .catch(e => console.log(e));
+
+    return true;
 }
 
 const deleteResourceById = async function(id) {
     await knex(constants.TABLE_RESOURCE)
         .where({resourceId: id})
         .del();
+    
+    return true;
 }
 
 exports.getResourceTierById = getResourceTierById;
