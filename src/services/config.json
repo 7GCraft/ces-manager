@@ -6,12 +6,14 @@
         }
     },
     "constants": {
-        "TABLE_RESOURCE": "Resource",
-        "TABLE_RESOURCE_TIER": "ResourceTier",
+        "TABLE_RESOURCE": "MsResource",
+        "TABLE_RESOURCE_TIER": "MsResourceTier",
+        "TABLE_STATE": "MsState",
         "COLUMN_RESOURCE_TIER_ID": "resourceTierId"
     },
     "paths": {
         "resourceModel": "../models/resourceModel",
-        "resourceTierModel": "../models/resourceTierModel"
+        "resourceTierModel": "../models/resourceTierModel",
+        "stateListItemModel": "../models/stateListItemModel"
     }
 }
