@@ -9,11 +9,13 @@
         "TABLE_RESOURCE": "MsResource",
         "TABLE_RESOURCE_TIER": "MsResourceTier",
         "TABLE_STATE": "MsState",
-        "COLUMN_RESOURCE_TIER_ID": "resourceTierId"
+        "COLUMN_RESOURCE_TIER_ID": "resourceTierId",
+        "COLUMN_STATE_ID": "stateId"
     },
     "paths": {
         "resourceModel": "../models/resourceModel",
         "resourceTierModel": "../models/resourceTierModel",
-        "stateListItemModel": "../models/stateListItemModel"
+        "stateListItemModel": "../models/stateListItemModel",
+        "stateModel": "../models/stateModel"
     }
 }

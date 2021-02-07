@@ -11,12 +11,14 @@ const getResourceTierById = async function(id) {
         .from(constants.TABLE_RESOURCE_TIER)
         .where(constants.COLUMN_RESOURCE_TIER_ID, id);
 
+    rawResourceTier = rawResourceTier[0];
+
     let rawResources = await knex
         .select('*')
         .from(constants.TABLE_RESOURCE)
         .where(constants.COLUMN_RESOURCE_TIER_ID, id);
 
-    let resourceTier = new ResourceTier(rawResourceTier.resourceTierId, rawResourceTier.name, rawResourceTier.tradePower);
+    let resourceTier = new ResourceTier(rawResourceTier.resourceTierId, rawResourceTier.name, rawResourceTier.tradePower, []);
 
     for (let rawResource of rawResources) {
         let resource = new Resource(rawResource.resourceId, rawResource.name, rawResource.resourceTierId);
@@ -176,4 +178,6 @@ exports.deleteResourceById = deleteResourceById;
 
 // FOR DEBUGGING
 // getResourceTierAll()
+//     .then(data => console.log(data));
+// getResourceTierById(1)
 //     .then(data => console.log(data));
