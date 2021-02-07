@@ -7,11 +7,6 @@ $(function(){
     handleButtonandSubmitCalls();
 })
 
-/**
- * Start of functions called on dom load
- * These functions will be called in each templates of home.html, regionList.html, resources.html, stateList.html, and tradeAgreementList.html
- */
-
  //Functions that load everything to front page are placed here
 function loadFrontPage() {
 
@@ -25,6 +20,7 @@ function handleButtonandSubmitCalls() {
     //Update Resources (resources.html)
     btnUpdateResources_onClick();
     frmAddResource_onSubmit();
+    frmDeleteResource_onSubmit();
 }
 
 /**
@@ -53,6 +49,11 @@ function getAllResourceTiers(){
             
             resourceTier.Resources.forEach(resource => {
                 $('#ResourceTier'+resourceTier.ResourceTierID).append('<li class="individualResource" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)" id="Resource'+resource.ResourceID+'">'+resource.ResourceName+'</li>')
+
+                $('#selResourceDelete').append($('<option>', {
+                    value: resource.ResourceID,
+                    text: resource.ResourceName
+                }));
             });
         });
     });
@@ -129,6 +130,28 @@ function getAllResourceTiers(){
             $('#mdlAddResource').modal('toggle');
         })
     });
+  }
+
+  function frmDeleteResource_onSubmit(){
+      $('#frmDeleteResource').on('submit', (e) => {
+        e.preventDefault();
+
+        let selectedResources = $('#selResourceDelete').val();
+        ipcRenderer.send("Resource:deleteResourceById", selectedResources);
+        ipcRenderer.once("Resource:deleteResourceByIdOk", (e, res) => {
+            if(res){
+                $('#resourceMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully deleted resources</div>')
+                $('.resourceContainer').remove();
+                getAllResourceTiers();
+            }
+            else{
+                $('#resourceMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting resources</div>')
+            }
+
+            $('#mdlDeleteResource').modal('toggle');
+        });
+        
+      })
   }
 
   /**

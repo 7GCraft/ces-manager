@@ -1,7 +1,7 @@
-const {ipcMain, BrowserWindow} = require('electron');
+const {ipcMain, BrowserWindow, ipcRenderer} = require('electron');
 const path = require('path');
 const state = require('../services/stateServices');
-const resource = require('../services/resourceTiersServices');
+const resource = require('../services/resourceServices');
 
 
 const initializeIpcMains = () =>{
@@ -20,8 +20,8 @@ function stateListBridge() {
 
     //Get List of states on program start
     ipcMain.on('StateList:getStateList', function(e){
-        let result = state.getListofState();
-        e.sender.send('StateList:getStateListOK', result)
+        //let result = state.getListofState();
+        //e.sender.send('StateList:getStateListOK', result)
     });
 
     //Get state that was clicked on State List
@@ -66,7 +66,7 @@ function resourceBridge(){
         //console.log(res);
         let response = resource.updateResourceAll(args);
         response.then((response) => {
-            if(typeof response == 'undefined'){
+            if(response){
                 e.sender.send("Resource:updateResourceAllOk", true);
             }
             else{
@@ -79,7 +79,7 @@ function resourceBridge(){
     ipcMain.on("Resource:addResource", (e, args) => {
         let response = resource.addResource(args)
         response.then((response) => {
-            if(typeof response == 'undefined'){
+            if(response){
                 e.sender.send("Resource:addResourceOK", true);
             }
             else{
@@ -87,4 +87,18 @@ function resourceBridge(){
             }
         })
     });
+
+    //Delete Resource(s) by ID
+    ipcMain.on("Resource:deleteResourceById", (e, args) => {
+        okDeleteResource = true;
+        args.forEach(arg => {
+            let response = resource.deleteResourceById(arg);
+
+            if(!response){
+                okDeleteResource = false;
+            }
+        });
+
+        e.sender.send("Resource:deleteResourceByIdOk", okDeleteResource);
+    })
 }

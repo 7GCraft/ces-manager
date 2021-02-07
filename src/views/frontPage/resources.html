@@ -29,6 +29,15 @@
               font-size: 1.2em;
               width: 120px;
             }
+
+            ::-webkit-scrollbar-thumb {
+                background:black; 
+                border-radius: 10px;
+            }
+
+            .individualResource{
+                border: 1px solid black;
+            }
         </style>
         <div class="template" id="resources-template" data-tab="resources">
             <div id="resourceMessage">
@@ -43,6 +52,8 @@
             <button class="btn btn-primary" id="btnUpdateResources">Save Current Resources</button>
 
             <button class="btn btn-success" id="btnAddResource" data-toggle="modal" data-target="#mdlAddResource">Add New Resource</button>
+
+            <button class="btn btn-danger" id="btnDeleteResource" data-toggle="modal" data-target="#mdlDeleteResource">Delete Resource(s)</button>
 
             <div class="modal fade" id="mdlAddResource" tabindex="-1" role="dialog" aria-labelledby="mdlAddResourceLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -60,6 +71,29 @@
 
                                 <label for="txtResourceName">Resource Name</label>
                                 <input type="text" id="txtResourceName">
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-primary"></input>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="mdlDeleteResource" tabindex="-1" role="dialog" aria-labelledby="mdlDeleteResourceLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="mdlDeleteResourceLabel">Delete Resources</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="frmDeleteResource">
+                            <div class="modal-body">
+                                <label for="selResourceDelete">Choose Resources to Delete </label>
+                                <select name="selResourceDelete" id="selResourceDelete" multiple class="form-select form-select-sm"></select> <br>
+
                             </div>
                             <div class="modal-footer">
                                 <input type="submit" class="btn btn-primary"></input>
