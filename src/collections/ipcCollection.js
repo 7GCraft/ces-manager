@@ -18,10 +18,12 @@ exports.initializeIpcMains = initializeIpcMains;
 
 function stateListBridge() {
 
-    //Get List of states on program start
+    //Get List of states
     ipcMain.on('StateList:getStateList', function(e){
-        //let result = state.getListofState();
-        //e.sender.send('StateList:getStateListOK', result)
+        let response = state.getStateList();
+        response.then((result) => {
+            e.sender.send('StateList:getStateListOK', result)
+        })
     });
 
     //Get state that was clicked on State List
