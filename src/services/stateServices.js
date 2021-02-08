@@ -8,7 +8,7 @@ const State = require(config.paths.stateModel);
 
 /**
  * Gets a list of state IDs and names.
- * @returns {Array} Array of state list items if successful, null otherwise.
+ * @returns {Array} Array of state list item objects if successful, null otherwise.
  */
 const getStateList = async function() {
     let stateList = [];
@@ -55,10 +55,10 @@ const getStateById = async function(id) {
 
 /**
  * Creates a new state.
- * @param {String} name must be a non-null string.
+ * @param {String} name must be a string.
  * @param {Number} treasuryAmt must be an integer.
  * @param {String} desc is optional. Must be a string.
- * @returns {Number} ID of the new state if successful, -1 otherwise.
+ * @returns {Boolean} true if successful, false otherwise.
  */
 const addState = async (name, treasuryAmt = 0, desc = null) => {
     let newStateId = await knex
@@ -66,10 +66,10 @@ const addState = async (name, treasuryAmt = 0, desc = null) => {
         .into(constants.TABLE_STATE)
         .catch(e => {
             console.log(errors.queryError, '\n', e);
-            return -1;
+            return false;
         });
 
-    return newStateId[0];
+    return true;
 };
 
 /**

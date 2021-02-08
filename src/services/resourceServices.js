@@ -1,22 +1,36 @@
 const config = require('./config.json');
 const constants = config.constants;
+const errors = config.errors;
 const knex = require('knex')(config.knexConfig);
 
 const ResourceTier = require(config.paths.resourceTierModel);
 const Resource = require(config.paths.resourceModel);
 
+/**
+ * Gets a resource of a given ID.
+ * @param {Number} id must be an integer.
+ * @returns {ResourceTier} ResourceTier object if successful, null otherwise. 
+ */
 const getResourceTierById = async function(id) {
     let rawResourceTier = await knex
         .select('*')
         .from(constants.TABLE_RESOURCE_TIER)
-        .where(constants.COLUMN_RESOURCE_TIER_ID, id);
+        .where(constants.COLUMN_RESOURCE_TIER_ID, id)
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return null;
+        });
 
     rawResourceTier = rawResourceTier[0];
 
     let rawResources = await knex
         .select('*')
         .from(constants.TABLE_RESOURCE)
-        .where(constants.COLUMN_RESOURCE_TIER_ID, id);
+        .where(constants.COLUMN_RESOURCE_TIER_ID, id)
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return null;
+        });
 
     let resourceTier = new ResourceTier(rawResourceTier.resourceTierId, rawResourceTier.name, rawResourceTier.tradePower, []);
 
@@ -29,14 +43,26 @@ const getResourceTierById = async function(id) {
     return resourceTier;
 };
 
+/**
+ * Gets all resource tiers.
+ * @returns {Array} Array of resource tier objects if successful, null otherwise.
+ */
 const getResourceTierAll = async function() {
     let rawResourceTiers = await knex
         .select('*')
-        .from(constants.TABLE_RESOURCE_TIER);
+        .from(constants.TABLE_RESOURCE_TIER)
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return null;
+        });
 
     let rawResources = await knex
         .select('*')
-        .from(constants.TABLE_RESOURCE);
+        .from(constants.TABLE_RESOURCE)
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return null;
+        });
     
     let resourceTiers = [];
 
@@ -56,6 +82,11 @@ const getResourceTierAll = async function() {
     return resourceTiers;
 };
 
+/**
+ * Updates a resource tier.
+ * @param {ResourceTier} resourceTier must be a resource tier object.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
 const updateResourceTier = async function(resourceTier) {
     let updatePromises = [];
 
@@ -64,6 +95,10 @@ const updateResourceTier = async function(resourceTier) {
         .update({
             name: resourceTier.ResourceTierName,
             tradePower: resourceTier.ResourceTierTradePower
+        })
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return false;
         });
     
     updatePromises.push(updateResourceTierPromise);
@@ -74,19 +109,29 @@ const updateResourceTier = async function(resourceTier) {
             .update({
                 name: resource.ResourceName,
                 resourceTierID: resource.ResourceTierID
+            })
+            .catch(e => {
+                console.log(errors.queryError, '\n', e);
+                return false;
             });
         
         updatePromises.push(updateResourcePromise);
     }
 
     await Promise.all(updatePromises)
-    .catch(e => {
-        console.log(e);
-    });
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return false;
+        });
 
     return true;
 }
 
+/**
+ * Updates all resource tiers.
+ * @param {Array} resourceTiers must be an array of resource tier objects.
+ * @returns {Boolean} true if successful, null otherwise.
+ */
 const updateResourceTierAll = async function(resourceTiers) {
     let updatePromises = [];
 
@@ -96,6 +141,10 @@ const updateResourceTierAll = async function(resourceTiers) {
             .update({
                 name: resourceTier.ResourceTierName,
                 tradePower: resourceTier.ResourceTierTradePower
+            })
+            .catch(e => {
+                console.log(errors.queryError, '\n', e);
+                return false;
             });
         
         updatePromises.push(updateResourceTierPromise);
@@ -106,6 +155,10 @@ const updateResourceTierAll = async function(resourceTiers) {
                 .update({
                     name: resource.ResourceName,
                     resourceTierID: resource.ResourceTierID
+                })
+                .catch(e => {
+                    console.log(errors.queryError, '\n', e);
+                    return false;
                 });
             
             updatePromises.push(updateResourcePromise);
@@ -114,31 +167,56 @@ const updateResourceTierAll = async function(resourceTiers) {
 
     await Promise.all(updatePromises)
         .catch(e => {
-            console.log(e);
+            console.log(errors.queryError, '\n', e);
+            return false;
         });
     
     return true;
 };
 
-const addResource = async function(resource) {
+/**
+ * Creates a new resource.
+ * @param {String} name must be a string.
+ * @param {Number} resourceTierId must be an integer.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const addResource = async function(name, resourceTierId) {
     await knex
-        .insert({name: resource.ResourceName, resourceTierID: resource.ResourceTierID})
-        .into(constants.TABLE_RESOURCE);
+        .insert({name: name, resourceTierId: resourceTierId})
+        .into(constants.TABLE_RESOURCE)
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return false;
+        });
     
     return true;
 };
 
+/**
+ * Updates a resource.
+ * @param {Resource} resource must be a resource object.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
 const updateResource = async function(resource) {
     await knex(constants.TABLE_RESOURCE)
         .where({resourceId: resource.ResourceID})
         .update({
             name: resource.ResourceName,
             resourceTierId: resource.ResourceTierID
+        })
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return false;
         });
     
     return true;
 }
 
+/**
+ * Updates all resources.
+ * @param {Array} resources must be an array of resource objects.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
 const updateResourceAll = async function(resources) {
     let updatePromises = [];
 
@@ -148,21 +226,37 @@ const updateResourceAll = async function(resources) {
             .update({
                 name: resource.ResourceName,
                 resourceTierId: resource.ResourceTierID
+            })
+            .catch(e => {
+                console.log(errors.queryError, '\n', e);
+                return false;
             });
 
         updatePromises.push(updatePromise);
     }
 
     await Promise.all(updatePromises)
-        .catch(e => console.log(e));
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return false;
+        });
 
     return true;
 }
 
+/**
+ * Deletes the resource of a given ID.
+ * @param {Number} id must be an integer.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
 const deleteResourceById = async function(id) {
     await knex(constants.TABLE_RESOURCE)
         .where({resourceId: id})
-        .del();
+        .del()
+        .catch(e => {
+            console.log(errors.queryError, '\n', e);
+            return false;
+        });
     
     return true;
 }
