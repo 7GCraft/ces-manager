@@ -6,13 +6,27 @@
         }
     },
     "constants": {
+        "TABLE_BIOME": "MsBiome",
+        "TABLE_CORRUPTION": "MsCorruption",
+        "TABLE_DEVELOPMENT": "MsDevelopment",
+        "TABLE_REGION": "MsRegion",
         "TABLE_RESOURCE": "MsResource",
         "TABLE_RESOURCE_TIER": "MsResourceTier",
         "TABLE_STATE": "MsState",
+        "COLUMN_NAME": "name",
+        "COLUMN_POPULATION": "population",
+        "COLUMN_DESC": "desc",
+        "COLUMN_RATE": "rate",
+        "COLUMN_BIOME_ID": "biomeId",
+        "COLUMN_CORRUPTION_ID": "corruptionId",
+        "COLUMN_DEVELOPMENT_ID": "developmentId",
+        "COLUMN_REGION_ID": "regionId",
         "COLUMN_RESOURCE_TIER_ID": "resourceTierId",
         "COLUMN_STATE_ID": "stateId"
     },
     "paths": {
+        "regionListItemModel": "../models/regionListItemModel",
+        "regionModel": "../models/regionModel",
         "resourceModel": "../models/resourceModel",
         "resourceTierModel": "../models/resourceTierModel",
         "stateListItemModel": "../models/stateListItemModel",

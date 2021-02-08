@@ -10,11 +10,11 @@ const State = require(config.paths.stateModel);
  * Gets a list of state IDs and names.
  * @returns {Array} Array of state list item objects if successful, null otherwise.
  */
-const getStateList = async function() {
+const getStateList = async () => {
     let stateList = [];
 
     let rawStateList = await knex
-        .select([constants.COLUMN_STATE_ID, 'name'])
+        .select([constants.COLUMN_STATE_ID, constants.COLUMN_NAME])
         .from(constants.TABLE_STATE)
         .catch(e => {
             console.log(errors.queryError, '\n', e);
@@ -35,7 +35,7 @@ const getStateList = async function() {
  * @param {Number} id must be an integer.
  * @returns {State} State object if successful, null otherwise.
  */
-const getStateById = async function(id) {
+const getStateById = async (id) => {
     let rawState = await knex
         .select('*')
         .from(constants.TABLE_STATE)
@@ -77,7 +77,7 @@ const addState = async (name, treasuryAmt = 0, desc = null) => {
  * @param {State} state must be a state object.
  * @returns {Boolean} true if successful, false otherwise.
  */
-const updateState = async(state) => {
+const updateState = async (state) => {
     let test = await knex(constants.TABLE_STATE)
         .where({stateId: state.StateID})
         .update({
