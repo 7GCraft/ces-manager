@@ -36,7 +36,7 @@ function getStateList(){
     ipcRenderer.once('State:getStateListOK', function(e, res){
         $('#stateContainer').append('<ul id="ulStateList"></ul>')
         res.forEach(state => {
-            $('#ulStateList').append('<li><a class="states" href="#" data-id="'+state.StateID+'"  onclick=openStatePage(this.getAttribute("data-id"))>'+ state.StateName + '</a></li>')
+            $('#ulStateList').append('<li><a class="states" href="#" data-id="State'+state.StateID+'"  onclick=openStatePage(this.getAttribute("data-id"))>'+ state.StateName + '</a></li>')
         });
     });
 }
@@ -197,7 +197,8 @@ function nextSeason(){
 
 //Called in getStateList()
 function openStatePage(ID){
-    //alert(ID);
-    ipcRenderer.send('State:openStatePage', ID);
+    let StateID = ID.replace('State', '');
+    //alert(StateID);
+    ipcRenderer.send('State:openStatePage', StateID);
 }
 

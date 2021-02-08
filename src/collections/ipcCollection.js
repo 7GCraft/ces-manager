@@ -35,7 +35,7 @@ function stateListBridge() {
     })
 
     //Get state that was clicked on State List
-    ipcMain.on('State:openStatePage', (e, args) => {
+    ipcMain.on('State:openStatePage', (e, arg) => {
         stateWindow = new BrowserWindow({
             width: 800,
             height: 600,
@@ -52,12 +52,14 @@ function stateListBridge() {
         });
 
         console.log("State Window Opened. Proceeding with Getting State Info");
-        let result = state.getStateInfo(args)
-        //console.log(item);
-        
-        ipcMain.on('State:loaded', function(e){
-            e.sender.send("State:getStateInfo", result)
+        let response = state.getStateById(arg)
+        response.then( (result) => {
+            console.log(result);
+            ipcMain.on('State:getStateInfo', function(e){
+                e.sender.send("State:getStateInfoOK", result)
+            })
         })
+        
     });
 }
 
@@ -82,8 +84,10 @@ function resourceBridge(){
 
     //Add new Resource
     ipcMain.on("Resource:addResource", (e, args) => {
-        let response = resource.addResource(args)
+        let response = resource.addResource(args.ResourceName, args.ResourceTierID);
+        //let response = resource.addResource(args)
         response.then((result) => {
+            console.log(result);
             e.sender.send("Resource:addResourceOK", result);
         })
     });

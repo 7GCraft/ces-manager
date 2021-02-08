@@ -7,10 +7,10 @@ console.log("Page Opened");
 $(function(){
     console.log('DOMLOADED');
     
-    ipcRenderer.send("State:loaded");
-    ipcRenderer.on("State:getStateInfo", function(e, res){
+    ipcRenderer.send("State:getStateInfo");
+    ipcRenderer.on("State:getStateInfoOK", function(e, res){
         console.log("MAP FROM DB")
         $('#lblStateName').text(res.StateName);
-        $('#lblStateTreasury').text(res.Treasury);
+        $('#lblStateTreasury').text(res.TreasuryAmt);
     });
 })
