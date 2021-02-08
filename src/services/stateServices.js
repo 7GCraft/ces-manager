@@ -112,6 +112,6 @@ exports.updateState = updateState;
 //     .then(data => console.log(data));
 // addState('Kingdom of Qasim')
 //     .catch(e => console.log(e));
-let stateToUpdate = new State(5, 'Cypra', 0, 'Kingdom of Cypra', 0, 0, 0, 0, []);
-updateState(stateToUpdate)
-     .then(console.log("Updated."));
+// let stateToUpdate = new State(5, 'Cypra', 0, 'Kingdom of Cypra', 0, 0, 0, 0, []);
+// updateState(stateToUpdate)
+//      .then(console.log("Updated."));
