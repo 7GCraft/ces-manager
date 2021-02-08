@@ -14,6 +14,8 @@ function loadFrontPage() {
     getStateList();
     //Get All Resources
     getAllResourceTiers();
+    //Get All regions by State ID
+    getAllRegionsByStateId();
 }
 
 function handleButtonandSubmitCalls() {
@@ -48,11 +50,6 @@ function getAllResourceTiers(){
         res.forEach(resourceTier => {
             $('#listsOfResourceTiers').append('<div class="resourceContainer"><h4>'+ resourceTier.ResourceTierName + '('+resourceTier.ResourceTierTradePower * 100+'%)' +'</h4><ul class="resourceSortable" id="ResourceTier'+resourceTier.ResourceTierID+'"><li ondragover="dragOver(event)"></li></ul></div>')
             
-            $('#selResourceTier').append($('<option>', {
-                value: resourceTier.ResourceTierID,
-                text: resourceTier.ResourceTierName
-            }));
-            
             resourceTier.Resources.forEach(resource => {
                 $('#ResourceTier'+resourceTier.ResourceTierID).append('<li class="individualResource" draggable="true" ondragover="dragOver(event)" ondragstart="dragStart(event)" id="Resource'+resource.ResourceID+'">'+resource.ResourceName+'</li>')
 
@@ -61,6 +58,26 @@ function getAllResourceTiers(){
                     text: resource.ResourceName
                 }));
             });
+            
+            $('#selResourceTier').append($('<option>', {
+                value: resourceTier.ResourceTierID,
+                text: resourceTier.ResourceTierName
+            }));
+        });
+    });
+}
+
+function getAllRegionsByStateId() {
+    ipcRenderer.send('Region:getAllRegionsByStateId');
+    ipcRenderer.once('Region:getAllRegionsByStateIdOK', (e, res)=>{
+        res.forEach(state => {
+            if(state.Regions.length != 0){
+                $('#listOfRegionsByState').append('<div class="regionContainer"><h5>'+state.StateName+'</h5><ul class="regionsList" id="StateRegion'+state.StateID+'"></ul></div>')
+    
+                state.Regions.forEach(region => {
+                    $('#StateRegion'+state.StateID).append('<li class="individualRegion" id="Region'+region.RegionID+'"><a href=#>'+region.RegionName+'</a><span class="totalIncome">'+region.RegionTotalIncome+'</span><span class="totalFood">'+region.RegionTotalFood+'</span></li>')
+                });
+            }
         });
     });
 }

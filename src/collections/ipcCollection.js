@@ -2,6 +2,7 @@ const {ipcMain, BrowserWindow, ipcRenderer} = require('electron');
 const path = require('path');
 const state = require('../services/stateServices');
 const resource = require('../services/resourceServices');
+const region = require('../services/regionServices');
 
 
 const initializeIpcMains = () =>{
@@ -12,6 +13,7 @@ const initializeIpcMains = () =>{
     });
 
     stateListBridge();
+    regionBridge();
     resourceBridge();
 };
 exports.initializeIpcMains = initializeIpcMains;
@@ -26,6 +28,7 @@ function stateListBridge() {
         })
     });
 
+    //Add State
     ipcMain.on('State:addState', (e, args) => {
         console.log(args);
         let response = state.addState(args.name, args.treasuryAmt, args.desc);
@@ -63,6 +66,29 @@ function stateListBridge() {
     });
 }
 
+function regionBridge(){
+    ipcMain.on('Region:getAllRegionsByStateId', (e) => {
+        let states = []
+        let response = state.getStateList();
+        response.then((result) => {
+            return Promise.all(result.map((state)=>{
+                return region.getRegionListByStateId(state.StateID).then((regions) => {
+                    stateRegionObj = {};
+                    stateRegionObj["StateID"] = state.StateID;
+                    stateRegionObj["StateName"] = state.StateName;
+                    stateRegionObj["Regions"] = regions; 
+
+                    return stateRegionObj;
+                })
+            }))
+        })
+        .then((regionsByState) => {
+            //console.log(regionsByStateArray);
+            e.sender.send('Region:getAllRegionsByStateIdOK', regionsByState);
+        });
+    })
+}
+
 function resourceBridge(){
     //Catch load request from IpcRenderer, then send it back when result is resolved
     ipcMain.on('Resource:getAllResourceTiers', (e) => {
@@ -97,10 +123,11 @@ function resourceBridge(){
         okDeleteResource = true;
         args.forEach(arg => {
             let response = resource.deleteResourceById(arg);
-
-            if(!response){
-                okDeleteResource = false;
-            }
+            response.then((result) => {
+                if(!result){
+                    okDeleteResource = false;
+                }
+            })
         });
 
         e.sender.send("Resource:deleteResourceByIdOk", okDeleteResource);
