@@ -19,15 +19,23 @@ exports.initializeIpcMains = initializeIpcMains;
 function stateListBridge() {
 
     //Get List of states
-    ipcMain.on('StateList:getStateList', function(e){
+    ipcMain.on('State:getStateList', (e) => {
         let response = state.getStateList();
         response.then((result) => {
-            e.sender.send('StateList:getStateListOK', result)
+            e.sender.send('State:getStateListOK', result)
         })
     });
 
+    ipcMain.on('State:addState', (e, args) => {
+        console.log(args);
+        let response = state.addState(args.name, args.treasuryAmt, args.desc);
+        response.then((result) => {
+            e.sender.send('State:addStateOK', result)
+        })
+    })
+
     //Get state that was clicked on State List
-    ipcMain.on('StateList:openStatePage', function(e, args){
+    ipcMain.on('State:openStatePage', (e, args) => {
         stateWindow = new BrowserWindow({
             width: 800,
             height: 600,
@@ -67,26 +75,16 @@ function resourceBridge(){
     ipcMain.on("Resource:updateResourceAll", (e, args) => {
         //console.log(res);
         let response = resource.updateResourceAll(args);
-        response.then((response) => {
-            if(response){
-                e.sender.send("Resource:updateResourceAllOk", true);
-            }
-            else{
-                e.sender.send("Resource:updateResourceAllOk", false);
-            }
+        response.then((result) => {
+            e.sender.send("Resource:updateResourceAllOK", result);
         })
     });
 
     //Add new Resource
     ipcMain.on("Resource:addResource", (e, args) => {
         let response = resource.addResource(args)
-        response.then((response) => {
-            if(response){
-                e.sender.send("Resource:addResourceOK", true);
-            }
-            else{
-                e.sender.send("Resource:addResourceOK", false);
-            }
+        response.then((result) => {
+            e.sender.send("Resource:addResourceOK", result);
         })
     });
 

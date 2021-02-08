@@ -17,9 +17,14 @@ function loadFrontPage() {
 }
 
 function handleButtonandSubmitCalls() {
+    //Add state
+    frmAddState_onSubmit();
+
     //Update Resources (resources.html)
     btnUpdateResources_onClick();
+    //Add Resource
     frmAddResource_onSubmit();
+    //Delete Resource
     frmDeleteResource_onSubmit();
 }
 
@@ -27,8 +32,9 @@ function handleButtonandSubmitCalls() {
  * Loading related functions
  */
 function getStateList(){
-    ipcRenderer.send('StateList:getStateList');
-    ipcRenderer.once('StateList:getStateListOK', function(e, res){
+    ipcRenderer.send('State:getStateList');
+    ipcRenderer.once('State:getStateListOK', function(e, res){
+        $('#stateContainer').append('<ul id="ulStateList"></ul>')
         res.forEach(state => {
             $('#ulStateList').append('<li><a class="states" href="#" data-id="'+state.StateID+'"  onclick=openStatePage(this.getAttribute("data-id"))>'+ state.StateName + '</a></li>')
         });
@@ -66,6 +72,32 @@ function getAllResourceTiers(){
  /**
   * Start of Button and Submit event related functions
   */
+
+  function frmAddState_onSubmit() {
+      $('#frmAddState').on('submit', function(e){
+        e.preventDefault();
+
+        let stateObj = {};
+
+        stateObj["name"] = $('#txtStateName').val();
+        stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
+        stateObj["desc"] = $('#txtDescription').val();
+
+        ipcRenderer.send('State:addState', stateObj);
+        ipcRenderer.once('State:addStateOK', (e, res) =>{
+            if(res){
+                $('#stateListMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully added state</div>')
+                $('#ulStateList').remove();
+                getStateList();
+            }
+            else{
+                $('#stateListMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding state</div>')
+            }
+
+            $('#mdlAddState').modal('toggle');
+        });
+      });
+  }
 
   function btnUpdateResources_onClick(){
     $('#btnUpdateResources').on('click', function(e){
@@ -166,6 +198,6 @@ function nextSeason(){
 //Called in getStateList()
 function openStatePage(ID){
     //alert(ID);
-    ipcRenderer.send('StateList:openStatePage', ID);
+    ipcRenderer.send('State:openStatePage', ID);
 }
 
