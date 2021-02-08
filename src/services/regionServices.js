@@ -11,8 +11,17 @@ const RegionListItem = require(config.paths.regionListItemModel);
  */
 const getRegionListAll = async () => {
     let rawRegions = await knex
-        .select([constants.COLUMN_REGION_ID, constants.COLUMN_NAME])
+        .select([
+            constants.COLUMN_REGION_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_NAME,
+            constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state'
+        ])
         .from(constants.TABLE_REGION)
+        .leftJoin(
+            constants.TABLE_STATE,
+            constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID,
+            constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID
+        )
         .catch(e => {
             console.log(errors.queryError, '\n', e);
             return null;
@@ -22,7 +31,7 @@ const getRegionListAll = async () => {
 
     for (let rawRegion of rawRegions) {
         // TODO: INTEGRATE WITH FACILITIES
-        let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0);
+        let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0, rawRegion.state);
 
         regionList.push(regionListItem);
     }
@@ -37,9 +46,18 @@ const getRegionListAll = async () => {
  */
 const getRegionListByStateId = async (stateId) => {
     let rawRegions = await knex
-        .select([constants.COLUMN_REGION_ID, constants.COLUMN_NAME])
+        .select([
+            constants.COLUMN_REGION_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_NAME,
+            constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state'
+        ])
         .from(constants.TABLE_REGION)
-        .where(constants.COLUMN_STATE_ID, stateId)
+        .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, stateId)
+        .leftJoin(
+            constants.TABLE_STATE,
+            constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID,
+            constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID
+        )
         .catch(e => {
             console.log(errors.queryError, '\n', e);
             return null;
@@ -49,7 +67,7 @@ const getRegionListByStateId = async (stateId) => {
 
     for (let rawRegion of rawRegions) {
         // TODO: INTEGRATE WITH FACILITIES
-        let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0);
+        let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0, rawRegion.state);
 
         regionList.push(regionListItem);
     }
@@ -61,7 +79,7 @@ const getRegionById = async (id) => {
     let rawRegion = await knex
         .select([
             constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID,
-            constants.TABLE_REGION + '.' + constants.COLUMN_NAME + ' AS regionName',
+            constants.TABLE_REGION + '.' + constants.COLUMN_NAME + ' AS name',
             constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_NAME + ' AS corruptionName',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_RATE + ' AS corruptionRate',
@@ -109,5 +127,5 @@ exports.getRegionListByStateId = getRegionListByStateId;
 //     .then(data => console.log(data));
 // getRegionListByStateId(1)
 //     .then(data => console.log(data));
-getRegionById(1)
-    .then(data => console.log(data));
+// getRegionById(1)
+//     .then(data => console.log(data));
