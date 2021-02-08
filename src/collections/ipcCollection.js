@@ -92,8 +92,8 @@ function regionBridge(){
 function resourceBridge(){
     //Catch load request from IpcRenderer, then send it back when result is resolved
     ipcMain.on('Resource:getAllResourceTiers', (e) => {
-        let result = resource.getResourceTierAll();
-        result.then(function(result){
+        let response = resource.getResourceTierAll();
+        response.then(function(result){
             e.sender.send('Resource:getAllResourceTiersOk', result);
             //console.log(result);
         });

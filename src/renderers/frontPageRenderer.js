@@ -71,7 +71,7 @@ function getAllRegionsByStateId() {
     ipcRenderer.send('Region:getAllRegionsByStateId');
     ipcRenderer.once('Region:getAllRegionsByStateIdOK', (e, res)=>{
         res.forEach(state => {
-            if(state.Regions.length != 0){
+            if(Array.isArray(state.Regions) || state.Regions.length){
                 $('#listOfRegionsByState').append('<div class="regionContainer"><h5>'+state.StateName+'</h5><ul class="regionsList" id="StateRegion'+state.StateID+'"></ul></div>')
     
                 state.Regions.forEach(region => {
@@ -141,7 +141,7 @@ function getAllRegionsByStateId() {
         //console.log(resourceJsonObj);
 
         ipcRenderer.send("Resource:updateResourceAll", resourceJsonObj);
-        ipcRenderer.once("Resource:updateResourceAllOk", (e, res) => {
+        ipcRenderer.once("Resource:updateResourceAllOK", (e, res) => {
             if(res){
                 $('#resourceMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully updated resources</div>')
             }
