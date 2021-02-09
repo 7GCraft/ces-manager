@@ -1,6 +1,5 @@
 const config = require('./config.json');
 const constants = config.constants;
-const errors = config.errors;
 const knex = require('knex')(config.knexConfig);
 
 const StateListItem = require(config.paths.stateListItemModel);
@@ -11,15 +10,16 @@ const State = require(config.paths.stateModel);
  * @returns {Array} Array of state list item objects if successful, null otherwise.
  */
 const getStateList = async () => {
-    let stateList = [];
-
     let rawStateList = await knex
         .select([constants.COLUMN_STATE_ID, constants.COLUMN_NAME])
         .from(constants.TABLE_STATE)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return null;
+            console.error(e);
         });
+    
+    if (rawStateList.length === 0) return null;
+
+    let stateList = [];
     
     for (let rawState of rawStateList) {
         let state = new StateListItem(rawState.stateId, rawState.name);
@@ -41,9 +41,11 @@ const getStateById = async (id) => {
         .from(constants.TABLE_STATE)
         .where(constants.COLUMN_STATE_ID, id)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return null;
+            console.error(e);
+            
         });
+
+    if (rawState.length === 0) return null;
     
     rawState = rawState[0];
     
@@ -61,15 +63,17 @@ const getStateById = async (id) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const addState = async (name, treasuryAmt = 0, desc = null) => {
-    let newStateId = await knex
+    let resStatus = true;
+
+    await knex
         .insert({name: name, treasuryAmt: treasuryAmt, desc: desc})
         .into(constants.TABLE_STATE)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return false;
+            console.error(e);
+            resStatus = false;
         });
 
-    return true;
+    return resStatus;
 };
 
 /**
@@ -78,6 +82,8 @@ const addState = async (name, treasuryAmt = 0, desc = null) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const updateState = async (state) => {
+    let resStatus = true;
+
     let test = await knex(constants.TABLE_STATE)
         .where({stateId: state.StateID})
         .update({
@@ -86,19 +92,37 @@ const updateState = async (state) => {
             desc: state.Desc
         })
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return false;
+            console.error(e);
+            resStatus = false;
+        });
+
+    return resStatus;
+}
+
+/**
+ * Deletes the state of a given ID.
+ * @param {Number} id must be an integer.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const deleteStateById = async (id) => {
+    let resStatus = true;
+
+    await knex(constants.TABLE_STATE)
+        .where({stateId: id})
+        .del()
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
         });
     
-    console.log(test);
-
-    return true;
+    return resStatus;
 }
 
 exports.getStateList = getStateList;
 exports.getStateById = getStateById;
 exports.addState = addState;
 exports.updateState = updateState;
+exports.deleteStateById = deleteStateById;
 
 // FOR DEBUGGING
 // getStateList()

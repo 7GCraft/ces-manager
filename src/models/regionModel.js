@@ -1,14 +1,23 @@
-module.exports = class State {
-    constructor(StateID, StateName, TreasuryAmt, Desc, TotalIncome, TotalFoodProduced, TotalFoodConsumed, AvgDevLevel, ProductiveResources) {
-        this.StateID = StateID;
-        this.StateName = StateName;
-        this.TreasuryAmt = TreasuryAmt;
-        this.Desc = Desc;
-        this.TotalIncome = TotalIncome;
-        this.TotalFoodProduced = TotalFoodProduced;
-        this.TotalFoodConsumed = TotalFoodConsumed;
-        this.TotalFoodAvailable = this.TotalFoodProduced - this.TotalFoodConsumed;
-        this.AvgDevLevel = AvgDevLevel;
-        this.ProductiveResources = ProductiveResources;
+module.exports = class Region {
+    constructor(regionId, regionName, stateId, stateName, totalIncome, totalFoodProduced, totalFoodConsumed, devLevel, devName, population, productiveResources, expectedPopulationGrowth, corruptionLevel, corruptionName, corruptionRate, biomeId, biome, desc) {
+        this.regionId = regionId;
+        this.regionName = regionName;
+        this.stateId = stateId;
+        this.stateName = stateName;
+        this.totalIncome = totalIncome;
+        this.totalFoodProduced = totalFoodProduced;
+        this.totalFoodConsumed = totalFoodConsumed;
+        this.totalFoodAvailable = this.totalFoodProduced - this.totalFoodConsumed;
+        this.devLevel = devLevel;
+        this.devName = devName;
+        this.population = population;
+        this.productiveResources = productiveResources;
+        this.expectedPopulationGrowth = expectedPopulationGrowth;
+        this.corruptionLevel = corruptionLevel;
+        this.corruptionName = corruptionName;
+        this.corruptionRate = corruptionRate;
+        this.biomeId = biomeId;
+        this.biome = biome;
+        this.desc = desc;
     }
 }
