@@ -25,6 +25,9 @@
         "COLUMN_STATE_ID": "stateId"
     },
     "paths": {
+        "biomeModel": "../models/biomeModel",
+        "corruptionModel": "../models/corruptionModel",
+        "developmentModel": "../models/developmentModel",
         "regionListItemModel": "../models/regionListItemModel",
         "regionModel": "../models/regionModel",
         "resourceModel": "../models/resourceModel",

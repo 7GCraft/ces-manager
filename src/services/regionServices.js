@@ -4,6 +4,9 @@ const knex = require('knex')(config.knexConfig);
 
 const RegionListItem = require(config.paths.regionListItemModel);
 const Region = require(config.paths.regionModel);
+const Biome = require(config.paths.biomeModel);
+const Corruption = require(config.paths.corruptionModel);
+const Development = require(config.paths.developmentModel);
 
 /**
  * Gets a list of region IDs, names, total income, and total food.
@@ -196,7 +199,7 @@ const addRegion = async (regionName, stateId, corruptionLevel = 1, biomeId, devL
 const updateRegion = async (region) => {
     let resStatus = true;
 
-    let test = await knex(constants.TABLE_REGION)
+    await knex(constants.TABLE_REGION)
         .where({regionId: region.regionId})
         .update({
             name: region.name,
@@ -234,12 +237,90 @@ const deleteRegionById = async (id) => {
     return resStatus;
 }
 
+/**
+ * Gets all biomes.
+ * @returns {Array} array of biome objects if successful, null otherwise.
+ */
+const getBiomeAll = async () => {
+    let rawBiomes = await knex
+        .select('*')
+        .from(constants.TABLE_BIOME)
+        .catch(e => {
+            console.error(e);
+        });
+
+    if (rawBiomes.length === 0) return null;
+
+    let biomes = [];
+
+    for (let rawBiome of rawBiomes) {
+        let biome = new Biome(rawBiome.biomeId, rawBiome.name);
+
+        biomes.push(biome);
+    }
+
+    return biomes;
+};
+
+/**
+ * Gets all corruption levels.
+ * @returns {Array} array of corruption objects if successful, null otherwise.
+ */
+const getCorruptionAll = async () => {
+    let rawCorruptions = await knex
+        .select('*')
+        .from(constants.TABLE_CORRUPTION)
+        .catch(e => {
+            console.error(e);
+        })
+    
+    if (rawCorruptions.length === 0) return null;
+
+    let corruptions = [];
+
+    for (let rawCorruption of rawCorruptions) {
+        let corruption = new Corruption(rawCorruption.corruptionId, rawCorruption.name, rawCorruption.rate);
+
+        corruptions.push(corruption);
+    }
+
+    return corruptions;
+}
+
+/**
+ * Gets all development levels.
+ * @returns {Array} array of development objects if successful, null otherwise.
+ */
+const getDevelopmentAll = async () => {
+    let rawDevelopments = await knex
+        .select('*')
+        .from(constants.TABLE_DEVELOPMENT)
+        .catch(e => {
+            console.error(e);
+        })
+    
+    if (rawDevelopments.length === 0) return null;
+
+    let developments = [];
+
+    for (let rawDevelopment of rawDevelopments) {
+        let development = new Development(rawDevelopment.developmentId, rawDevelopment.name, rawDevelopment.populationCap, rawDevelopment.militaryTier, rawDevelopment.growthModifier, rawDevelopment.shrinkageModifier);
+
+        developments.push(development);
+    }
+
+    return developments;
+}
+
 exports.getRegionListAll = getRegionListAll;
 exports.getRegionListByStateId = getRegionListByStateId;
 exports.getRegionById = getRegionById;
 exports.addRegion = addRegion;
 exports.updateRegion = updateRegion;
 exports.deleteRegionById = deleteRegionById;
+exports.getBiomeAll = getBiomeAll;
+exports.getCorruptionAll = getCorruptionAll;
+exports.getDevelopmentAll = getDevelopmentAll;
 
 // FOR DEBUGGING
 // getRegionListAll()
@@ -254,3 +335,6 @@ exports.deleteRegionById = deleteRegionById;
 //     .then(data => console.log(data));
 // getRegionById(6)
 //     .then(data => console.log(data));
+// getBiomeAll().then(data => console.log(data));
+// getCorruptionAll().then(data => console.log(data));
+getDevelopmentAll().then(data => console.log(data));
