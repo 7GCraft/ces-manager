@@ -95,9 +95,26 @@ const updateState = async (state) => {
             console.error(e);
             resStatus = false;
         });
-    
-    console.log(test);
 
+    return resStatus;
+}
+
+/**
+ * Deletes the state of a given ID.
+ * @param {Number} id must be an integer.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const deleteStateById = async (id) => {
+    let resStatus = true;
+
+    await knex(constants.TABLE_STATE)
+        .where({stateId: id})
+        .del()
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+    
     return resStatus;
 }
 
@@ -105,6 +122,7 @@ exports.getStateList = getStateList;
 exports.getStateById = getStateById;
 exports.addState = addState;
 exports.updateState = updateState;
+exports.deleteStateById = deleteStateById;
 
 // FOR DEBUGGING
 // getStateList()
