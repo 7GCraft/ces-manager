@@ -49,15 +49,16 @@ function stateListBridge() {
             stateWindow = null
         });
 
-        let response = state.getStateById(arg)
-        response.then( (result) => {
-            //console.log(result);
-            ipcMain.on('State:getStateInfo', function(e){
-                e.sender.send("State:getStateInfoOK", result)
-            })
-        })
         
     });
+
+    ipcMain.on('State:getStateInfo', function(e, arg){
+        let response = state.getStateById(arg);
+        response.then( (result) => {
+            //console.log(result);
+            e.sender.send("State:getStateInfoOK", result)
+        })
+    })
 
     ipcMain.on('State:getRegionsForState', (e, arg) => {
         let response = region.getRegionListByStateId(arg);
@@ -66,12 +67,30 @@ function stateListBridge() {
         });
     });
 
+    ipcMain.on('State:updateState', (e, args) => {
+        let response = state.updateState(args);
+        response.then((result) => {
+            e.sender.send("State:updateStateOK", result);
+        });
+    })
+
     ipcMain.on('State:deleteState', (e, arg) => {
         let response = state.deleteStateById(arg);
         response.then((result)=> {
             e.sender.send("State:deleteStateOK", result);
         });
     })
+
+    ipcMain.on('State:ReloadPageOnUpdate', function(e){
+        BrowserWindow.getFocusedWindow().reload();
+        //win.webContents.send('test', item);
+    });
+     
+    ipcMain.on('State:ClosePageOnDelete', function(e){
+        BrowserWindow.getFocusedWindow().close();
+        BrowserWindow.getFocusedWindow().reload();
+        //win.webContents.send('test', item);
+    });
 }
 
 function regionBridge(){

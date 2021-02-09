@@ -33,6 +33,7 @@
                 Average Development Level : <span id="lblAvgDevelopment"></span>
                 <br><br>
 
+                <button class="btn btn-primary" id="btnUpdateState" data-toggle="modal" data-target="#mdlUpdateState">Update State</button>
                 <button class="btn btn-danger" id="btnDeleteState">Delete State</button>
             </div>
         </div>
@@ -45,6 +46,34 @@
         <div class="tab-pane fade" id="nav-resources" role="tabpanel" aria-labelledby="nav-resources-tab">...</div>
         <div class="tab-pane fade" id="nav-tradeAgreements" role="tabpanel" aria-labelledby="nav-tradeAgreements-tab">...</div>
       </div>
+
+      <div class="modal fade" id="mdlUpdateState" tabindex="-1" role="dialog" aria-labelledby="mdlUpdateStateLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mdlUpdateStateLabel">Add State</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="frmUpdateState">
+                    <div class="modal-body">
+                        <label for="txtStateName">State Name</label>
+                        <input type="text" id="txtStateName" required><br/>
+
+                        <label for="nmbTreasury">Treasury</label>
+                        <input type="number" id="nmbTreasury"><br/>
+
+                        <label for="txtDescription">Description</label>
+                        <input type="text" id="txtDescription">
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary"></input>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     
 </body>
 <script src="../renderers/stateRenderer.js"></script>

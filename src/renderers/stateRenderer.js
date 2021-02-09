@@ -9,13 +9,15 @@ console.log("Page Opened");
 $(function(){
     //Load all state info on page open
     getStateInfo();
-
+    //Delete state
     btnDeleteState_onClick();
+    //Update State
+    frmUpdateState_onSubmit();
 })
 
 
 function getStateInfo(){
-    ipcRenderer.send("State:getStateInfo");
+    ipcRenderer.send("State:getStateInfo", parseInt(window.process.argv.slice(-1)));
     ipcRenderer.on("State:getStateInfoOK", function(e, res){
         $('#lblStateName').text(res.StateName);
         $('#lblDescription').text(res.Desc);
@@ -25,6 +27,10 @@ function getStateInfo(){
         $('#lblFoodConsumed').text(res.TotalFoodConsumed);
         $('#lblFoodAvailable').text(res.TotalFoodAvailable);
         $('#lblAvgDevelopment').text(res.AvgDevLevel);
+
+        $('#txtStateName').val(res.StateName);
+        $('#nmbTreasury').val(res.TreasuryAmt);
+        $('#txtDescription').val(res.Desc);
     });
 
     ipcRenderer.send("State:getRegionsForState", parseInt(window.process.argv.slice(-1)));
@@ -49,6 +55,37 @@ function btnDeleteState_onClick() {
             else{
                 $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting state</div>')
             }
+        });
+    });
+}
+
+function frmUpdateState_onSubmit() {
+    $('#frmUpdateState').on('submit', (e) => {
+        e.preventDefault();
+
+        let stateObj = {};
+
+        stateObj["StateID"] =  parseInt(window.process.argv.slice(-1))
+        stateObj["StateName"] = $('#txtStateName').val();
+        stateObj["TreasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
+        stateObj["Desc"] = $('#txtDescription').val();
+
+        console.log(stateObj);
+
+        ipcRenderer.send("State:updateState", stateObj);
+        ipcRenderer.once("State:updateStateOK", (e, res) => {
+            if(res){
+                // $('#stateMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully updated state</div>');
+                // $('.regionList').empty();
+                // getStateInfo();
+                alert("Successfully updated state");
+                ipcRenderer.send("State:ReloadPageOnUpdate");
+            }
+            else{
+                $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating state</div>');
+            }
+
+            $('#mdlUpdateState').modal('toggle');
         });
     });
 }

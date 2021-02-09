@@ -1,12 +1,12 @@
 .totalIncome{
     position: absolute;
     color: #d1b422;
-    left: 30%;
+    left: 200px;
 }
 
 .totalFood{
     position: absolute;
-    left : 45%;
+    left : 350px;
     color: green;
 }
 
