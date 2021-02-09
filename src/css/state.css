@@ -1,0 +1,15 @@
+.totalIncome{
+    position: absolute;
+    color: #d1b422;
+    left: 30%;
+}
+
+.totalFood{
+    position: absolute;
+    left : 45%;
+    color: green;
+}
+
+.regionList{
+    list-style: none;
+}

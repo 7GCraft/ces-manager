@@ -3,10 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" 
+    href = "../../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel = "stylesheet" 
+    href = "../css/state.css" />
 </head>
 <body>
-    <h1><label id="lblStateName"></label></h1>
-    <label id="lblStateTreasury"></label>
+    <nav>
+        <div class="jumbotron" style="text-align: center;"><h1><label id="lblStateName"></label></h1><h5><span id="lblDescription"></span></h5></div>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <a class="nav-item nav-link active" id="nav-general-tab" data-toggle="tab" href="#nav-general" role="tab" aria-controls="nav-general" aria-selected="true">General Info</a>
+          <a class="nav-item nav-link" id="nav-regions-tab" data-toggle="tab" href="#nav-regions" role="tab" aria-controls="nav-regions" aria-selected="false">Regions</a>
+          <a class="nav-item nav-link" id="nav-resources-tab" data-toggle="tab" href="#nav-resources" role="tab" aria-controls="nav-resources" aria-selected="false">Resources</a>
+          <a class="nav-item nav-link" id="nav-tradeAgreements-tab" data-toggle="tab" href="#nav-tradeAgreements" role="tab" aria-controls="nav-tradeAgreements" aria-selected="false">Trade Agreements</a>
+        </div>
+      </nav>
+      <div class="tab-content stateContent" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
+            <div class="container-lg">
+                Treasury : <span id="lblStateTreasury"></span> <br>
+                Total Income : <span id="lblTotalIncome"></span> <br>
+                Total Food Produced : <span id="lblFoodProduced"></span> <br>
+                Total Food Consumed : <span id="lblFoodConsumed"></span> <br>
+                Total Food Available : <span id="lblFoodAvailable"></span> <br>
+                Average Development Level : <span id="lblAvgDevelopment"></span>
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="nav-regions" role="tabpanel" aria-labelledby="nav-regions-tab">
+            <div id="listOfRegionsByState" class="regionList container-lg">
+                
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-resources" role="tabpanel" aria-labelledby="nav-resources-tab">...</div>
+        <div class="tab-pane fade" id="nav-tradeAgreements" role="tabpanel" aria-labelledby="nav-tradeAgreements-tab">...</div>
+      </div>
+    
 </body>
 <script src="../renderers/stateRenderer.js"></script>
 </html>

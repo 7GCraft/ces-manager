@@ -71,7 +71,7 @@ function getAllRegionsByStateId() {
     ipcRenderer.send('Region:getAllRegionsByStateId');
     ipcRenderer.once('Region:getAllRegionsByStateIdOK', (e, res)=>{
         res.forEach(state => {
-            if(Array.isArray(state.Regions) || state.Regions.length){
+            if(Array.isArray(state.Regions) && state.Regions.length){
                 $('#listOfRegionsByState').append('<div class="regionContainer"><h5>'+state.StateName+'</h5><ul class="regionsList" id="StateRegion'+state.StateID+'"></ul></div>')
     
                 state.Regions.forEach(region => {

@@ -43,7 +43,8 @@ function stateListBridge() {
             width: 800,
             height: 600,
             webPreferences: {
-                nodeIntegration: true
+                nodeIntegration: true,
+                additionalArguments: [arg]
             },
             title: 'State Info'
         })
@@ -57,12 +58,19 @@ function stateListBridge() {
         console.log("State Window Opened. Proceeding with Getting State Info");
         let response = state.getStateById(arg)
         response.then( (result) => {
-            console.log(result);
+            //console.log(result);
             ipcMain.on('State:getStateInfo', function(e){
                 e.sender.send("State:getStateInfoOK", result)
             })
         })
         
+    });
+
+    ipcMain.on('State:getRegionsForState', (e, arg) => {
+        let response = region.getRegionListByStateId(arg)
+        response.then((result) => {
+            e.sender.send("State:getRegionsForStateOK", result);
+        })
     });
 }
 
