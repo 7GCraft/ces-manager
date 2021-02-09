@@ -51,7 +51,7 @@ function stateListBridge() {
 
         
     });
-
+    //Get all state by ID
     ipcMain.on('State:getStateInfo', function(e, arg){
         let response = state.getStateById(arg);
         response.then( (result) => {
@@ -60,6 +60,7 @@ function stateListBridge() {
         })
     })
 
+    //Get all regions for one state
     ipcMain.on('State:getRegionsForState', (e, arg) => {
         let response = region.getRegionListByStateId(arg);
         response.then((result) => {
@@ -67,6 +68,7 @@ function stateListBridge() {
         });
     });
 
+    //Update a state
     ipcMain.on('State:updateState', (e, args) => {
         let response = state.updateState(args);
         response.then((result) => {
@@ -74,6 +76,7 @@ function stateListBridge() {
         });
     })
 
+    //Delete a state
     ipcMain.on('State:deleteState', (e, arg) => {
         let response = state.deleteStateById(arg);
         response.then((result)=> {
