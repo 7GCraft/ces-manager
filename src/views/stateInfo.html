@@ -20,18 +20,25 @@
       </nav>
       <div class="tab-content stateContent" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
-            <div class="container-lg">
+            <div class="container-fluid">
+                <div id="stateMessage">
+
+                </div>
+
                 Treasury : <span id="lblStateTreasury"></span> <br>
                 Total Income : <span id="lblTotalIncome"></span> <br>
                 Total Food Produced : <span id="lblFoodProduced"></span> <br>
                 Total Food Consumed : <span id="lblFoodConsumed"></span> <br>
                 Total Food Available : <span id="lblFoodAvailable"></span> <br>
                 Average Development Level : <span id="lblAvgDevelopment"></span>
+                <br><br>
+
+                <button class="btn btn-danger" id="btnDeleteState">Delete State</button>
             </div>
         </div>
         
         <div class="tab-pane fade" id="nav-regions" role="tabpanel" aria-labelledby="nav-regions-tab">
-            <div id="listOfRegionsByState" class="regionList container-lg">
+            <div id="listOfRegions" class="regionList container-fluid">
                 
             </div>
         </div>

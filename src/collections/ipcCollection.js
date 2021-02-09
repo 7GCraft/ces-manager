@@ -1,4 +1,4 @@
-const {ipcMain, BrowserWindow, ipcRenderer} = require('electron');
+const {ipcMain, BrowserWindow, ipcRenderer, remote} = require('electron');
 const path = require('path');
 const state = require('../services/stateServices');
 const resource = require('../services/resourceServices');
@@ -6,12 +6,6 @@ const region = require('../services/regionServices');
 
 
 const initializeIpcMains = () =>{
-        
-    ipcMain.on('test', function(e, item){
-        console.log(item);
-        //win.webContents.send('test', item);
-    });
-
     stateListBridge();
     regionBridge();
     resourceBridge();
@@ -55,7 +49,6 @@ function stateListBridge() {
             stateWindow = null
         });
 
-        console.log("State Window Opened. Proceeding with Getting State Info");
         let response = state.getStateById(arg)
         response.then( (result) => {
             //console.log(result);
@@ -67,11 +60,18 @@ function stateListBridge() {
     });
 
     ipcMain.on('State:getRegionsForState', (e, arg) => {
-        let response = region.getRegionListByStateId(arg)
+        let response = region.getRegionListByStateId(arg);
         response.then((result) => {
             e.sender.send("State:getRegionsForStateOK", result);
-        })
+        });
     });
+
+    ipcMain.on('State:deleteState', (e, arg) => {
+        let response = state.deleteStateById(arg);
+        response.then((result)=> {
+            e.sender.send("State:deleteStateOK", result);
+        });
+    })
 }
 
 function regionBridge(){
