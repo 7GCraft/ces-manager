@@ -1,6 +1,5 @@
 const config = require('./config.json');
 const constants = config.constants;
-const errors = config.errors;
 const knex = require('knex')(config.knexConfig);
 
 const RegionListItem = require(config.paths.regionListItemModel);
@@ -23,10 +22,11 @@ const getRegionListAll = async () => {
             constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID
         )
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return null;
+            console.error(e);
         });
     
+    if (rawRegions.length === 0) return null;
+
     let regionList = [];
 
     for (let rawRegion of rawRegions) {
@@ -59,9 +59,10 @@ const getRegionListByStateId = async (stateId) => {
             constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID
         )
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return null;
+            console.error(e);
         });
+    
+    if (rawRegions.length === 0) return null;
     
     let regionList = [];
 
@@ -113,9 +114,11 @@ const getRegionById = async (id) => {
         )
         .catch(e => {
             console.log(errors.queryError, '\n', e);
-            return null;
+            
         });
     
+    if (rawRegion.length === 0) return null;
+
     return rawRegion;
 };
 
@@ -123,8 +126,8 @@ exports.getRegionListAll = getRegionListAll;
 exports.getRegionListByStateId = getRegionListByStateId;
 
 // FOR DEBUGGING
-// getRegionListAll()
-//     .then(data => console.log(data));
+getRegionListAll()
+    .then(data => console.log(data));
 // getRegionListByStateId(1)
 //     .then(data => console.log(data));
 // getRegionById(1)

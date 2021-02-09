@@ -1,6 +1,5 @@
 const config = require('./config.json');
 const constants = config.constants;
-const errors = config.errors;
 const knex = require('knex')(config.knexConfig);
 
 const ResourceTier = require(config.paths.resourceTierModel);
@@ -17,20 +16,20 @@ const getResourceTierById = async function(id) {
         .from(constants.TABLE_RESOURCE_TIER)
         .where(constants.COLUMN_RESOURCE_TIER_ID, id)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return null;
+            console.error(e);
         });
-
-    rawResourceTier = rawResourceTier[0];
 
     let rawResources = await knex
         .select('*')
         .from(constants.TABLE_RESOURCE)
         .where(constants.COLUMN_RESOURCE_TIER_ID, id)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return null;
+            console.error(e);
         });
+
+    if (rawResourceTier.length === 0 || rawResources.length === 0) return null;
+
+    rawResourceTier = rawResourceTier[0];
 
     let resourceTier = new ResourceTier(rawResourceTier.resourceTierId, rawResourceTier.name, rawResourceTier.tradePower, []);
 
@@ -52,17 +51,17 @@ const getResourceTierAll = async function() {
         .select('*')
         .from(constants.TABLE_RESOURCE_TIER)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return null;
+            console.error(e);
         });
 
     let rawResources = await knex
         .select('*')
         .from(constants.TABLE_RESOURCE)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return null;
+            console.error(e);
         });
+
+    if (rawResourceTiers.length === 0 || rawResources.length === 0) return null;
     
     let resourceTiers = [];
 
@@ -88,6 +87,8 @@ const getResourceTierAll = async function() {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const updateResourceTier = async function(resourceTier) {
+    let resStatus = true;
+    
     let updatePromises = [];
 
     let updateResourceTierPromise = knex(constants.TABLE_RESOURCE_TIER)
@@ -97,8 +98,8 @@ const updateResourceTier = async function(resourceTier) {
             tradePower: resourceTier.ResourceTierTradePower
         })
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return false;
+            console.error(e);
+            resStatus = false;
         });
     
     updatePromises.push(updateResourceTierPromise);
@@ -111,8 +112,8 @@ const updateResourceTier = async function(resourceTier) {
                 resourceTierID: resource.ResourceTierID
             })
             .catch(e => {
-                console.log(errors.queryError, '\n', e);
-                return false;
+                console.error(e);
+                resStatus = false;
             });
         
         updatePromises.push(updateResourcePromise);
@@ -120,11 +121,11 @@ const updateResourceTier = async function(resourceTier) {
 
     await Promise.all(updatePromises)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return false;
+            console.error(e);
+            resStatus = false;
         });
 
-    return true;
+    return resStatus;
 }
 
 /**
@@ -133,6 +134,8 @@ const updateResourceTier = async function(resourceTier) {
  * @returns {Boolean} true if successful, null otherwise.
  */
 const updateResourceTierAll = async function(resourceTiers) {
+    let resStatus = true;
+    
     let updatePromises = [];
 
     for (let resourceTier of resourceTiers) {
@@ -143,8 +146,8 @@ const updateResourceTierAll = async function(resourceTiers) {
                 tradePower: resourceTier.ResourceTierTradePower
             })
             .catch(e => {
-                console.log(errors.queryError, '\n', e);
-                return false;
+                console.error(e);
+                resStatus = false;
             });
         
         updatePromises.push(updateResourceTierPromise);
@@ -157,8 +160,8 @@ const updateResourceTierAll = async function(resourceTiers) {
                     resourceTierID: resource.ResourceTierID
                 })
                 .catch(e => {
-                    console.log(errors.queryError, '\n', e);
-                    return false;
+                    console.error(e);
+                    resStatus = false;
                 });
             
             updatePromises.push(updateResourcePromise);
@@ -167,11 +170,11 @@ const updateResourceTierAll = async function(resourceTiers) {
 
     await Promise.all(updatePromises)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return false;
+            console.error(e);
+            resStatus = false;
         });
     
-    return true;
+    return resStatus;
 };
 
 /**
@@ -181,15 +184,17 @@ const updateResourceTierAll = async function(resourceTiers) {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const addResource = async function(name, resourceTierId) {
+    let resStatus = true;
+
     await knex
         .insert({name: name, resourceTierId: resourceTierId})
         .into(constants.TABLE_RESOURCE)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return false;
+            console.error(e);
+            resStatus = false;
         });
     
-    return true;
+    return resStatus;
 };
 
 /**
@@ -198,6 +203,8 @@ const addResource = async function(name, resourceTierId) {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const updateResource = async function(resource) {
+    let resStatus = true;
+
     await knex(constants.TABLE_RESOURCE)
         .where({resourceId: resource.ResourceID})
         .update({
@@ -205,11 +212,11 @@ const updateResource = async function(resource) {
             resourceTierId: resource.ResourceTierID
         })
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return false;
+            console.error(e);
+            resStatus = false;
         });
     
-    return true;
+    return resStatus;
 }
 
 /**
@@ -218,6 +225,7 @@ const updateResource = async function(resource) {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const updateResourceAll = async function(resources) {
+    let resStatus = true;
     let updatePromises = [];
 
     for (let resource of resources) {
@@ -228,8 +236,8 @@ const updateResourceAll = async function(resources) {
                 resourceTierId: resource.ResourceTierID
             })
             .catch(e => {
-                console.log(errors.queryError, '\n', e);
-                return false;
+                console.error(e);
+                resStatus = false;
             });
 
         updatePromises.push(updatePromise);
@@ -237,11 +245,11 @@ const updateResourceAll = async function(resources) {
 
     await Promise.all(updatePromises)
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return false;
+            console.error(e);
+            resStatus = false;
         });
 
-    return true;
+    return resStatus;
 }
 
 /**
@@ -250,15 +258,17 @@ const updateResourceAll = async function(resources) {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const deleteResourceById = async function(id) {
+    let resStatus = true;
+
     await knex(constants.TABLE_RESOURCE)
         .where({resourceId: id})
         .del()
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            return false;
+            console.error(e);
+            resStatus = false;
         });
     
-    return true;
+    return resStatus;
 }
 
 exports.getResourceTierById = getResourceTierById;
@@ -274,4 +284,6 @@ exports.deleteResourceById = deleteResourceById;
 // getResourceTierAll()
 //     .then(data => console.log(data));
 // getResourceTierById(1)
+//     .then(data => console.log(data));
+// addResource(1)
 //     .then(data => console.log(data));

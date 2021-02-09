@@ -31,8 +31,5 @@
         "resourceTierModel": "../models/resourceTierModel",
         "stateListItemModel": "../models/stateListItemModel",
         "stateModel": "../models/stateModel"
-    },
-    "errors": {
-        "queryError": "ERROR: QUERY ERROR!"
     }
 }
