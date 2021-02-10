@@ -89,11 +89,11 @@ const updateState = async (state) => {
     let resStatus = true;
 
     let test = await knex(constants.TABLE_STATE)
-        .where({stateId: state.StateID})
+        .where({stateId: state.stateID})
         .update({
-            name: state.StateName,
-            treasuryAmt: state.TreasuryAmt,
-            desc: state.Desc
+            name: state.stateName,
+            treasuryAmt: state.treasuryAmt,
+            desc: state.desc
         })
         .catch(e => {
             console.error(e);
