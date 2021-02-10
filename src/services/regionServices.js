@@ -36,7 +36,7 @@ const getRegionListAll = async () => {
 
     for (let rawRegion of rawRegions) {
         /**
-         * @todo integrate with facilities
+         * @todo integrate with state, facilities, and components.
          */
         let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0, rawRegion.state);
 
@@ -75,7 +75,7 @@ const getRegionListByStateId = async (stateId) => {
 
     for (let rawRegion of rawRegions) {
         /**
-         * @todo integrate with facilities
+         * @todo integrate with state, facilities, and components.
          */
         let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0, rawRegion.state);
 
@@ -145,7 +145,7 @@ const getRegionById = async (id) => {
     rawRegion = rawRegion[0];
 
     /**
-     * @todo integrate with facilities
+     * @todo integrate with state, facilities, and components.
      */
     let region = new Region(
         id,

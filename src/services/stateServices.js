@@ -49,7 +49,9 @@ const getStateById = async (id) => {
     
     rawState = rawState[0];
     
-    // TODO: INTEGRATE WITH REGIONS AND RESOURCES
+    /**
+     * @todo integrate with regions, facilities, and components.
+     */
     let state = new State(rawState.stateId, rawState.name, rawState.treasuryAmt, rawState.desc, 0, 0, 0, 0, []);
 
     return state;
@@ -57,16 +59,18 @@ const getStateById = async (id) => {
 
 /**
  * Creates a new state.
- * @param {String} name must be a string.
- * @param {Number} treasuryAmt must be an integer.
- * @param {String} desc is optional. Must be a string.
+ * @param {State} state must be a state object.
  * @returns {Boolean} true if successful, false otherwise.
  */
-const addState = async (name, treasuryAmt = 0, desc = null) => {
+const addState = async (state) => {
     let resStatus = true;
 
     await knex
-        .insert({name: name, treasuryAmt: treasuryAmt, desc: desc})
+        .insert({
+            name: state.stateName,
+            treasuryAmt: state.treasuryAmt,
+            desc: state.desc
+        })
         .into(constants.TABLE_STATE)
         .catch(e => {
             console.error(e);
