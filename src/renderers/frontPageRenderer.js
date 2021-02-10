@@ -36,9 +36,10 @@ function handleButtonandSubmitCalls() {
 function getStateList(){
     ipcRenderer.send('State:getStateList');
     ipcRenderer.once('State:getStateListOK', function(e, res){
+        console.log(res);
         $('#stateContainer').append('<ul id="ulStateList"></ul>')
         res.forEach(state => {
-            $('#ulStateList').append('<li><a class="states" href="#" data-id="State'+state.StateID+'"  onclick=openStatePage(this.getAttribute("data-id"))>'+ state.StateName + '</a></li>')
+            $('#ulStateList').append('<li><a class="states" href="#" data-id="State'+state.stateID+'"  onclick=openStatePage(this.getAttribute("data-id"))>'+ state.stateName + '</a></li>')
         });
     });
 }
@@ -72,10 +73,10 @@ function getAllRegionsByStateId() {
     ipcRenderer.once('Region:getAllRegionsByStateIdOK', (e, res)=>{
         res.forEach(state => {
             if(Array.isArray(state.Regions) && state.Regions.length){
-                $('#listOfRegionsByState').append('<div class="regionContainer"><h5>'+state.StateName+'</h5><ul class="regionsList" id="StateRegion'+state.StateID+'"></ul></div>')
+                $('#listOfRegionsByState').append('<div class="regionContainer"><h5>'+state.stateName+'</h5><ul class="regionsList" id="StateRegion'+state.stateID+'"></ul></div>')
     
                 state.Regions.forEach(region => {
-                    $('#StateRegion'+state.StateID).append('<li class="individualRegion" id="Region'+region.RegionID+'"><a href=#>'+region.RegionName+'</a><span class="totalIncome">'+region.RegionTotalIncome+'</span><span class="totalFood">'+region.RegionTotalFood+'</span></li>')
+                    $('#StateRegion'+state.stateID).append('<li class="individualRegion" id="Region'+region.RegionID+'" onclick=openRegionPage(this.getAttribute("id"))><a href=#>'+region.RegionName+'</a><span class="totalIncome">'+region.RegionTotalIncome+'</span><span class="totalFood">'+region.RegionTotalFood+'</span></li>')
                 });
             }
         });
@@ -96,7 +97,7 @@ function getAllRegionsByStateId() {
 
         let stateObj = {};
 
-        stateObj["name"] = $('#txtStateName').val();
+        stateObj["stateName"] = $('#txtStateName').val();
         stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
         stateObj["desc"] = $('#txtDescription').val();
 
@@ -214,8 +215,14 @@ function nextSeason(){
 
 //Called in getStateList()
 function openStatePage(ID){
-    let StateID = ID.replace('State', '');
-    //alert(StateID);
-    ipcRenderer.send('State:openStatePage', StateID);
+    let stateID = ID.replace('State', '');
+    //alert(stateID);
+    ipcRenderer.send('State:openStatePage', stateID);
 }
 
+//called on region click
+
+function openRegionPage(ID){
+    let regionID = ID.replace('Region', '');
+    ipcRenderer.send('Region:openRegionPage', regionID);
+}

@@ -24,8 +24,7 @@ function stateListBridge() {
 
     //Add State
     ipcMain.on('State:addState', (e, args) => {
-        console.log(args);
-        let response = state.addState(args.name, args.treasuryAmt, args.desc);
+        let response = state.addState(args);
         response.then((result) => {
             e.sender.send('State:addStateOK', result)
         })
@@ -102,10 +101,10 @@ function regionBridge(){
         let response = state.getStateList();
         response.then((result) => {
             return Promise.all(result.map((state)=>{
-                return region.getRegionListByStateId(state.StateID).then((regions) => {
+                return region.getRegionListByStateId(state.stateID).then((regions) => {
                     stateRegionObj = {};
-                    stateRegionObj["StateID"] = state.StateID;
-                    stateRegionObj["StateName"] = state.StateName;
+                    stateRegionObj["stateID"] = state.stateID;
+                    stateRegionObj["stateName"] = state.stateName;
                     stateRegionObj["Regions"] = regions; 
 
                     return stateRegionObj;
@@ -117,6 +116,24 @@ function regionBridge(){
             e.sender.send('Region:getAllRegionsByStateIdOK', regionsByState);
         });
     })
+
+    ipcMain.on('Region:openRegionPage', (e, arg) => {
+        regionWindow = new BrowserWindow({
+            width: 800,
+            height: 600,
+            webPreferences: {
+                nodeIntegration: true,
+                additionalArguments: [arg]
+            },
+            title: 'Region Info'
+        })
+        
+        regionWindow.loadFile('src/views/regionInfo.html')
+        
+        regionWindow.on('close', function(){
+            regionWindow = null
+        });
+    });
 }
 
 function resourceBridge(){

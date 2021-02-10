@@ -1,7 +1,9 @@
 const { app, remote } = require('electron');
 const electron = require('electron');
+const { fstat } = require('fs');
 const {ipcRenderer} = electron;
 const $ = require('jquery');
+const fs = require('fs');
 require('bootstrap');
 
 console.log("Page Opened");
@@ -19,18 +21,18 @@ $(function(){
 function getStateInfo(){
     ipcRenderer.send("State:getStateInfo", parseInt(window.process.argv.slice(-1)));
     ipcRenderer.on("State:getStateInfoOK", function(e, res){
-        $('#lblStateName').text(res.StateName);
-        $('#lblDescription').text(res.Desc);
-        $('#lblStateTreasury').text(res.TreasuryAmt);
+        $('#lblStateName').text(res.stateName);
+        $('#lblDescription').text(res.desc);
+        $('#lblStateTreasury').text(res.treasuryAmt);
         $('#lblTotalIncome').text(res.TotalIncome);
         $('#lblFoodProduced').text(res.TotalFoodProduced);
         $('#lblFoodConsumed').text(res.TotalFoodConsumed);
         $('#lblFoodAvailable').text(res.TotalFoodAvailable);
         $('#lblAvgDevelopment').text(res.AvgDevLevel);
 
-        $('#txtStateName').val(res.StateName);
-        $('#nmbTreasury').val(res.TreasuryAmt);
-        $('#txtDescription').val(res.Desc);
+        $('#txtStateName').val(res.stateName);
+        $('#nmbTreasury').val(res.treasuryAmt);
+        $('#txtDescription').val(res.desc);
     });
 
     ipcRenderer.send("State:getRegionsForState", parseInt(window.process.argv.slice(-1)));
@@ -40,6 +42,26 @@ function getStateInfo(){
         });
        
     });
+
+    fs.readdir('src/images', (err, files) => {
+        if(err){
+            console.log(err)
+        }
+        else{
+
+            for(let file of files) {
+                let id = file.match(/(\d+)/);
+
+                if( parseInt(window.process.argv.slice(-1)) == id[0]){
+                    console.log(file);
+                    $('.jumbotron').css('background-image', 'url(../images/'+file+')');
+                    $('.jumbotron').css('background-size', 'contain');
+                    break;
+                }
+            }
+            
+        }
+    })
 }
 
 function btnDeleteState_onClick() {
@@ -65,10 +87,10 @@ function frmUpdateState_onSubmit() {
 
         let stateObj = {};
 
-        stateObj["StateID"] =  parseInt(window.process.argv.slice(-1))
-        stateObj["StateName"] = $('#txtStateName').val();
-        stateObj["TreasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
-        stateObj["Desc"] = $('#txtDescription').val();
+        stateObj["stateID"] =  parseInt(window.process.argv.slice(-1))
+        stateObj["stateName"] = $('#txtStateName').val();
+        stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
+        stateObj["desc"] = $('#txtDescription').val();
 
         console.log(stateObj);
 
