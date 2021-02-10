@@ -10,6 +10,50 @@
     href = "../css/region.css" />
 </head>
 <body>
-    <h1>Region</h1>
+    <nav>
+        <div class="jumbotron" style="text-align: center;"><h1><label id="lblRegionName"></label></h1><h5><span id="lblDescription"></span></h5></div>
+        <div id="regionMessage"></div>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <a class="nav-item nav-link active" id="nav-general-tab" data-toggle="tab" href="#nav-general" role="tab" aria-controls="nav-general" aria-selected="true">General Info</a>
+          <a class="nav-item nav-link" id="nav-development-tab" data-toggle="tab" href="#nav-development" role="tab" aria-controls="nav-development" aria-selected="false">Development Info</a>
+          <a class="nav-item nav-link" id="nav-corruption-tab" data-toggle="tab" href="#nav-corruption" role="tab" aria-controls="nav-corruption" aria-selected="false">Corruption Info</a>
+          <a class="nav-item nav-link" id="nav-facilities-tab" data-toggle="tab" href="#nav-facilities" role="tab" aria-controls="nav-facilities" aria-selected="false">Facilities</a>
+          <a class="nav-item nav-link" id="nav-components-tab" data-toggle="tab" href="#nav-components" role="tab" aria-controls="nav-components" aria-selected="false">Components</a>
+        </div>
+      </nav>
+      <div class="tab-content stateContent" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
+            <div class="container-fluid">
+                Biome                       : <span id="lblBiome"></span><br>
+                Belongs To                  : <span id="lblOwner"></span><br>
+                Population                  : <span id="lblPopulation"></span><br>
+                Total Region Income         : <span id="lblTotalRegionIncome"></span> <br>
+                Total Region Food Produced  : <span id="lblRegionFoodProduced"></span> <br>
+                Total Region Food Consumed  : <span id="lblRegionFoodConsumed"></span> <br>
+                Total Region Food Available : <span id="lblRegionFoodAvailable"></span> <br>
+                Expected Population Growth  : <span id="lblPopulationGrowth"></span> <br>
+                Resources Produced          : <span id="lblResourcesProduced"></span> <br>
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="nav-development" role="tabpanel" aria-labelledby="nav-development-tab">
+            <div class="container-fluid">
+                Development Level   : <span id="lblDevelopmentLevel"></span><br>
+                Population Cap      : <span id="lblPopulationCap"></span><br>
+                Military Tier       : <span id="lblMilitaryTier"></span><br>
+                Growth Modifier     : <span id="lblGrowthModifier"></span><br>
+                Shrinkage Modifier  : <span id="lblShrinkageModifier"></span>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-corruption" role="tabpanel" aria-labelledby="nav-corruption-tab">
+            <div class="container-fluid">
+                Corruption Level    : <span id="lblCorruptionName"></span><br>
+                Corruption Rate     : <span id="lblCorruptionRate"></span>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-facilities" role="tabpanel" aria-labelledby="nav-facilities-tab">...</div>
+        <div class="tab-pane fade" id="nav-components" role="tabpanel" aria-labelledby="nav-components-tab">...</div>
+      </div>
+      <script src="../renderers/regionRenderer.js"></script>
 </body>
 </html>

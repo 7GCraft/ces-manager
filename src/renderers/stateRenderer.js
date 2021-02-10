@@ -1,12 +1,9 @@
 const { app, remote } = require('electron');
 const electron = require('electron');
-const { fstat } = require('fs');
 const {ipcRenderer} = electron;
 const $ = require('jquery');
 const fs = require('fs');
 require('bootstrap');
-
-console.log("Page Opened");
 
 $(function(){
     //Load all state info on page open

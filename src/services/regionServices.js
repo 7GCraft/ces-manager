@@ -342,8 +342,8 @@ exports.getDevelopmentAll = getDevelopmentAll;
 //     .then(data => console.log(data));
 // getRegionListByStateId(1)
 //     .then(data => console.log(data));
-getRegionById(1)
-    .then(data => console.log(data));
+//getRegionById(1)
+    //.then(data => console.log(data));
 // addRegion('Ges Ogygia', 4, 4, 3, 5, 63);
 // addRegion('Giosria', 8, 2, 13, 3, 24, "Capital of Cypra.");
 // getRegionById(5)

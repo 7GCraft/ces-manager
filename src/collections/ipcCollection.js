@@ -134,6 +134,15 @@ function regionBridge(){
             regionWindow = null
         });
     });
+
+    ipcMain.on('Region:getRegionInfo', (e, arg) => {
+        
+        let response = region.getRegionById(arg)
+        response.then(result => {
+            console.log(result);
+            e.sender.send('Region:getRegionInfoOK', result);
+        });
+    })
 }
 
 function resourceBridge(){
