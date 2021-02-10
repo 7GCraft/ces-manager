@@ -76,5 +76,12 @@ module.exports = class Region {
         } else {
             this.desc = desc;
         }
+
+        this.totalIncome = 0;
+        this.totalFoodProduced = 0;
+        this.totalFoodConsumed = 0;
+        this.totalFoodAvailable = this.totalFoodProduced - this.totalFoodConsumed;
+        this.productiveResources = [];
+        this.expectedPopulationGrowth = 0;
     }
 }
