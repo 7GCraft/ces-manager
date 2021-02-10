@@ -34,7 +34,7 @@
                 <br><br>
 
                 <button class="btn btn-primary" id="btnUpdateState" data-toggle="modal" data-target="#mdlUpdateState">Update State</button>
-                <button class="btn btn-danger" id="btnDeleteState">Delete State</button>
+                <button class="btn btn-danger" id="btnOpenDeleteState" data-toggle="modal" data-target="#mdlDeleteState">Delete State</button>
             </div>
         </div>
         
@@ -51,7 +51,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="mdlUpdateStateLabel">Add State</h5>
+                    <h5 class="modal-title" id="mdlUpdateStateLabel">Update State</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -73,7 +73,27 @@
                 </form>
             </div>
         </div>
-    </div>
+      </div>
+
+        <div class="modal fade" id="mdlDeleteState" tabindex="-1" role="dialog" aria-labelledby="mdlDeleteStateLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mdlDeleteStateLabel">Delete State</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure?
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger" id="btnDeleteState">Yes</button>
+                        <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     
 </body>
 <script src="../renderers/stateRenderer.js"></script>
