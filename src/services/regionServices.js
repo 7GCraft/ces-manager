@@ -7,6 +7,7 @@ const Region = require(config.paths.regionModel);
 const Biome = require(config.paths.biomeModel);
 const Corruption = require(config.paths.corruptionModel);
 const Development = require(config.paths.developmentModel);
+const State = require(config.paths.stateModel);
 
 /**
  * Gets a list of region IDs, names, total income, and total food.
@@ -34,7 +35,9 @@ const getRegionListAll = async () => {
     let regionList = [];
 
     for (let rawRegion of rawRegions) {
-        // TODO: INTEGRATE WITH FACILITIES
+        /**
+         * @todo integrate with facilities
+         */
         let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0, rawRegion.state);
 
         regionList.push(regionListItem);
@@ -71,7 +74,9 @@ const getRegionListByStateId = async (stateId) => {
     let regionList = [];
 
     for (let rawRegion of rawRegions) {
-        // TODO: INTEGRATE WITH FACILITIES
+        /**
+         * @todo integrate with facilities
+         */
         let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0, rawRegion.state);
 
         regionList.push(regionListItem);
@@ -92,15 +97,21 @@ const getRegionById = async (id) => {
             constants.TABLE_REGION + '.' + constants.COLUMN_NAME + ' AS regionName',
             constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID + ' AS stateId',
             constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS stateName',
-            constants.TABLE_CORRUPTION + '.' + constants.COLUMN_CORRUPTION_ID + ' AS corruptionLevel',
+            constants.TABLE_STATE + '.' + constants.COLUMN_TREASURY_AMT,
+            constants.TABLE_STATE + '.' + constants.COLUMN_DESC + ' AS stateDesc',
+            constants.TABLE_CORRUPTION + '.' + constants.COLUMN_CORRUPTION_ID + ' AS corruptionId',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_NAME + ' AS corruptionName',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_RATE + ' AS corruptionRate',
             constants.TABLE_BIOME + '.' + constants.COLUMN_BIOME_ID + ' AS biomeId',
-            constants.TABLE_BIOME + '.' + constants.COLUMN_NAME + ' AS biome',
-            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_DEVELOPMENT_ID + ' AS devLevel',
-            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_NAME + ' AS devName',
+            constants.TABLE_BIOME + '.' + constants.COLUMN_NAME + ' AS biomeName',
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_DEVELOPMENT_ID + ' AS developmentId',
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_NAME + ' AS developmentName',
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_POPULATION_CAP,
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_MILITARY_TIER,
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_GROWTH_MODIFIER,
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_SHRINKAGE_MODIFIER,
             constants.TABLE_REGION + '.' + constants.COLUMN_POPULATION,
-            constants.TABLE_REGION + '.' + constants.COLUMN_DESC
+            constants.TABLE_REGION + '.' + constants.COLUMN_DESC + ' AS regionDesc'
         ])
         .from(constants.TABLE_REGION)
         .where(constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID, id)
@@ -133,26 +144,36 @@ const getRegionById = async (id) => {
 
     rawRegion = rawRegion[0];
 
-    // TODO: INTEGRATE WITH FACILITIES
+    /**
+     * @todo integrate with facilities
+     */
     let region = new Region(
         id,
-        rawRegion.stateId,
         rawRegion.regionName,
-        rawRegion.stateName,
-        0,
-        0,
-        0,
-        rawRegion.devLevel,
-        rawRegion.devName,
-        rawRegion.population,
-        [],
-        0,
-        rawRegion.corruptionLevel,
-        rawRegion.corruptionName,
-        rawRegion.corruptionRate,
-        rawRegion.biomeId,
-        rawRegion.biome,
-        rawRegion.desc
+        new State(
+            rawRegion.stateId,
+            rawRegion.stateName,
+            rawRegion.treasuryAmt,
+            rawRegion.stateDesc
+        ),
+        new Biome(rawRegion.biomeId, rawRegion.biomeName),
+        {
+            development: new Development(
+                rawRegion.developmentId,
+                rawRegion.developmentName,
+                rawRegion.populationCap,
+                rawRegion.militaryTier,
+                rawRegion.growthModifier,
+                rawRegion.shrinkageModifier
+            ),
+            population: rawRegion.population,
+            corruption: new Corruption(
+                rawRegion.corruptionId,
+                rawRegion.corruptionName,
+                rawRegion.corruptionRate
+            ),
+            desc: rawRegion.regionDesc
+        }
     );
 
     return region;
@@ -160,27 +181,21 @@ const getRegionById = async (id) => {
 
 /**
  * Creates a new region.
- * @param {String} regionName must be a string.
- * @param {Number} stateId must be an integer.
- * @param {Number} corruptionLevel must be an integer.
- * @param {Number} biomeId must be an integer.
- * @param {Number} devLevel must be an integer.
- * @param {Number} population must be an integer.
- * @param {String} desc must be a string.
+ * @param {Region} region must be a region object.
  * @returns {Boolean} true if successful, false otherwise.
  */
-const addRegion = async (regionName, stateId, corruptionLevel = 1, biomeId, devLevel = 1, population = 1, desc = null) => {
+const addRegion = async (region) => {
     let resStatus = true;
 
     await knex
         .insert({
-            name: regionName,
-            stateId: stateId,
-            corruptionId: corruptionLevel,
-            biomeId: biomeId,
-            developmentId: devLevel,
-            population: population,
-            desc: desc
+            name: region.regionName,
+            stateId: region.state.stateId,
+            corruptionId: region.corruption.corruptionId,
+            biomeId: region.biome.biomeId,
+            developmentId: region.development.developmentId,
+            population: region.population,
+            desc: region.desc
         })
         .into(constants.TABLE_REGION)
         .catch(e => {
@@ -203,10 +218,10 @@ const updateRegion = async (region) => {
         .where({regionId: region.regionId})
         .update({
             name: region.name,
-            stateId: region.stateId,
-            corruptionId: region.corruptionLevel,
-            biomeId: region.biomeId,
-            developmentId: region.devLevel,
+            stateId: region.state.stateId,
+            corruptionId: region.corruption.corruptionId,
+            biomeId: region.biome.biomeId,
+            developmentId: region.development.developmentId,
             population: region.population,
             desc: region.desc
         })
@@ -327,8 +342,8 @@ exports.getDevelopmentAll = getDevelopmentAll;
 //     .then(data => console.log(data));
 // getRegionListByStateId(1)
 //     .then(data => console.log(data));
-// getRegionById(1)
-//     .then(data => console.log(data));
+getRegionById(1)
+    .then(data => console.log(data));
 // addRegion('Ges Ogygia', 4, 4, 3, 5, 63);
 // addRegion('Giosria', 8, 2, 13, 3, 24, "Capital of Cypra.");
 // getRegionById(5)
@@ -337,4 +352,17 @@ exports.getDevelopmentAll = getDevelopmentAll;
 //     .then(data => console.log(data));
 // getBiomeAll().then(data => console.log(data));
 // getCorruptionAll().then(data => console.log(data));
-getDevelopmentAll().then(data => console.log(data));
+// getDevelopmentAll().then(data => console.log(data));
+
+// let testRegion = new Region(
+//     0,
+//     'Test',
+//     {
+//         stateName: 'sup'
+//     },
+//     {
+//         biomeName: 'biome'
+//     }
+// );
+
+// console.log(testRegion);
