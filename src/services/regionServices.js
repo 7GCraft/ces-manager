@@ -303,7 +303,7 @@ const getRegionById = async (id) => {
 
     let facilities = await facilityServices.getFacilityByRegionId(region.regionId);
 
-    let stateRegions = await getRegionListByStateId(region.state.stateId);
+    let stateRegions = await getRegionListByStateId(region.state.stateID);
 
     if (facilities === null || stateRegions === null) {
         return null;

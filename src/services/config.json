@@ -51,6 +51,7 @@
         "componentServices": "./componentServices",
         "facilityServices": "./facilityServices",
         "regionServices": "./regionServices",
-        "resourceServices": "./resourceServices"
+        "resourceServices": "./resourceServices",
+        "stateServices": "./stateServices"
     }
 }
