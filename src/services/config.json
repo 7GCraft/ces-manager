@@ -50,6 +50,7 @@
         "stateModel": "../models/stateModel",
         "componentServices": "./componentServices",
         "facilityServices": "./facilityServices",
+        "regionServices": "./regionServices",
         "resourceServices": "./resourceServices"
     }
 }

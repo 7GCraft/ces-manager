@@ -117,6 +117,104 @@ const getRegionListByStateId = async (stateId) => {
 }
 
 /**
+ * Gets all regions of a given state.
+ * @param {Number} id must be an integer.
+ * @returns {Array} array of region objects if successful, null otherwise.
+ */
+const getRegionByStateId = async (id) => {
+    let rawRegions = await knex
+        .select([
+            constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_NAME + ' AS regionName',
+            constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID + ' AS stateId',
+            constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS stateName',
+            constants.TABLE_STATE + '.' + constants.COLUMN_TREASURY_AMT,
+            constants.TABLE_STATE + '.' + constants.COLUMN_DESC + ' AS stateDesc',
+            constants.TABLE_CORRUPTION + '.' + constants.COLUMN_CORRUPTION_ID + ' AS corruptionId',
+            constants.TABLE_CORRUPTION + '.' + constants.COLUMN_NAME + ' AS corruptionName',
+            constants.TABLE_CORRUPTION + '.' + constants.COLUMN_RATE + ' AS corruptionRate',
+            constants.TABLE_BIOME + '.' + constants.COLUMN_BIOME_ID + ' AS biomeId',
+            constants.TABLE_BIOME + '.' + constants.COLUMN_NAME + ' AS biomeName',
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_DEVELOPMENT_ID + ' AS developmentId',
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_NAME + ' AS developmentName',
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_POPULATION_CAP,
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_MILITARY_TIER,
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_GROWTH_MODIFIER,
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_SHRINKAGE_MODIFIER,
+            constants.TABLE_REGION + '.' + constants.COLUMN_POPULATION,
+            constants.TABLE_REGION + '.' + constants.COLUMN_DESC + ' AS regionDesc'
+        ])
+        .from(constants.TABLE_REGION)
+        .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, id)
+        .leftJoin(
+            constants.TABLE_STATE,
+            constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID,
+            constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID
+        )
+        .leftJoin(
+            constants.TABLE_CORRUPTION,
+            constants.TABLE_REGION + '.' + constants.COLUMN_CORRUPTION_ID,
+            constants.TABLE_CORRUPTION + '.' + constants.COLUMN_CORRUPTION_ID
+        )
+        .leftJoin(
+            constants.TABLE_BIOME,
+            constants.TABLE_REGION +  '.' + constants.COLUMN_BIOME_ID,
+            constants.TABLE_BIOME + '.' + constants.COLUMN_BIOME_ID
+        )
+        .leftJoin(
+            constants.TABLE_DEVELOPMENT,
+            constants.TABLE_REGION +  '.' + constants.COLUMN_DEVELOPMENT_ID,
+            constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_DEVELOPMENT_ID
+        )
+        .catch(e => {
+            console.error(e);
+        });
+    
+    if (rawRegions.length === null) return null;
+
+    let regions = [];
+
+    for (let rawRegion of rawRegions) {
+        let region = new Region(
+            rawRegion.regionId,
+            rawRegion.regionName,
+            new State(
+                rawRegion.stateId,
+                rawRegion.stateName,
+                rawRegion.treasuryAmt,
+                rawRegion.stateDesc
+            ),
+            new Biome(rawRegion.biomeId, rawRegion.biomeName),
+            {
+                development: new Development(
+                    rawRegion.developmentId,
+                    rawRegion.developmentName,
+                    rawRegion.populationCap,
+                    rawRegion.militaryTier,
+                    rawRegion.growthModifier,
+                    rawRegion.shrinkageModifier
+                ),
+                population: rawRegion.population,
+                corruption: new Corruption(
+                    rawRegion.corruptionId,
+                    rawRegion.corruptionName,
+                    rawRegion.corruptionRate
+                ),
+                desc: rawRegion.regionDesc
+            }
+        );
+    
+        let facilities = await facilityServices.getFacilityByRegionId(region.regionId);
+
+        region.summarise(facilities);
+
+        regions.push(region);
+    }
+    
+    return regions;
+}
+
+/**
  * Gets a region of a given ID.
  * @param {Number} id must be an integer.
  * @returns {Region} Region object if successful, null otherwise. 
@@ -205,7 +303,24 @@ const getRegionById = async (id) => {
 
     let facilities = await facilityServices.getFacilityByRegionId(region.regionId);
 
-    region.summarise(facilities);
+    let stateRegions = await getRegionListByStateId(region.state.stateId);
+
+    if (facilities === null || stateRegions === null) {
+        return null;
+    }
+
+    let totalFoodProduced = 0;
+    let totalFoodConsumed = 0;
+
+    for (let stateRegion of stateRegions) {
+        totalFoodProduced += stateRegion.totalFoodProduced;
+        totalFoodConsumed += stateRegion.totalFoodConsumed;
+    }
+
+    let totalFoodOutput = totalFoodProduced - totalFoodConsumed;
+    let baseGrowth = totalFoodOutput / 5;
+
+    region.summarise(facilities, baseGrowth);
 
     return region;
 };
@@ -360,6 +475,7 @@ const getDevelopmentAll = async () => {
 
 exports.getRegionListAll = getRegionListAll;
 exports.getRegionListByStateId = getRegionListByStateId;
+exports.getRegionByStateId = getRegionByStateId;
 exports.getRegionById = getRegionById;
 exports.addRegion = addRegion;
 exports.updateRegion = updateRegion;
@@ -397,3 +513,5 @@ exports.getDevelopmentAll = getDevelopmentAll;
 // );
 
 // console.log(testRegion);
+
+// getRegionByStateId(1).then(data => console.log(data));

@@ -56,7 +56,12 @@ module.exports = class Region {
         }
     }
 
-    summarise (facilities) {
+    /**
+     * Summarises the secondary stats of the region.
+     * @param {Array} facilities must be an array of facility objects.
+     * @param {Number} baseGrowth must be a double.
+     */
+    summarise (facilities, baseGrowth = null) {
         this.totalIncome = 0;
         this.totalFoodProduced = 0;
         this.totalFoodConsumed = 0;
@@ -77,15 +82,9 @@ module.exports = class Region {
         }
 
         this.totalFoodAvailable = this.totalFoodProduced + this.totalFoodConsumed;
-
-        /**
-         * @todo integrate with state
-         */
-        this.expectedPopulationGrowth = this.totalFoodAvailable / 5;
-
-        if (this.expectedPopulationGrowth > 0) this.expectedPopulationGrowth *= this.development.growthModifier;
-        else if (this.expectedPopulationGrowth < 0) this.expectedPopulationGrowth *= this.development.shrinkageModifier;
-
-        this.expectedPopulationGrowth = Math.round(this.expectedPopulationGrowth);
+        if (baseGrowth !== null) {
+            if (baseGrowth > 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.growthModifier);
+            else if (baseGrowth < 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.shrinkageModifier);
+        }
     }
 }

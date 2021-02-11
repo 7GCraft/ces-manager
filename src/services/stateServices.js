@@ -1,5 +1,6 @@
 const config = require('./config.json');
 const constants = config.constants;
+const regionServices = require(config.paths.regionServices);
 const knex = require('knex')(config.knexConfig);
 
 const StateListItem = require(config.paths.stateListItemModel);
@@ -42,17 +43,17 @@ const getStateById = async (id) => {
         .where(constants.COLUMN_STATE_ID, id)
         .catch(e => {
             console.error(e);
-            
         });
 
     if (rawState.length === 0) return null;
     
     rawState = rawState[0];
     
-    /**
-     * @todo integrate with regions, facilities, and components.
-     */
-    let state = new State(rawState.stateId, rawState.name, rawState.treasuryAmt, rawState.desc, 0, 0, 0, 0, []);
+    let state = new State(rawState.stateId, rawState.name, rawState.treasuryAmt, rawState.desc);
+    
+    let regions = await regionServices.getRegionByStateId(state.stateID);
+
+    state.summarise(regions);
 
     return state;
 }
