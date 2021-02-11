@@ -1,17 +1,17 @@
 module.exports = class Component {
     /**
      * Constructor for component objects.
-     * @param {*} componentId must be an integer.
-     * @param {*} componentName must be a string.
-     * @param {*} componentType must be a component type object.
-     * @param {*} regionId must be an integer.
-     * @param {*} facilityId must be an integer.
-     * @param {*} value must either be an integer, string or null.
-     * @param {*} children must be an array of component objects.
-     * @param {*} activationTime must be an integer.
-     * @param {*}
+     * @param {Number} componentId must be an integer.
+     * @param {String} componentName must be a string.
+     * @param {ComponentType} componentType must be a component type object.
+     * @param {Number} regionId must be an integer.
+     * @param {Number} facilityId must be an integer.
+     * @param {Number|String|null} value must either be an integer, string or null.
+     * @param {Number} activationTime must be an integer.
+     * @param {Boolean} isChild must be a boolean.
+     * @param {Number|null} parentId must be an integer or null.
      */
-    constructor (componentId, componentName, componentType, regionId, facilityId, value, children, activationTime, isChild, parentId = null) {
+    constructor (componentId, componentName, componentType, regionId, facilityId, value, activationTime, isChild, parentId = null) {
         this.componentId = componentId;
         this.componentName = componentName;
         this.componentType = componentType;
@@ -38,12 +38,23 @@ module.exports = class Component {
             this.value = value;
         }
 
-        this.children = children;
         this.activationTime = activationTime;
-        this.isChild = isChild;
 
-        if (isChild === true) {
+        // parse is child
+        if (typeof(isChild) !== 'boolean') {
+            if (isChild === 0) {
+                this.isChild = false;
+            } else {
+                this.isChild = true;
+            }
+        } else {
+            this.isChild = isChild;
+        }
+
+        if (this.isChild === true) {
             this.parentId = parentId;
+
+            this.parent = null;
         }
     }
 }
