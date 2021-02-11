@@ -1,5 +1,6 @@
 const config = require('./config.json');
 const constants = config.constants;
+const facilityServices = require(config.paths.facilityServices);
 const knex = require('knex')(config.knexConfig);
 
 const RegionListItem = require(config.paths.regionListItemModel);
@@ -35,10 +36,25 @@ const getRegionListAll = async () => {
     let regionList = [];
 
     for (let rawRegion of rawRegions) {
-        /**
-         * @todo integrate with state, facilities, and components.
-         */
-        let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0, rawRegion.state);
+        let facilities = await facilityServices.getFacilityByRegionId(rawRegion.regionId);
+
+        let foodOutput = 0;
+        let moneyOutput = 0;
+
+        if (facilities !== null) {
+            for (let facility of facilities) {
+                foodOutput += facility.foodOutput;
+                moneyOutput += facility.moneyOutput;
+            }
+        }
+
+        let regionListItem = new RegionListItem (
+            rawRegion.regionId,
+            rawRegion.name,
+            moneyOutput,
+            foodOutput,
+            rawRegion.state
+        );
 
         regionList.push(regionListItem);
     }
@@ -74,10 +90,25 @@ const getRegionListByStateId = async (stateId) => {
     let regionList = [];
 
     for (let rawRegion of rawRegions) {
-        /**
-         * @todo integrate with state, facilities, and components.
-         */
-        let regionListItem = new RegionListItem(rawRegion.regionId, rawRegion.name, 0, 0, rawRegion.state);
+        let facilities = await facilityServices.getFacilityByRegionId(rawRegion.regionId);
+
+        let foodOutput = 0;
+        let moneyOutput = 0;
+
+        if (facilities !== null) {
+            for (let facility of facilities) {
+                foodOutput += facility.foodOutput;
+                moneyOutput += facility.moneyOutput;
+            }
+        }
+
+        let regionListItem = new RegionListItem (
+            rawRegion.regionId,
+            rawRegion.name,
+            moneyOutput,
+            foodOutput,
+            rawRegion.state
+        );
 
         regionList.push(regionListItem);
     }
@@ -136,17 +167,13 @@ const getRegionById = async (id) => {
             constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_DEVELOPMENT_ID
         )
         .catch(e => {
-            console.log(errors.queryError, '\n', e);
-            
+            console.error(e);
         });
     
     if (rawRegion.length === 0) return null;
 
     rawRegion = rawRegion[0];
-
-    /**
-     * @todo integrate with state, facilities, and components.
-     */
+    
     let region = new Region(
         id,
         rawRegion.regionName,
@@ -175,6 +202,10 @@ const getRegionById = async (id) => {
             desc: rawRegion.regionDesc
         }
     );
+
+    let facilities = await facilityServices.getFacilityByRegionId(region.regionId);
+
+    region.summarise(facilities);
 
     return region;
 };

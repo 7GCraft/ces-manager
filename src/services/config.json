@@ -11,6 +11,7 @@
         "TABLE_COMPONENT_TYPE": "MsComponentType",
         "TABLE_CORRUPTION": "MsCorruption",
         "TABLE_DEVELOPMENT": "MsDevelopment",
+        "TABLE_FACILITY": "MsFacility",
         "TABLE_REGION": "MsRegion",
         "TABLE_RESOURCE": "MsResource",
         "TABLE_RESOURCE_TIER": "MsResourceTier",
@@ -40,11 +41,15 @@
         "componentTypeModel": "../models/componentTypeModel",
         "corruptionModel": "../models/corruptionModel",
         "developmentModel": "../models/developmentModel",
+        "facilityModel": "../models/facilityModel",
         "regionListItemModel": "../models/regionListItemModel",
         "regionModel": "../models/regionModel",
         "resourceModel": "../models/resourceModel",
         "resourceTierModel": "../models/resourceTierModel",
         "stateListItemModel": "../models/stateListItemModel",
-        "stateModel": "../models/stateModel"
+        "stateModel": "../models/stateModel",
+        "componentServices": "./componentServices",
+        "facilityServices": "./facilityServices",
+        "resourceServices": "./resourceServices"
     }
 }

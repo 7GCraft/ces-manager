@@ -178,6 +178,31 @@ const updateResourceTierAll = async function(resourceTiers) {
 };
 
 /**
+ * Gets all resources.
+ * @returns {Array} array of resource objects if successful, null otherwise.
+ */
+const getResourceAll = async () => {
+    let rawResources = await knex
+        .select('*')
+        .from(constants.TABLE_RESOURCE)
+        .catch(e => {
+            console.error(e);
+        });
+    
+    if (rawResources.length === 0) return null;
+
+    let resources = [];
+
+    for (let rawResource of rawResources) {
+        let resource = new Resource(rawResource.resourceId, rawResource.name, rawResource.resourceTierId);
+
+        resources.push(resource);
+    }
+
+    return resources;
+}
+
+/**
  * Creates a new resource.
  * @param {String} name must be a string.
  * @param {Number} resourceTierId must be an integer.
@@ -275,6 +300,7 @@ exports.getResourceTierById = getResourceTierById;
 exports.getResourceTierAll = getResourceTierAll;
 exports.updateResourceTier = updateResourceTier;
 exports.updateResourceTierAll = updateResourceTierAll;
+exports.getResourceAll = getResourceAll;
 exports.addResource = addResource;
 exports.updateResource = updateResource;
 exports.updateResourceAll = updateResourceAll;

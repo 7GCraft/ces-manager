@@ -8,7 +8,7 @@ module.exports = class Component {
      * @param {Number} facilityId must be an integer.
      * @param {Number|String|null} value must either be an integer, string or null.
      * @param {Number} activationTime must be an integer.
-     * @param {Boolean} isChild must be a boolean.
+     * @param {Boolean|Number} isChild must be a boolean or integer.
      * @param {Number|null} parentId must be an integer or null.
      */
     constructor (componentId, componentName, componentType, regionId, facilityId, value, activationTime, isChild, parentId = null) {
@@ -19,7 +19,7 @@ module.exports = class Component {
         this.facilityId = facilityId;
 
         // parse value
-        if (value !== null) {
+        if (value !== null && typeof(value) !== 'object') {
             let tokens = value.split(';');
 
             switch (tokens[0]) {
