@@ -104,11 +104,38 @@ const updateFacility = async (facility) => {
 }
 
 /**
- * Deletes the facility of a given ID.
+ * Deletes the facility of a given ID without deleting its components.
  * @param {Number} id must be an integer.
  * @returns {Boolean} true if successful, false otherwise.
  */
 const deleteFacilityById = async (id) => {
+    let resStatus = true;
+
+    await knex(constants.TABLE_FACILITY)
+    .where({facilityId: id})
+    .del()
+    .catch(e => {
+        console.error(e);
+        resStatus = false;
+    });
+    
+    await knex(constants.TABLE_COMPONENT)
+        .where({facilityId: id})
+        .update({facilityId: null})
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+    
+    return resStatus;
+}
+
+/**
+ * Deletes the facility of a given ID and its components.
+ * @param {Number} id must be an integer.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const destroyFacilityById = async (id) => {
     let resStatus = true;
 
     await knex(constants.TABLE_FACILITY)
@@ -118,6 +145,16 @@ const deleteFacilityById = async (id) => {
             console.error(e);
             resStatus = false;
         });
+
+    if (resStatus) {
+        await knex(constants.TABLE_COMPONENT)
+        .where({facilityId: id})
+        .del()
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        }) 
+    }
     
     return resStatus;
 }
@@ -126,6 +163,9 @@ exports.getFacilityByRegionId = getFacilityByRegionId;
 exports.addFacility = addFacility;
 exports.updateFacility = updateFacility;
 exports.deleteFacilityById = deleteFacilityById;
+exports.destroyFacilityById = destroyFacilityById;
 
 // FOR DEBUGGING
 // getFacilityByRegionId(1).then(data => console.dir(data));
+// deleteFacilityById(3).then(data => console.dir(data));
+// destroyFacilityById(4).then(data => console.dir(data));
