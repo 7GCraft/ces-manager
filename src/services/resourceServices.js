@@ -278,20 +278,36 @@ const updateResourceAll = async function(resources) {
 }
 
 /**
- * Deletes the resource of a given ID.
+ * Deletes the resource of a given ID. Will fail if there are components that use the resource.
  * @param {Number} id must be an integer.
  * @returns {Boolean} true if successful, false otherwise.
  */
 const deleteResourceById = async function(id) {
     let resStatus = true;
 
-    await knex(constants.TABLE_RESOURCE)
+    let isUsed = await knex
+        .select(1)
+        .from(constants.TABLE_COMPONENT)
+        .where({
+            componentTypeId: 3,
+            value: `i;${id}`
+        })
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        })
+    
+    if (isUsed.length !== 0) {
+        resStatus = false;
+    } else {
+        await knex(constants.TABLE_RESOURCE)
         .where({resourceId: id})
         .del()
         .catch(e => {
             console.error(e);
             resStatus = false;
         });
+    }
     
     return resStatus;
 }
@@ -312,4 +328,6 @@ exports.deleteResourceById = deleteResourceById;
 // getResourceTierById(1)
 //     .then(data => console.log(data));
 // addResource(1)
+//     .then(data => console.log(data));
+// deleteResourceById(24)
 //     .then(data => console.log(data));
