@@ -208,11 +208,25 @@ const updateComponent = async (component) => {
 
 /**
  * Deletes the component of a given ID.
+ * If the component was being used by a facility and if the facility was functional, it will be set non-functional.
  * @param {Number} id must be an integer.
  * @returns {Boolean} true if successful, false otherwise.
  */
 const deleteComponentById = async (id) => {
     let resStatus = true;
+
+    let facility = await knex
+        .select(constants.COLUMN_FACILITY_ID)
+        .from(constants.TABLE_COMPONENT)
+        .where(constants.COLUMN_COMPONENT_ID, id)
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+
+    let facilityId;
+    
+    if (facility.length !== 0) facilityId = facility[0].facilityId;
 
     await knex(constants.TABLE_COMPONENT)
         .where({componentId: id})
@@ -221,6 +235,18 @@ const deleteComponentById = async (id) => {
             console.error(e);
             resStatus = false;
         });
+    
+    if (resStatus) {
+        await knex(constants.TABLE_FACILITY)
+            .where(constants.COLUMN_FACILITY_ID, facilityId)
+            .update({
+                isFunctional: 0
+            })
+            .catch(e => {
+                console.error(e);
+                resStatus = false;
+            });
+    }
     
     return resStatus;
 }
@@ -261,3 +287,5 @@ exports.getComponentTypeAll = getComponentTypeAll;
 // getComponentByRegionId(1).then(data => console.dir(data));
 // getComponentByFacilityId(1).then(data => console.dir(data));
 // getComponentTypeAll().then(data => console.log(data));
+// deleteComponentById(5)
+//     .then(data => console.log(data));
