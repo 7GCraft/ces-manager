@@ -380,7 +380,7 @@ const updateRegion = async (region) => {
 };
 
 /**
- * Deletes the region of a given ID.
+ * Deletes the region of a given ID. Also deletes all associated facilities and components.
  * @param {Number} id must be an integer.
  * @returns {Boolean} true if successful, false otherwise.
  */

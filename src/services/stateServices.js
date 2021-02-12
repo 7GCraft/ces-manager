@@ -89,7 +89,7 @@ const addState = async (state) => {
 const updateState = async (state) => {
     let resStatus = true;
 
-    let test = await knex(constants.TABLE_STATE)
+    await knex(constants.TABLE_STATE)
         .where({stateId: state.stateID})
         .update({
             name: state.stateName,
@@ -105,20 +105,33 @@ const updateState = async (state) => {
 }
 
 /**
- * Deletes the state of a given ID.
+ * Deletes the state of a given ID. Will fail if the state has regions.
  * @param {Number} id must be an integer.
  * @returns {Boolean} true if successful, false otherwise.
  */
 const deleteStateById = async (id) => {
     let resStatus = true;
 
-    await knex(constants.TABLE_STATE)
-        .where({stateId: id})
-        .del()
+    let hasRegions = await knex
+        .select(1)
+        .from(constants.TABLE_REGION)
+        .where(constants.COLUMN_STATE_ID, id)
         .catch(e => {
-            console.error(e);
+            console.log(e);
             resStatus = false;
         });
+    
+    if (hasRegions.length !== 0) {
+        resStatus = false;
+    } else {
+        await knex(constants.TABLE_STATE)
+            .where({stateId: id})
+            .del()
+            .catch(e => {
+                console.error(e);
+                resStatus = false;
+            });
+    }
     
     return resStatus;
 }
@@ -144,3 +157,5 @@ exports.deleteStateById = deleteStateById;
 // let stateToUpdate = new State(5, 'Cypra', 0, 'Kingdom of Cypra', 0, 0, 0, 0, []);
 // updateState(stateToUpdate)
 //      .then(console.log("Updated."));
+// deleteStateById(8)
+//     .then(data => console.log(data));
