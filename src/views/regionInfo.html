@@ -10,6 +10,9 @@
     href = "../css/region.css" />
 </head>
 <body>
+    <div id="regionMessage">
+
+    </div>
     <nav>
         <div class="jumbotron" style="text-align: center;"><h1><label id="lblRegionName"></label></h1><h5><span id="lblDescription"></span></h5></div>
         <div id="regionMessage"></div>
@@ -21,7 +24,7 @@
           <a class="nav-item nav-link" id="nav-components-tab" data-toggle="tab" href="#nav-components" role="tab" aria-controls="nav-components" aria-selected="false">Components</a>
         </div>
       </nav>
-      <div class="tab-content stateContent" id="nav-tabContent">
+      <div class="tab-content regionContent" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
             <div class="container-fluid">
                 Biome                       : <span id="lblBiome"></span><br>
@@ -32,7 +35,10 @@
                 Total Region Food Consumed  : <span id="lblRegionFoodConsumed"></span> <br>
                 Total Region Food Available : <span id="lblRegionFoodAvailable"></span> <br>
                 Expected Population Growth  : <span id="lblPopulationGrowth"></span> <br>
-                Resources Produced          : <span id="lblResourcesProduced"></span> <br>
+                Resources Produced          : <span id="lblResourcesProduced"></span> <br><br>
+
+                <button class="btn btn-primary" id="btnUpdateRegion" data-toggle="modal" data-target="#mdlUpdateRegion">Update Region</button>
+                <button class="btn btn-danger" id="btnOpenDeleteRegion" data-toggle="modal" data-target="#mdlDeleteRegion">Delete Region</button>
             </div>
         </div>
         
@@ -54,6 +60,66 @@
         <div class="tab-pane fade" id="nav-facilities" role="tabpanel" aria-labelledby="nav-facilities-tab">...</div>
         <div class="tab-pane fade" id="nav-components" role="tabpanel" aria-labelledby="nav-components-tab">...</div>
       </div>
+
+      <div class="modal fade" id="mdlUpdateRegion" tabindex="-1" role="dialog" aria-labelledby="mdlmdlUpdateRegionLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mdlmdlUpdateRegionLabel">Update Region</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="frmUpdateRegion">
+                    <div class="modal-body">
+                        <label for="txtRegionName">Region Name</label>
+                        <input type="text" id="txtRegionName" required><br/>
+
+                        <label for="selState">Select State</label>
+                        <select name="selState" id="selState" required></select><br/>
+
+                        <label for="selCorruption">Select Corruption Level</label>
+                        <select name="selCorruption" id="selCorruption"></select><br/>
+
+                        <label for="selBiome">Select Biome</label>
+                        <select name="selBiome" id="selBiome" required></select><br/>
+
+                        <label for="selDevelopment">Select Development Level</label>
+                        <select name="selDevelopment" id="selDevelopment"></select><br/>
+                        
+                        <label for="nmbPopulation">Population</label>
+                        <input type="number" id="nmbPopulation" ><br/>
+
+                        <label for="txtDescRegion">Description</label>
+                        <input type="text" id="txtDescRegion" ><br/>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary"></input>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+
+        <div class="modal fade" id="mdlDeleteRegion" tabindex="-1" role="dialog" aria-labelledby="mdlDeleteRegionLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mdlDeleteRegionLabel">Delete Region</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure?
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger" id="btnDeleteRegion">Yes</button>
+                        <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
       <script src="../renderers/regionRenderer.js"></script>
 </body>
 </html>

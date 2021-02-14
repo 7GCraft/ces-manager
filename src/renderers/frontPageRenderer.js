@@ -22,6 +22,9 @@ function handleButtonandSubmitCalls() {
     //Add state
     frmAddState_onSubmit();
 
+    //Add Region
+    frmAddRegion_onSubmit();
+
     //Update Resources (resources.html)
     btnUpdateResources_onClick();
     //Add Resource
@@ -81,6 +84,51 @@ function getAllRegionsByStateId() {
             }
         });
     });
+
+    ipcRenderer.send('Region:getStatesForAdd');
+    ipcRenderer.once('Region:getStatesForAddOK', (e, res) => {
+        
+        res.forEach(state => {
+            $('#selState').append($('<option>', {
+                value: state.stateID,
+                text: state.stateName
+            }));
+        });
+    });
+
+    ipcRenderer.send('Region:getBiomesForAdd');
+    ipcRenderer.once('Region:getBiomesForAddOK', (e, res) => {
+        console.log(res);
+        
+        res.forEach(biome => {
+            $('#selBiome').append($('<option>', {
+                value: biome.biomeId,
+                text: biome.biomeName
+            }));
+        });
+    });
+
+    ipcRenderer.send('Region:getDevelopmentForAdd');
+    ipcRenderer.once('Region:getDevelopmentForAddOK', (e, res) => {
+        res.forEach(dev => {
+            $('#selDevelopment').append($('<option>', {
+                value: dev.developmentId,
+                text: dev.developmentName
+            }));
+        });
+        
+    });
+
+    ipcRenderer.send('Region:getCorruptionForAdd');
+    ipcRenderer.once('Region:getCorruptionForAddOK', (e, res) => {
+        res.forEach(corruption => {
+            $('#selCorruption').append($('<option>', {
+                value: corruption.corruptionId,
+                text: corruption.corruptionName
+            }));
+        });
+        
+    });
 }
 
 /**
@@ -115,6 +163,37 @@ function getAllRegionsByStateId() {
             $('#mdlAddState').modal('toggle');
         });
       });
+  }
+
+  function frmAddRegion_onSubmit() {
+      $('#frmAddRegion').on('submit', (e) => {
+          e.preventDefault();
+
+          let regionObj = {};
+
+          regionObj['regionName'] = $('#txtRegionName').val();
+          regionObj['state'] = {'stateId' : parseInt($('#selState').val())};
+          regionObj['corruption'] = {'corruptionId': parseInt($('#selCorruption').val())};
+          regionObj['biome'] = {'biomeId' : parseInt($('#selBiome').val())};
+          regionObj['development'] = {'developmentId' :parseInt( $('#selDevelopment').val())};
+          regionObj['population'] = parseInt($('#nmbPopulation').val());
+          regionObj['desc'] = $('#txtDescRegion').val();
+
+          console.log(regionObj);
+
+        ipcRenderer.send('Region:addRegion', regionObj);
+        ipcRenderer.once('Region:addRegionOK', (e, res) => {
+            if(res){
+                $('#regionListMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully added region</div>')
+                $('#listOfRegionsByState').empty();
+                getAllRegionsByStateId();
+            }
+            else{
+                $('#regionListMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding region</div>')
+            }
+            $('#mdlAddRegion').modal('toggle');
+        });
+      })
   }
 
   function btnUpdateResources_onClick(){

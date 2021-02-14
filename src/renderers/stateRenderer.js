@@ -69,11 +69,12 @@ function btnDeleteState_onClick() {
         ipcRenderer.once("State:deleteStateOK", (e, res) => {
             if(res){
                 alert("Successfully deleted state");
-                ipcRenderer.send("State:ClosePageOnDelete");
+                ipcRenderer.send("ClosePageOnDelete");
             }
             else{
                 $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting state</div>')
             }
+            $('#mdlDeleteState').modal('toggle');
         });
     });
 }
@@ -98,7 +99,7 @@ function frmUpdateState_onSubmit() {
                 // $('.regionList').empty();
                 // getStateInfo();
                 alert("Successfully updated state");
-                ipcRenderer.send("State:ReloadPageOnUpdate");
+                ipcRenderer.send("ReloadPageOnUpdate");
             }
             else{
                 $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating state</div>');

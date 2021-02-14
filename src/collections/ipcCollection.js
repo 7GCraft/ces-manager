@@ -9,6 +9,7 @@ const initializeIpcMains = () =>{
     stateListBridge();
     regionBridge();
     resourceBridge();
+    miscellaneous();
 };
 exports.initializeIpcMains = initializeIpcMains;
 
@@ -83,16 +84,7 @@ function stateListBridge() {
         });
     })
 
-    ipcMain.on('State:ReloadPageOnUpdate', function(e){
-        BrowserWindow.getFocusedWindow().reload();
-        //win.webContents.send('test', item);
-    });
-     
-    ipcMain.on('State:ClosePageOnDelete', function(e){
-        BrowserWindow.getFocusedWindow().close();
-        BrowserWindow.getFocusedWindow().reload();
-        //win.webContents.send('test', item);
-    });
+    
 }
 
 function regionBridge(){
@@ -136,12 +128,61 @@ function regionBridge(){
     });
 
     ipcMain.on('Region:getRegionInfo', (e, arg) => {
-        
+        //console.log(arg);
         let response = region.getRegionById(arg)
         response.then(result => {
             console.log(result);
             e.sender.send('Region:getRegionInfoOK', result);
         });
+    })
+
+    ipcMain.on('Region:getStatesForAdd', e => {
+        let response = state.getStateList();
+        response.then(result => {
+            e.sender.send("Region:getStatesForAddOK", result);
+        });
+    });
+
+    ipcMain.on('Region:getBiomesForAdd', e => {
+        let response = region.getBiomeAll();
+        response.then(result => {
+            e.sender.send("Region:getBiomesForAddOK", result);
+        });
+    });
+
+    ipcMain.on('Region:getDevelopmentForAdd', e => {
+        let response = region.getDevelopmentAll();
+        response.then(result => {
+            e.sender.send("Region:getDevelopmentForAddOK", result);
+        });
+    });
+
+    ipcMain.on('Region:getCorruptionForAdd', e => {
+        let response = region.getCorruptionAll();
+        response.then(result => {
+            e.sender.send("Region:getCorruptionForAddOK", result);
+        });
+    });
+
+    ipcMain.on('Region:addRegion', (e, args) => {
+        let response = region.addRegion(args);
+        response.then(result => {
+            e.sender.send("Region:addRegionOK", result);
+        })
+    });
+
+    ipcMain.on('Region:updateRegion', (e, args) => {
+        let response = region.updateRegion(args);
+        response.then(result => {
+            e.sender.send("Region:updateRegionOK", result);
+        });
+    })
+
+    ipcMain.on('Region:deleteRegion', (e, arg) => {
+        let response = region.deleteRegionById(arg);
+        response.then(result => {
+            e.sender.send("Region:deleteRegionOK", result);
+        })
     })
 }
 
@@ -188,4 +229,17 @@ function resourceBridge(){
 
         e.sender.send("Resource:deleteResourceByIdOk", okDeleteResource);
     })
+}
+
+function miscellaneous() {
+    ipcMain.on('ReloadPageOnUpdate', function(e){
+        BrowserWindow.getFocusedWindow().reload();
+        //win.webContents.send('test', item);
+    });
+     
+    ipcMain.on('ClosePageOnDelete', function(e){
+        BrowserWindow.getFocusedWindow().close();
+        BrowserWindow.getFocusedWindow().reload();
+        //win.webContents.send('test', item);
+    });
 }
