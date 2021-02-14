@@ -271,6 +271,8 @@ const getRegionById = async (id) => {
     if (rawRegion.length === 0) return null;
 
     rawRegion = rawRegion[0];
+
+    console.log(rawRegion);
     
     let region = new Region(
         id,
@@ -305,22 +307,20 @@ const getRegionById = async (id) => {
 
     let stateRegions = await getRegionListByStateId(region.state.stateID);
 
-    if (facilities === null || stateRegions === null) {
-        return null;
+    if (facilities !== null || stateRegions !== null) {
+        let totalFoodProduced = 0;
+        let totalFoodConsumed = 0;
+
+        for (let stateRegion of stateRegions) {
+            totalFoodProduced += stateRegion.totalFoodProduced;
+            totalFoodConsumed += stateRegion.totalFoodConsumed;
+        }
+
+        let totalFoodOutput = totalFoodProduced - totalFoodConsumed;
+        let baseGrowth = totalFoodOutput / 5;
+
+        region.summarise(facilities, baseGrowth);
     }
-
-    let totalFoodProduced = 0;
-    let totalFoodConsumed = 0;
-
-    for (let stateRegion of stateRegions) {
-        totalFoodProduced += stateRegion.totalFoodProduced;
-        totalFoodConsumed += stateRegion.totalFoodConsumed;
-    }
-
-    let totalFoodOutput = totalFoodProduced - totalFoodConsumed;
-    let baseGrowth = totalFoodOutput / 5;
-
-    region.summarise(facilities, baseGrowth);
 
     return region;
 };
@@ -489,8 +489,8 @@ exports.getDevelopmentAll = getDevelopmentAll;
 //     .then(data => console.log(data));
 // getRegionListByStateId(1)
 //     .then(data => console.log(data));
-//getRegionById(1)
-    //.then(data => console.log(data));
+getRegionById(2)
+    .then(data => console.log(data));
 // addRegion('Ges Ogygia', 4, 4, 3, 5, 63);
 // addRegion('Giosria', 8, 2, 13, 3, 24, "Capital of Cypra.");
 // getRegionById(5)
