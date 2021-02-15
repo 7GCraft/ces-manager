@@ -159,13 +159,45 @@ const destroyFacilityById = async (id) => {
     return resStatus;
 }
 
+/**
+ * Assigns components to a facility.
+ * @param {Number} facilityId must be an integer.
+ * @param {Array} componentIds must be an array of integers.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const assignFacilityComponents = async (facilityId, componentIds) => {
+    let resStatus = true;
+
+    let promises = [];
+
+    for (let componentId of componentIds) {
+        let promise = knex(constants.TABLE_COMPONENT)
+            .where({componentId: componentId})
+            .update({
+                facilityId: facilityId
+            })
+            .catch(e => {
+                console.error(e);
+                resStatus = false;
+            });
+        
+        promises.push(promise);
+    }
+
+    await Promise.all(promises);
+
+    return resStatus;
+}
+
 exports.getFacilityByRegionId = getFacilityByRegionId;
 exports.addFacility = addFacility;
 exports.updateFacility = updateFacility;
 exports.deleteFacilityById = deleteFacilityById;
 exports.destroyFacilityById = destroyFacilityById;
+exports.assignFacilityComponents = assignFacilityComponents;
 
 // FOR DEBUGGING
 // getFacilityByRegionId(1).then(data => console.dir(data));
 // deleteFacilityById(3).then(data => console.dir(data));
 // destroyFacilityById(4).then(data => console.dir(data));
+// assignFacilityComponents(1, [3]);
