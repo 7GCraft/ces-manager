@@ -3,11 +3,13 @@ const path = require('path');
 const state = require('../services/stateServices');
 const resource = require('../services/resourceServices');
 const region = require('../services/regionServices');
+const component = require('../services/componentServices');
 
 
 const initializeIpcMains = () =>{
     stateListBridge();
     regionBridge();
+    componentBridge();
     resourceBridge();
     miscellaneous();
 };
@@ -34,8 +36,8 @@ function stateListBridge() {
     //Get state that was clicked on State List
     ipcMain.on('State:openStatePage', (e, arg) => {
         stateWindow = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: 1080,
+            height: 720,
             webPreferences: {
                 nodeIntegration: true,
                 additionalArguments: [arg]
@@ -111,8 +113,8 @@ function regionBridge(){
 
     ipcMain.on('Region:openRegionPage', (e, arg) => {
         regionWindow = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: 1080,
+            height: 720,
             webPreferences: {
                 nodeIntegration: true,
                 additionalArguments: [arg]
@@ -184,6 +186,22 @@ function regionBridge(){
             e.sender.send("Region:deleteRegionOK", result);
         })
     })
+}
+
+function componentBridge() {
+    ipcMain.on('Component:getComponentList', (e, arg) => {
+        let response = component.getComponentByRegionId(arg);
+        response.then(result => {
+            e.sender.send("Component:getComponentListOK", result);
+        })
+    });
+
+    ipcMain.on('Component:getUsedComponentList', (e, arg) => {
+        let response = component.getComponentFunctionalByRegionId(arg);
+        response.then(result => {
+            e.sender.send("Component:getUsedComponentListOK", result);
+        })
+    });
 }
 
 function resourceBridge(){
