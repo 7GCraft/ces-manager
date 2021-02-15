@@ -125,7 +125,7 @@ const getComponentByFacilityId = async (id) => {
 }
 
 /**
- * Gets all functional components of a given region id.
+ * Gets all functional components of a given region.
  * @param {Number} id must be an integer.
  * @returns {Array} array of component objects if successful, null otherwise. 
  */
@@ -140,6 +140,66 @@ const getComponentFunctionalByRegionId = async (id) => {
         )
         .where(constants.TABLE_COMPONENT + '.' + constants.COLUMN_REGION_ID, id)
         .andWhere(constants.TABLE_FACILITY + '.' + constants.COLUMN_IS_FUNCTIONAL, 1)
+        .catch(e => {
+            console.error(e);
+        });
+
+    const componentTypes = await getComponentTypeAll();
+    
+    const resources = await resourceServices.getResourceAll();
+    
+    if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
+
+    let components = [];
+
+    for (let rawComponent of rawComponents) {
+        let componentValue = rawComponent.value;
+
+        if (rawComponent.componentTypeId === 3) {
+            let resourceName = resources[parseInt(rawComponent.value.split(';')[1]) - 1].ResourceName;
+            componentValue = `s;${resourceName}`;
+        }
+
+        let component = new Component(
+            rawComponent.componentId,
+            rawComponent.name,
+            componentTypes[rawComponent.componentTypeId - 1],
+            rawComponent.regionId,
+            rawComponent.facilityId,
+            componentValue,
+            rawComponent.activationTime,
+            rawComponent.isChild,
+            rawComponent.parentId
+        );
+
+        components.push(component);
+    }
+
+    for (let component of components) {
+        if (component.isChild) {
+            for (let parentComponent of components) {
+                if (component.parentId === parentComponent.componentId) {
+                    component.parent = parentComponent;
+                    break;
+                }
+            }
+        }
+    }
+
+    return components;
+}
+
+/**
+ * Gets all components that don't belong to a facility in a given region.
+ * @param {Number} id must be an integer.
+ * @returns {Array} array of component objects if successful, null otherwise.
+ */
+const getComponentUnusedByRegionId = async (id) => {
+    const rawComponents = await knex
+        .select('*')
+        .from(constants.TABLE_COMPONENT)
+        .where(constants.COLUMN_REGION_ID, id)
+        .whereNull(constants.COLUMN_FACILITY_ID)
         .catch(e => {
             console.error(e);
         });
@@ -346,6 +406,7 @@ const getComponentTypeAll = async () => {
 exports.getComponentByRegionId = getComponentByRegionId;
 exports.getComponentByFacilityId = getComponentByFacilityId;
 exports.getComponentFunctionalByRegionId = getComponentFunctionalByRegionId;
+exports.getComponentUnusedByRegionId = getComponentUnusedByRegionId;
 exports.addComponent = addComponent;
 exports.updateComponent = updateComponent;
 exports.deleteComponentById = deleteComponentById;
