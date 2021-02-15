@@ -26,6 +26,7 @@
         "COLUMN_SHRINKAGE_MODIFIER": "shrinkageModifier",
         "COLUMN_TREASURY_AMT": "treasuryAmt",
         "COLUMN_IS_CHILD": "isChild",
+        "COLUMN_IS_FUNCTIONAL": "isFunctional",
         "COLUMN_BIOME_ID": "biomeId",
         "COLUMN_COMPONENT_ID": "componentId",
         "COLUMN_CORRUPTION_ID": "corruptionId",
