@@ -35,7 +35,7 @@ function getStateInfo(){
     ipcRenderer.send("State:getRegionsForState", parseInt(window.process.argv.slice(-1)));
     ipcRenderer.on("State:getRegionsForStateOK", (e, res) => {
         res.forEach(region => {
-            $('#listOfRegions').append('<li class="individualRegion" id="Region'+region.RegionID+'"><a href=#>'+region.RegionName+'</a><span class="totalIncome">'+region.RegionTotalIncome+'</span><span class="totalFood">'+region.RegionTotalFood+'</span></li>')
+            $('#listOfRegions').append('<li class="individualRegion" id="Region'+region.RegionID+'" onclick=openRegionPage(this.getAttribute("id"))><a href=#>'+region.RegionName+'</a><span class="totalIncome">'+region.RegionTotalIncome+'</span><span class="totalFood">'+region.RegionTotalFood+'</span></li>')
         });
        
     });
@@ -108,4 +108,11 @@ function frmUpdateState_onSubmit() {
             $('#mdlUpdateState').modal('toggle');
         });
     });
+}
+
+//called on region click
+
+function openRegionPage(ID){
+    let regionID = ID.replace('Region', '');
+    ipcRenderer.send('Region:openRegionPage', regionID);
 }

@@ -5,6 +5,8 @@ const $ = require('jquery');
 $(function(){
     //Get all region info including components and facilities
     getRegionInfo()
+    //event handler for component display change
+    rbsComponentsDisplay_onChange();
     //update region
     frmUpdateRegion_onSubmit();
     //delete region
@@ -58,7 +60,7 @@ function getRegionInfo(){
     });
 
     ipcRenderer.send('Region:getRegionInfo', parseInt(window.process.argv.slice(-1)));
-    ipcRenderer.on('Region:getRegionInfoOK', (e, res) => {
+    ipcRenderer.once('Region:getRegionInfoOK', (e, res) => {
         $('#lblRegionName').text(res.regionName);
         $('#lblDescription').text(res.desc);
         $('#lblBiome').text(res.biome.biomeName)
@@ -97,6 +99,34 @@ function getRegionInfo(){
         $('#nmbPopulation').val(res.population);
         $('#txtDescRegion').val(res.desc);
     });
+
+    ipcRenderer.send('Component:getComponentList', parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.once('Component:getComponentListOK', (e, res) => {
+       setComponentList(res);
+    })
+}
+
+function rbsComponentsDisplay_onChange() {
+    $('input[type=radio][name=componentDisplay]').on('change', e => {
+        e.preventDefault
+
+        $('#componentsList').empty();
+
+        switch($('input[name=componentDisplay]:checked').val()){
+            case 'all':
+                ipcRenderer.send('Component:getComponentList', parseInt(window.process.argv.slice(-1)));
+                ipcRenderer.once('Component:getComponentListOK', (e, res) => {
+                    setComponentList(res);
+                })
+                break;
+            case 'used':
+                ipcRenderer.send('Component:getUsedComponentList', parseInt(window.process.argv.slice(-1)));
+                ipcRenderer.once('Component:getUsedComponentListOK', (e, res) => {
+                    setComponentList(res);
+                })
+                break;
+        }
+    })
 }
 
 function frmUpdateRegion_onSubmit() {
@@ -148,4 +178,107 @@ function btnDeleteRegion_onClick() {
         $('#mdlDeleteRegion').modal('toggle');
         });
     })
+}
+
+function setComponentList(res){
+    if(Array.isArray(res) && res.length){
+        let childComponents = []
+        res.forEach(component => {
+            if(!component.isChild){
+                let activation = (component.activationTime > 0) ? ' Activation Time: ' + component.activationTime : '';
+                $('#componentsList').append('<li id="Component'+
+                component.componentId
+                +'"><b>'+
+                component.componentName
+                +'</b> <span class="parentComponent"><span id="value'+
+                component.componentId
+                +'">'+
+                component.value
+                +' ('+
+                component.componentType.componentTypeName
+                +')</span>'+
+                activation
+                +'</span></li>');
+
+                switch(component.componentType.componentTypeId){
+                    case 1:
+                        $('#value'+component.componentId).attr('class', ' valuePopulation');
+                        break;
+                    case 2:
+                        $('#value'+component.componentId).attr('class', 'valueBuilding');
+                        break;
+                    case 3:
+                        $('#value'+component.componentId).attr('class', 'valueResource');
+                        break;
+                    case 4:
+                        $('#value'+component.componentId).attr('class', 'valueFood');
+                        break;
+                    case 5:
+                        $('#value'+component.componentId).attr('class', 'valueMoney');
+                        break;
+                    case 6:
+                        $('#value'+component.componentId).attr('class', ' valueSpecial');
+                        break;
+                }
+            }
+            else{
+                childComponents.push(component);
+            }
+        })
+        
+        while(childComponents.length > 0){
+            childComponents.forEach(component => {
+                if($('#Component' + component.parentId).length){
+                    let activation = (component.activationTime > 0) ? ' Activation Time: ' + component.activationTime : '';
+
+                    $('#Component' + component.parentId).append('<ul><li id="Component'+
+                    component.componentId
+                    +'"><b>'+
+                    component.componentName
+                    +'</b> <span class="childComponent"><span id="value'+
+                    component.componentId
+                    +'">'+
+                    component.value
+                    +' ('+
+                    component.componentType.componentTypeName
+                    +')</span> '+
+                    activation
+                    +'</span></li></ul>');
+                    switch(component.componentType.componentTypeId){
+                        case 1:
+                            $('#value'+component.componentId).attr('class', 'valuePopulation');
+                            break;
+                        case 2:
+                            $('#value'+component.componentId).attr('class', 'valueBuilding');
+                            break;
+                        case 3:
+                            $('#value'+component.componentId).attr('class', 'valueResource');
+                            break;
+                        case 4:
+                            $('#value'+component.componentId).attr('class', 'valueFood');
+                            break;
+                        case 5:
+                            $('#value'+component.componentId).attr('class', 'valueMoney');
+                            break;
+                        case 6:
+                            $('#value'+component.componentId).attr('class', 'valueSpecial');
+                            break;
+                    }
+                    childComponents.pop(component);
+                }
+            })
+        }
+
+        $('.valuePopulation').css('color', '#e68a2e');
+        $('.valueBuilding').css('color', 'brown');
+        $('.valueResource').css('color', 'purple');
+        $('.valueFood').css('color', 'green');
+        $('.valueMoney').css('color', '#d1b422');
+        $('.valueSpecial').css('color', '#23b8cc');
+
+        //console.log(childComponents);
+    }
+    else{
+        $('#componentsList').append('<li>NO COMPONENTS AVAILABLE</li>')
+    }
 }

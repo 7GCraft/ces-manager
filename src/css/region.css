@@ -1,0 +1,17 @@
+.parentComponent{
+    position: absolute;
+    left: 400px;
+}
+
+.childComponent{
+    position: absolute;
+    left: 520px;
+}
+
+#componentsList > li{
+    margin: 10px 0;
+}
+
+#rbsComponentsDisplay{
+    float: left;
+}

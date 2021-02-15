@@ -58,7 +58,21 @@
             </div>
         </div>
         <div class="tab-pane fade" id="nav-facilities" role="tabpanel" aria-labelledby="nav-facilities-tab">...</div>
-        <div class="tab-pane fade" id="nav-components" role="tabpanel" aria-labelledby="nav-components-tab">...</div>
+        <div class="tab-pane fade" id="nav-components" role="tabpanel" aria-labelledby="nav-components-tab">
+            <div class="container-fluid">
+                <div id="rbsComponentsDisplay">
+                    <input type="radio" id="rbAll" name="componentDisplay" value="all" checked>
+                    <label for="rbAll">All</label>
+                    <input type="radio" id="rbUsed" name="componentDisplay" value="used" >
+                    <label for="rbUsed">Used</label>
+                </div><br>
+                <div>
+                    <ul id="componentsList">
+    
+                    </ul>
+                </div>
+            </div>
+        </div>
       </div>
 
       <div class="modal fade" id="mdlUpdateRegion" tabindex="-1" role="dialog" aria-labelledby="mdlmdlUpdateRegionLabel" aria-hidden="true">
