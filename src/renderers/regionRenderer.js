@@ -196,7 +196,7 @@ function setComponentList(res){
                 component.componentId
                 +'"><b>'+
                 component.componentName
-                +'</b> <span class="parentComponent"><span id="value'+
+                +'</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;"/>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;"/> <span class="parentComponent"><span id="value'+
                 component.componentId
                 +'">'+
                 component.value
@@ -241,7 +241,7 @@ function setComponentList(res){
                     component.componentId
                     +'"><b>'+
                     component.componentName
-                    +'</b> <span class="childComponent"><span id="value'+
+                    +'</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;"/>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;"/> <span class="childComponent"><span id="value'+
                     component.componentId
                     +'">'+
                     component.value

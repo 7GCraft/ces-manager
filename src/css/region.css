@@ -4,8 +4,8 @@
 }
 
 .childComponent{
-    position: absolute;
-    left: 520px;
+    position: relative;
+    left: 175px;
 }
 
 #componentsList > li{

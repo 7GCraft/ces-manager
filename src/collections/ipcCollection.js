@@ -133,7 +133,7 @@ function regionBridge(){
         //console.log(arg);
         let response = region.getRegionById(arg)
         response.then(result => {
-            console.log(result);
+            //console.log(result);
             e.sender.send('Region:getRegionInfoOK', result);
         });
     })
