@@ -32,7 +32,8 @@ const getComponentByRegionId = async (id) => {
         let componentValue = rawComponent.value;
 
         if (rawComponent.componentTypeId === 3) {
-            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
+            let resourceName = resources[parseInt(rawComponent.value.split(';')[1]) - 1].ResourceName;
+            componentValue = `s;${resourceName}`;
         }
 
         let component = new Component(
@@ -90,7 +91,8 @@ const getComponentByFacilityId = async (id) => {
         let componentValue = rawComponent.value;
 
         if (rawComponent.componentTypeId === 3) {
-            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
+            let resourceName = resources[parseInt(rawComponent.value.split(';')[1]) - 1].ResourceName;
+            componentValue = `s;${resourceName}`;
         }
 
         let component = new Component(
@@ -154,7 +156,8 @@ const getComponentFunctionalByRegionId = async (id) => {
         let componentValue = rawComponent.value;
 
         if (rawComponent.componentTypeId === 3) {
-            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
+            let resourceName = resources[parseInt(rawComponent.value.split(';')[1]) - 1].ResourceName;
+            componentValue = `s;${resourceName}`;
         }
 
         let component = new Component(
@@ -354,4 +357,4 @@ exports.getComponentTypeAll = getComponentTypeAll;
 // getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)
 //     .then(data => console.log(data));
-// getComponentUsedByRegionId(1).then(data => console.log(data));
+getComponentFunctionalByRegionId(1).then(data => console.log(data));
