@@ -125,6 +125,12 @@ function rbsComponentsDisplay_onChange() {
                     setComponentList(res);
                 })
                 break;
+            case 'unused':
+                ipcRenderer.send('Component:getUnusedComponentList', parseInt(window.process.argv.slice(-1)));
+                ipcRenderer.once('Component:getUnusedComponentListOK', (e, res) => {
+                    setComponentList(res);
+                })
+                break;
         }
     })
 }

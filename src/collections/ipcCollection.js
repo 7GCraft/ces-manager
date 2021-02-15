@@ -202,6 +202,13 @@ function componentBridge() {
             e.sender.send("Component:getUsedComponentListOK", result);
         })
     });
+
+    ipcMain.on('Component:getUnusedComponentList', (e, arg) => {
+        let response = component.getComponentUnusedByRegionId(arg);
+        response.then(result => {
+            e.sender.send("Component:getUnusedComponentListOK", result);
+        })
+    });
 }
 
 function resourceBridge(){
