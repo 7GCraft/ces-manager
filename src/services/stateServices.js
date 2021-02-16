@@ -31,6 +31,37 @@ const getStateList = async () => {
     return stateList;
 }
 
+const getStateAll = async () => {
+    let rawStates = await knex
+        .select('*')
+        .from(constants.TABLE_STATE)
+        .catch(e => {
+            console.error(e);
+        });
+
+    if (rawStates.length === 0) return null;
+
+    let states = [];
+
+    for (let rawState of rawStates) {
+        let state = new State(
+            rawState.stateId,
+            rawState.name,
+            rawState.treasuryAmt,
+            rawState.desc,
+            rawState.expenses
+        );
+
+        let regions = await regionServices.getRegionByStateId(state.stateID);
+
+        state.summarise(regions);
+
+        states.push(state);
+    }
+
+    return states;
+}
+
 /**
  * Gets a state of a given ID.
  * @param {Number} id must be an integer.
@@ -106,12 +137,17 @@ const updateState = async (state) => {
     return resStatus;
 }
 
-const updateStateTreasuryByStateId = async (id, treasuryAmtChange) => {
+/**
+ * Updates the treasury amount of the state of a given ID.
+ * @param {State} state must be a state object.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const updateStateTreasuryByStateId = async (id, treasuryAmt) => {
     let resStatus = true;
 
     await knex(constants.TABLE_STATE)
         .where({stateId: id})
-        .update({treasuryAmt: 0})
+        .update({treasuryAmt: treasuryAmt})
         .catch(e => {
             console.error(e);
             resStatus = false;
@@ -156,7 +192,8 @@ exports.getStateList = getStateList;
 exports.getStateById = getStateById;
 exports.addState = addState;
 exports.updateState = updateState;
-// exports.updateStateTreasuryByStateId = updateStateTreasuryByStateId;
+exports.updateStateTreasuryByStateId = updateStateTreasuryByStateId;
+exports.getStateAll = getStateAll;
 exports.deleteStateById = deleteStateById;
 
 // FOR DEBUGGING

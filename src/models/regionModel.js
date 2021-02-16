@@ -87,4 +87,13 @@ module.exports = class Region {
             else if (baseGrowth < 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.shrinkageModifier);
         }
     }
+
+    /**
+     * Calculates the growth of the region.
+     * @param {Number} baseGrowth must be an double.
+     */
+    calculateGrowth(baseGrowth) {
+        if (baseGrowth > 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.growthModifier);
+        else if (baseGrowth < 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.shrinkageModifier);
+    }
 }

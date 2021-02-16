@@ -384,6 +384,33 @@ const updateRegion = async (region) => {
 };
 
 /**
+ * Updates the population of a region according to development constraints.
+ * @param {Region} region must be a region object.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const updateRegionPopulation = async (region) => {
+    let resStatus = true;
+
+    let newPopulation = region.population + region.expectedPopulationGrowth;
+
+    if (region.development.populationCap <= newPopulation) {
+        newPopulation = region.development.populationCap;
+    }
+
+    await knex(constants.TABLE_REGION)
+        .where({regionId: region.regionId})
+        .update({
+            population: newPopulation
+        })
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        })
+    
+    return resStatus;
+}
+
+/**
  * Deletes the region of a given ID. Also deletes all associated facilities and components.
  * @param {Number} id must be an integer.
  * @returns {Boolean} true if successful, false otherwise.
@@ -483,6 +510,7 @@ exports.getRegionByStateId = getRegionByStateId;
 exports.getRegionById = getRegionById;
 exports.addRegion = addRegion;
 exports.updateRegion = updateRegion;
+exports.updateRegionPopulation = updateRegionPopulation;
 exports.deleteRegionById = deleteRegionById;
 exports.getBiomeAll = getBiomeAll;
 exports.getCorruptionAll = getCorruptionAll;

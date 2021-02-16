@@ -18,6 +18,7 @@ module.exports = class State {
         this.TotalPopulation = 0;
         this.AvgDevLevel = 0;
         this.ProductiveResources = [];
+        this.regions = regions;
 
         if (regions !== null) {
             let totalDevLevel = 0;
