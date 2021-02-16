@@ -1,9 +1,10 @@
 module.exports = class State {
-    constructor(stateID, stateName, treasuryAmt, desc) {
+    constructor(stateID, stateName, treasuryAmt, desc, expenses) {
         this.stateID = stateID;
         this.stateName = stateName;
         this.treasuryAmt = treasuryAmt;
         this.desc = desc;
+        this.expenses = expenses;
     }
 
     /**

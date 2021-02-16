@@ -130,6 +130,7 @@ const getRegionByStateId = async (id) => {
             constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS stateName',
             constants.TABLE_STATE + '.' + constants.COLUMN_TREASURY_AMT,
             constants.TABLE_STATE + '.' + constants.COLUMN_DESC + ' AS stateDesc',
+            constants.TABLE_STATE + '.' + constants.COLUMN_EXPENSES + ' AS stateExpenses',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_CORRUPTION_ID + ' AS corruptionId',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_NAME + ' AS corruptionName',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_RATE + ' AS corruptionRate',
@@ -182,7 +183,8 @@ const getRegionByStateId = async (id) => {
                 rawRegion.stateId,
                 rawRegion.stateName,
                 rawRegion.treasuryAmt,
-                rawRegion.stateDesc
+                rawRegion.stateDesc,
+                rawRegion.stateExpenses
             ),
             new Biome(rawRegion.biomeId, rawRegion.biomeName),
             {
@@ -228,6 +230,7 @@ const getRegionById = async (id) => {
             constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS stateName',
             constants.TABLE_STATE + '.' + constants.COLUMN_TREASURY_AMT,
             constants.TABLE_STATE + '.' + constants.COLUMN_DESC + ' AS stateDesc',
+            constants.TABLE_STATE + '.' + constants.COLUMN_EXPENSES + ' AS stateExpenses',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_CORRUPTION_ID + ' AS corruptionId',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_NAME + ' AS corruptionName',
             constants.TABLE_CORRUPTION + '.' + constants.COLUMN_RATE + ' AS corruptionRate',
@@ -281,7 +284,8 @@ const getRegionById = async (id) => {
             rawRegion.stateId,
             rawRegion.stateName,
             rawRegion.treasuryAmt,
-            rawRegion.stateDesc
+            rawRegion.stateDesc,
+            rawRegion.stateExpenses
         ),
         new Biome(rawRegion.biomeId, rawRegion.biomeName),
         {

@@ -49,7 +49,7 @@ const getStateById = async (id) => {
     
     rawState = rawState[0];
     
-    let state = new State(rawState.stateId, rawState.name, rawState.treasuryAmt, rawState.desc);
+    let state = new State(rawState.stateId, rawState.name, rawState.treasuryAmt, rawState.desc, rawState.expenses);
     
     let regions = await regionServices.getRegionByStateId(state.stateID);
 
@@ -70,7 +70,8 @@ const addState = async (state) => {
         .insert({
             name: state.stateName,
             treasuryAmt: state.treasuryAmt,
-            desc: state.desc
+            desc: state.desc,
+            expenses: state.expenses
         })
         .into(constants.TABLE_STATE)
         .catch(e => {
@@ -94,13 +95,28 @@ const updateState = async (state) => {
         .update({
             name: state.stateName,
             treasuryAmt: state.treasuryAmt,
-            desc: state.desc
+            desc: state.desc,
+            expenses: state.expenses
         })
         .catch(e => {
             console.error(e);
             resStatus = false;
         });
 
+    return resStatus;
+}
+
+const updateStateTreasuryByStateId = async (id, treasuryAmtChange) => {
+    let resStatus = true;
+
+    await knex(constants.TABLE_STATE)
+        .where({stateId: id})
+        .update({treasuryAmt: 0})
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+    
     return resStatus;
 }
 
@@ -140,6 +156,7 @@ exports.getStateList = getStateList;
 exports.getStateById = getStateById;
 exports.addState = addState;
 exports.updateState = updateState;
+// exports.updateStateTreasuryByStateId = updateStateTreasuryByStateId;
 exports.deleteStateById = deleteStateById;
 
 // FOR DEBUGGING
