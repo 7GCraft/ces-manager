@@ -410,9 +410,9 @@ exports.deleteComponentById = deleteComponentById;
 exports.getComponentTypeAll = getComponentTypeAll;
 
 // FOR DEBUGGING
-// getComponentByRegionId(1).then(data => console.dir(data));
+getComponentByRegionId(1).then(data => console.dir(data));
 // getComponentByFacilityId(1).then(data => console.dir(data));
-// getComponentTypeAll().then(data => console.log(data));
+//getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)
 //     .then(data => console.log(data));
 // getComponentFunctionalByRegionId(1).then(data => console.log(data));

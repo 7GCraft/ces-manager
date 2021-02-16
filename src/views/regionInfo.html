@@ -72,16 +72,18 @@
                     <ul id="componentsList">
     
                     </ul>
+                    <br><br>
+                    <button class="btn btn-success" id="btnAddComponent" data-toggle="modal" data-target="#mdlAddUpdateComponent">Add Component</button>
                 </div>
             </div>
         </div>
       </div>
 
-      <div class="modal fade" id="mdlUpdateRegion" tabindex="-1" role="dialog" aria-labelledby="mdlmdlUpdateRegionLabel" aria-hidden="true">
+      <div class="modal fade" id="mdlUpdateRegion" tabindex="-1" role="dialog" aria-labelledby="mdlUpdateRegionLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="mdlmdlUpdateRegionLabel">Update Region</h5>
+                    <h5 class="modal-title" id="mdlUpdateRegionLabel">Update Region</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -131,6 +133,76 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-danger" id="btnDeleteRegion">Yes</button>
+                        <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="mdlAddUpdateComponent" tabindex="-1" role="dialog" aria-labelledby="mdlAddUpdateComponentLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mdlAddUpdateComponentLabel">Add or Update Component</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="frmAddUpdateComponent">
+                        <div class="modal-body">
+                            <input type="hidden" name="hdnComponentId" id="hdnComponentId">
+
+                            <label for="txtComponentName">Component Name</label>
+                            <input type="text" id="txtComponentName" required><br/>
+
+                            <label for="selComponentType">Select Component Type</label>
+                            <select name="selComponentType" id="selComponentType" required></select><br/>
+    
+                            <label for="selFacility">Select Facility</label>
+                            <select name="selFacility" id="selFacility"></select><br/>
+
+                            <label for="chkChild">IsChild</label>
+                            <input type="checkbox" id="chkChild" name="chkChild"><br>
+                            
+                            <div id="componentParentField">
+                                <label for="selParent">Select Parent Component</label>
+                                <select name="selParent" id="selParent"></select><br/>
+                            </div>
+                            
+                            <div id="resourceValue">
+                                
+                            </div>
+                            <div id="numTextValue">
+                                <label for="txtValue">Value</label>
+                                <input type="text" id="txtValue" name="value" >
+                                <select name="value" id="selResource"></select><br/>
+                            </div>
+    
+                            <label for="nmbActivation">Activation Time</label>
+                            <input type="number" id="nmbActivation" required><br/>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-primary"></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id="mdlDeleteComponent" tabindex="-1" role="dialog" aria-labelledby="mdlDeleteComponentLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mdlDeleteComponentLabel">Delete Region</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure?
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger" id="btnDeleteComponent">Yes</button>
                         <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
                     </div>
                 </div>

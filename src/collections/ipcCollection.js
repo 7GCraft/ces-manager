@@ -3,19 +3,21 @@ const path = require('path');
 const state = require('../services/stateServices');
 const resource = require('../services/resourceServices');
 const region = require('../services/regionServices');
+const facility = require('../services/facilityServices');
 const component = require('../services/componentServices');
 
 
 const initializeIpcMains = () =>{
-    stateListBridge();
+    stateBridge();
     regionBridge();
+    facilityBridge();
     componentBridge();
     resourceBridge();
     miscellaneous();
 };
 exports.initializeIpcMains = initializeIpcMains;
 
-function stateListBridge() {
+function stateBridge() {
 
     //Get List of states
     ipcMain.on('State:getStateList', (e) => {
@@ -188,6 +190,15 @@ function regionBridge(){
     })
 }
 
+function facilityBridge() {
+    ipcMain.on('Facility:getFacilitiesByRegion', (e, arg) => {
+        let response = facility.getFacilityByRegionId(arg);
+        response.then(result => {
+            e.sender.send("Facility:getFacilitiesByRegionOK", result);
+        })
+    })
+}
+
 function componentBridge() {
     ipcMain.on('Component:getComponentList', (e, arg) => {
         let response = component.getComponentByRegionId(arg);
@@ -209,6 +220,33 @@ function componentBridge() {
             e.sender.send("Component:getUnusedComponentListOK", result);
         })
     });
+
+    ipcMain.on('Component:getAllComponentTypes', e => {
+        let response = component.getComponentTypeAll();
+        response.then(result => {
+            e.sender.send("Component:getAllComponentTypesOK", result);
+        })
+    })
+
+    ipcMain.on('Component:addComponent', (e, args) => {
+        let response = component.addComponent(args);
+        response.then(result => {
+            e.sender.send("Component:addComponentOK", result);
+        })
+    })
+
+    ipcMain.on('Component:updateComponent', (e, args) => {
+        let response = component.updateComponent(args);
+        response.then(result => {
+            e.sender.send("Component:updateComponentOK", result);
+        })
+    })
+    ipcMain.on('Component:deleteComponent', (e, arg) => {
+        let response = component.deleteComponentById(arg);
+        response.then(result => {
+            e.sender.send("Component:deleteComponentOK", result);
+        })
+    })
 }
 
 function resourceBridge(){

@@ -3,14 +3,20 @@ require('bootstrap');
 const $ = require('jquery');
 
 $(function(){
-    //Get all region info including components and facilities
-    getRegionInfo()
+    //Get all region info
+    getRegionInfo();
+    //Get all component related info
+    getComponentsInfo();
     //event handler for component display change
     rbsComponentsDisplay_onChange();
     //update region
     frmUpdateRegion_onSubmit();
     //delete region
     btnDeleteRegion_onClick();
+    //handles events for addUpdateComponent
+    addUpdateComponent_handler();
+    //handle delete component events
+    deleteComponent_handler();
 });
 
 function getRegionInfo(){
@@ -99,11 +105,66 @@ function getRegionInfo(){
         $('#nmbPopulation').val(res.population);
         $('#txtDescRegion').val(res.desc);
     });
+    
+}
 
+function getComponentsInfo() {
     ipcRenderer.send('Component:getComponentList', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Component:getComponentListOK', (e, res) => {
        setComponentList(res);
-    })
+       $('#selParent').append($('<option selected>', {
+            value: null,
+            text: 'NONE'
+        }));
+
+       res.forEach(component => {
+           $('#selParent').append($('<option>', {
+            value: component.componentId,
+            text: component.componentName
+        }));
+       });
+    });
+
+    ipcRenderer.send('Component:getAllComponentTypes');
+    ipcRenderer.once('Component:getAllComponentTypesOK', (e, res)=>{
+        console.log(res);
+        res.forEach(componentType => {
+            $('#selComponentType').append($('<option>', {
+                value: componentType.componentTypeId,
+                text: componentType.componentTypeName
+            }));
+        })
+    });
+
+    ipcRenderer.send('Facility:getFacilitiesByRegion',  parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
+        $('#selFacility').append($('<option selected>', {
+            value: null,
+            text: 'NONE'
+        }));
+        res.forEach(facility => {
+            $('#selFacility').append($('<option>', {
+                value: facility.facilityId,
+                text: facility.facilityName
+            }));
+        });
+    });
+
+    ipcRenderer.send('Resource:getAllResourceTiers');
+    ipcRenderer.once('Resource:getAllResourceTiersOk', function(e, res){
+        $('#selResource').append($('<option selected>', {
+            value: null,
+            text: 'NONE'
+        }));
+        res.forEach(resourceTier => {
+            resourceTier.Resources.forEach(resource => {
+                $('#selResource').append($('<option>', {
+                    value: resource.ResourceID,
+                    text: resource.ResourceName
+                }));
+            });
+        });
+    });
 }
 
 function rbsComponentsDisplay_onChange() {
@@ -154,15 +215,15 @@ function frmUpdateRegion_onSubmit() {
 
         ipcRenderer.send('Region:updateRegion', regionObj);
         ipcRenderer.once('Region:updateRegionOK', (e, res) => {
-        if(res){
-            alert("Successfully updated state");
-            ipcRenderer.send("ReloadPageOnUpdate");
-        }
-        else{
-            $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating region</div>');
-        }
+            if(res){
+                alert("Successfully updated region");
+                ipcRenderer.send("ReloadPageOnUpdate");
+            }
+            else{
+                $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating region</div>');
+            }
 
-        $('#mdlUpdateRegion').modal('toggle');
+            $('#mdlUpdateRegion').modal('toggle');
         });   
     });
 }
@@ -181,8 +242,118 @@ function btnDeleteRegion_onClick() {
                 $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting region</div>')
             }
 
-        $('#mdlDeleteRegion').modal('toggle');
+            $('#mdlDeleteRegion').modal('toggle');
         });
+    })
+}
+
+function addUpdateComponent_handler(){
+    $('#chkChild').on('click', () => {
+        $('#componentParentField').toggle(this.checked);
+    })
+
+    $('#btnAddComponent').on('click', () => {
+        $('#frmAddUpdateComponent').trigger('reset');
+        $('#hdnComponentId').val(undefined);
+        $('#txtValue').show();
+        $('#selResource').hide();
+        $('#componentParentField').hide();
+        console.log($('#hdnComponentId').val());
+    })
+
+    $('#selComponentType').on('change', () => {
+        $('#txtValue').val('');
+        $('#selResource').val(null);
+        console.log($('#selComponentType').val());
+        if($('#selComponentType').val() == 3){
+            $('#txtValue').hide();
+            $('#selResource').show();
+        }
+        else{
+            $('#txtValue').show();
+            $('#selResource').hide();
+        }
+    })
+
+    $('#frmAddUpdateComponent').on('submit', e => {
+        e.preventDefault();
+
+        let componentObj = {};
+
+        componentObj['componentName'] = $('#txtComponentName').val();
+        componentObj['componentType'] = {'componentTypeId': $('#selComponentType').val()};
+        componentObj['regionId'] = parseInt(window.process.argv.slice(-1));
+        componentObj['facilityId'] = $('#selFacility').val();
+
+        if($('#chkChild').is(':checked')){
+            componentObj['isChild'] = true;
+            componentObj['parentId'] = $('#selParent').val();
+        }
+        else{
+            componentObj['isChild'] = false;
+        }
+
+        if($('#selComponentType').val() == 3){
+            componentObj['value'] = {'resourceId':  $('#selResource').val()};
+        }
+        else{
+            let componentTypeId = $('#selComponentType').val();
+
+            componentObj['value'] = (componentTypeId == 1 || componentTypeId == 4 || componentTypeId == 5) ? parseInt($('#txtValue').val()) : $('#txtValue').val()
+
+
+           
+        }
+
+        componentObj['activationTime'] = $('#nmbActivation').val();
+
+        if( $('#hdnComponentId').val() == ''){
+            ipcRenderer.send('Component:addComponent', componentObj);
+            ipcRenderer.once('Component:addComponentOK', (e, res) => {
+                if(res){
+                    alert("Successfully added component");
+                    ipcRenderer.send("ReloadPageOnUpdate");
+                }
+                else{
+                    $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding component</div>');
+                }
+            });
+        }
+        else{
+            componentObj['componentId'] = $('#hdnComponentId').val();
+
+            ipcRenderer.send('Component:updateComponent', componentObj);
+            ipcRenderer.once('Component:updateComponentOK', (e, res) => {
+                if(res){
+                    alert("Successfully updated component");
+                    ipcRenderer.send("ReloadPageOnUpdate");
+                }
+                else{
+                    $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating component</div>');
+                }
+                $('#mdlAddUpdateComponent').modal('toggle');
+            });
+        }
+    })
+}
+
+function deleteComponent_handler() {
+    $('#btnDeleteComponent').on('click', (e) => {
+        e.preventDefault();
+        let componentId = $('#btnDeleteComponent').data('componentId').replace('Component', '');
+        
+        ipcRenderer.send('Component:deleteComponent', componentId);
+        ipcRenderer.on('Component:deleteComponentOK', (e, res) => {
+            if(res){
+                alert("Successfully deleted component");
+                ipcRenderer.send("ReloadPageOnUpdate");
+            }
+            else{
+                $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting component</div>')
+            }
+
+            $('#mdlDeleteComponent').modal('toggle');
+        })
     })
 }
 
@@ -191,15 +362,29 @@ function setComponentList(res){
         let childComponents = []
         res.forEach(component => {
             if(!component.isChild){
+                let valueId = (component.componentType.componentTypeId == 3) ? component.value.ResourceID : component.value;
+                let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : component.value;
                 let activation = (component.activationTime > 0) ? ' Activation Time: ' + component.activationTime : '';
                 $('#componentsList').append('<li id="Component'+
                 component.componentId
+                +'" data-facility-id="'+
+                component.facilityId
+                +'" data-component-type-id="'+
+                component.componentType.componentTypeId
+                +'" data-is-child="'+
+                component.isChild
+                +'" data-component-name="'+
+                component.componentName
+                +'" data-value="'+
+                valueId
+                +'" data-activation="'+
+                component.activationTime
                 +'"><b>'+
                 component.componentName
-                +'</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;"/>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;"/> <span class="parentComponent"><span id="value'+
+                +'</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component'+component.componentId+'")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component'+component.componentId+'")> <span class="parentComponent"><span id="value'+
                 component.componentId
                 +'">'+
-                component.value
+                valueText
                 +' ('+
                 component.componentType.componentTypeName
                 +')</span>'+
@@ -232,19 +417,34 @@ function setComponentList(res){
             }
         })
         
-        while(childComponents.length > 0){
             childComponents.forEach(component => {
                 if($('#Component' + component.parentId).length){
+                    let valueId = (component.componentType.componentTypeId == 3) ? component.value.ResourceID : component.value;
+                    let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : component.value;
                     let activation = (component.activationTime > 0) ? ' Activation Time: ' + component.activationTime : '';
 
                     $('#Component' + component.parentId).append('<ul><li id="Component'+
                     component.componentId
+                    +'" data-facility-id="'+
+                    component.facilityId
+                    +'" data-component-type-id="'+
+                    component.componentType.componentTypeId
+                    +'" data-is-child="'+
+                    component.isChild
+                    +'" data-component-name="'+
+                    component.componentName
+                    +'" data-value="'+
+                    valueId
+                    +'" data-activation="'+
+                    component.activationTime
+                    +'" data-parent="'+
+                    component.parentId
                     +'"><b>'+
                     component.componentName
-                    +'</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;"/>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;"/> <span class="childComponent"><span id="value'+
+                    +'</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component'+component.componentId+'")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component'+component.componentId+'")> <span class="childComponent"><span id="value'+
                     component.componentId
                     +'">'+
-                    component.value
+                    valueText
                     +' ('+
                     component.componentType.componentTypeName
                     +')</span> '+
@@ -270,10 +470,8 @@ function setComponentList(res){
                             $('#value'+component.componentId).attr('class', 'valueSpecial');
                             break;
                     }
-                    childComponents.pop(component);
                 }
             })
-        }
 
         $('.valuePopulation').css('color', '#e68a2e');
         $('.valueBuilding').css('color', 'brown');
@@ -287,4 +485,49 @@ function setComponentList(res){
     else{
         $('#componentsList').append('<li>NO COMPONENTS AVAILABLE</li>')
     }
+}
+
+function populateUpdateComponentForm(componentId){
+    let splicedComponentId = componentId.replace('Component', '');
+    let facilityId = $('#'+componentId).data("facilityId");
+    let componentTypeId = $('#'+componentId).data("componentTypeId");
+    let isChild =  $('#'+componentId).data("isChild");
+    let componentName = $('#'+componentId).data("componentName");
+    let value = $('#'+componentId).data("value");
+    let activationTime = $('#'+componentId).data("activation");
+    let parent = $('#'+componentId).data("parent");
+
+
+    $('#hdnComponentId').val(splicedComponentId);
+    $('#txtComponentName').val(componentName);
+    $('#selComponentType').val(componentTypeId);
+    $('#selFacility').val(facilityId);
+    $('#chkChild').prop('checked', isChild);
+
+    if(isChild){
+        $('#componentParentField').show();
+        $('#selParent').val(parent);
+    }
+    else{
+        $('#componentParentField').hide();
+    }
+
+    if(componentTypeId == 3){
+        $('#txtValue').hide();
+        $('#selResource').show();
+
+        $('#selResource').val(value);
+    }
+    else{
+        $('#txtValue').show();
+        $('#selResource').hide();
+        
+        $('#txtValue').val(value);
+    }
+    $('#nmbActivation').val(activationTime);
+    console.log($('#hdnComponentId').val());
+}
+
+function setComponentIdForDelete(componentId){
+        $('#btnDeleteComponent').attr('data-component-id', componentId);
 }
