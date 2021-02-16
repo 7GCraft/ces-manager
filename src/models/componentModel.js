@@ -19,7 +19,7 @@ module.exports = class Component {
         this.facilityId = facilityId;
 
         // parse value
-        if (value !== null) {
+        if (value !== null && typeof(value) !== 'object') {
             let tokens = value.split(';');
 
             switch (tokens[0]) {
