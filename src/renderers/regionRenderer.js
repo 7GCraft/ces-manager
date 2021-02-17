@@ -112,10 +112,7 @@ function getComponentsInfo() {
     ipcRenderer.send('Component:getComponentList', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Component:getComponentListOK', (e, res) => {
        setComponentList(res);
-       $('#selParent').append($('<option selected>', {
-            value: null,
-            text: 'NONE'
-        }));
+       $('#selParent').append('<option selected value="">NONE</option>');
 
        res.forEach(component => {
            $('#selParent').append($('<option>', {
@@ -138,10 +135,7 @@ function getComponentsInfo() {
 
     ipcRenderer.send('Facility:getFacilitiesByRegion',  parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
-        $('#selFacility').append($('<option selected>', {
-            value: null,
-            text: 'NONE'
-        }));
+        $('#selFacility').append('<option selected value="">NONE</option>');
         res.forEach(facility => {
             $('#selFacility').append($('<option>', {
                 value: facility.facilityId,
@@ -152,10 +146,7 @@ function getComponentsInfo() {
 
     ipcRenderer.send('Resource:getAllResourceTiers');
     ipcRenderer.once('Resource:getAllResourceTiersOk', function(e, res){
-        $('#selResource').append($('<option selected>', {
-            value: null,
-            text: 'NONE'
-        }));
+        $('#selResource').append('<option selected value="">NONE</option>');
         res.forEach(resourceTier => {
             resourceTier.Resources.forEach(resource => {
                 $('#selResource').append($('<option>', {
@@ -258,6 +249,8 @@ function addUpdateComponent_handler(){
         $('#txtValue').show();
         $('#selResource').hide();
         $('#componentParentField').hide();
+        $('#selFacility').attr('disabled', false);
+        $('#chkChild').attr('disabled', false);
         console.log($('#hdnComponentId').val());
     })
 
@@ -268,10 +261,25 @@ function addUpdateComponent_handler(){
         if($('#selComponentType').val() == 3){
             $('#txtValue').hide();
             $('#selResource').show();
+            $('#selResource').attr('required', true);
+            $('#txtValue').attr('required', false);
         }
         else{
             $('#txtValue').show();
             $('#selResource').hide();
+            $('#selResource').attr('required', false);
+            $('#txtValue').attr('required', true);
+        }
+    })
+
+    $('#selFacility').on('change', () => {
+        if($('#selFacility').val() != ''){
+            $('#chkChild').prop('checked', false);
+            $('#componentParentField').hide();
+            $('#chkChild').attr('disabled', true);
+        }
+        else{
+            $('#chkChild').removeAttr('disabled');
         }
     })
 
@@ -283,7 +291,7 @@ function addUpdateComponent_handler(){
         componentObj['componentName'] = $('#txtComponentName').val();
         componentObj['componentType'] = {'componentTypeId': $('#selComponentType').val()};
         componentObj['regionId'] = parseInt(window.process.argv.slice(-1));
-        componentObj['facilityId'] = $('#selFacility').val();
+        componentObj['facilityId'] = ($('#selFacility').val() == '') ? null : $('#selFacility').val();
 
         if($('#chkChild').is(':checked')){
             componentObj['isChild'] = true;
@@ -497,7 +505,6 @@ function populateUpdateComponentForm(componentId){
     let activationTime = $('#'+componentId).data("activation");
     let parent = $('#'+componentId).data("parent");
 
-
     $('#hdnComponentId').val(splicedComponentId);
     $('#txtComponentName').val(componentName);
     $('#selComponentType').val(componentTypeId);
@@ -523,6 +530,21 @@ function populateUpdateComponentForm(componentId){
         $('#selResource').hide();
         
         $('#txtValue').val(value);
+    }
+
+    if(facilityId != null){
+        $('#chkChild').attr('disabled', true);
+        $('#componentParentField').hide();
+        if(isChild){
+            $('#selFacility').attr('disabled', true);
+        }
+        else{
+            $('#selFacility').attr('disabled', false);
+        }
+    }
+    else{
+        $('#chkChild').attr('disabled', false);
+        $('#selFacility').attr('disabled', false);
     }
     $('#nmbActivation').val(activationTime);
     console.log($('#hdnComponentId').val());

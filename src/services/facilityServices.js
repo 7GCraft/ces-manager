@@ -20,8 +20,9 @@ const getFacilityByRegionId = async (id) => {
         });
     
     let components = await componentServices.getComponentByRegionId(id);
+    let sortedComponents = await componentServices.sortChildComponents(components);
 
-    if (rawFacilities.length === 0 || components.length === 0) return null;
+    if (rawFacilities.length === 0 || sortedComponents.length === 0) return null;
     
     let facilities = [];
 
@@ -35,7 +36,7 @@ const getFacilityByRegionId = async (id) => {
 
         let facilityComponents = [];
 
-        for (let component of components) {
+        for (let component of sortedComponents) {
             if (component.facilityId === facility.facilityId) {
                 facilityComponents.push(component);
             }

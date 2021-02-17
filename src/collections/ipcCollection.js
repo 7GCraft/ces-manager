@@ -203,21 +203,30 @@ function componentBridge() {
     ipcMain.on('Component:getComponentList', (e, arg) => {
         let response = component.getComponentByRegionId(arg);
         response.then(result => {
-            e.sender.send("Component:getComponentListOK", result);
+            return component.sortChildComponents(result);
+        })
+        .then(result2 => {
+            e.sender.send("Component:getComponentListOK", result2);
         })
     });
 
     ipcMain.on('Component:getUsedComponentList', (e, arg) => {
         let response = component.getComponentFunctionalByRegionId(arg);
         response.then(result => {
-            e.sender.send("Component:getUsedComponentListOK", result);
+            return component.sortChildComponents(result); 
+        })
+        .then(result2 => {
+            e.sender.send("Component:getUsedComponentListOK", result2);
         })
     });
 
     ipcMain.on('Component:getUnusedComponentList', (e, arg) => {
         let response = component.getComponentUnusedByRegionId(arg);
         response.then(result => {
-            e.sender.send("Component:getUnusedComponentListOK", result);
+            return component.sortChildComponents(result);
+        })
+        .then(result2 => {
+            e.sender.send("Component:getUnusedComponentListOK", result2);
         })
     });
 
