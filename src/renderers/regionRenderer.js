@@ -5,6 +5,8 @@ const $ = require('jquery');
 $(function(){
     //Get all region info
     getRegionInfo();
+    //get all facility related info
+    getFacilitiesInfo();
     //Get all component related info
     getComponentsInfo();
     //event handler for component display change
@@ -108,6 +110,30 @@ function getRegionInfo(){
     
 }
 
+function getFacilitiesInfo() {
+    ipcRenderer.send('Facility:getFacilitiesByRegion',  parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
+        $('#selFacility').append('<option selected value="">NONE</option>');
+        res.forEach(facility => {
+            // $('#facilityList').append(
+            //     '<div class="accordion-item">'+
+            //     ' <h2 class="accordion-header" id="FacilityHeading'+facility.facilityId+'">'+
+            //     '<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">'+
+            //       facility.facilityName
+            //     +'</button>'+
+            //   '</h2>'+
+            //     '</div>'
+            // )
+
+            $('#selFacility').append($('<option>', {
+                value: facility.facilityId,
+                text: facility.facilityName
+            }));
+        });
+    });
+
+}
+
 function getComponentsInfo() {
     ipcRenderer.send('Component:getComponentList', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Component:getComponentListOK', (e, res) => {
@@ -131,17 +157,6 @@ function getComponentsInfo() {
                 text: componentType.componentTypeName
             }));
         })
-    });
-
-    ipcRenderer.send('Facility:getFacilitiesByRegion',  parseInt(window.process.argv.slice(-1)));
-    ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
-        $('#selFacility').append('<option selected value="">NONE</option>');
-        res.forEach(facility => {
-            $('#selFacility').append($('<option>', {
-                value: facility.facilityId,
-                text: facility.facilityName
-            }));
-        });
     });
 
     ipcRenderer.send('Resource:getAllResourceTiers');

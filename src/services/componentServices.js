@@ -412,14 +412,18 @@ const sortChildComponents = async (components) => {
     let parentComponents = [];
     let childComponents = [];
 
+    if(components == null){
+        return null;
+    }
+
     // separate parent and child components
     for (let component of components) {
         if (component.isChild) childComponents.push(component);
         else parentComponents.push(component);
     }
 
-    console.log(parentComponents);
-    console.log(childComponents);
+    // console.log(parentComponents);
+    // console.log(childComponents);
 
     while (childComponents.length > 0) {
         let newParentComponents = [];
@@ -453,11 +457,11 @@ exports.getComponentTypeAll = getComponentTypeAll;
 exports.sortChildComponents = sortChildComponents;
 
 // FOR DEBUGGING
-getComponentByRegionId(1)
-.then(data => {
-    sortChildComponents(data)
-    .then(test => console.dir(test));
-})
+//getComponentByRegionId(1)
+//.then(data => {
+//    sortChildComponents(data)
+ //   .then(test => console.dir(test));
+//})
 // getComponentByFacilityId(1).then(data => console.dir(data));
 //getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)
