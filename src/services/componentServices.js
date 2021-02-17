@@ -252,6 +252,8 @@ const getComponentUnusedByRegionId = async (id) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const addComponent = async (component) => {
+    console.log(`From addComponent: ${component}`);
+
     let resStatus = true;
 
     let newValue = null;
@@ -400,6 +402,47 @@ const getComponentTypeAll = async () => {
     return componentTypes;
 };
 
+/**
+ * Sorts given components into parent-child relationships.
+ * Children will be part of the children property of their parent component.
+ * @param {Array} components must be an array of component objects.
+ * @returns {Array} array of component objects if successful, false otherwise.
+ */
+const sortChildComponents = async (components) => {
+    let parentComponents = [];
+    let childComponents = [];
+
+    // separate parent and child components
+    for (let component of components) {
+        if (component.isChild) childComponents.push(component);
+        else parentComponents.push(component);
+    }
+
+    while (childComponents.length > 0) {
+        let newParentComponents = [];
+
+        for (let parentComponent of parentComponents) {
+            parentComponent.getChildren();
+            let childComponentsNum = childComponents.length;
+
+            for (let i = 0; i < childComponentsNum; i++) {
+                if (childComponents[i].parentId === parentComponent.componentId) {
+                    let children = parentComponent.getChildren();
+                    children.push(childComponents[i]);
+                    parentComponent.setChildren(children);
+                    newParentComponents.push(childComponents[i]);
+                    childComponents.splice(i, 1);
+                    childComponentsNum = childComponents.length;
+                }
+            }
+        }
+
+        parentComponents.concat(newParentComponents);
+    }
+
+    return parentComponents;
+}
+
 exports.getComponentByRegionId = getComponentByRegionId;
 exports.getComponentByFacilityId = getComponentByFacilityId;
 exports.getComponentFunctionalByRegionId = getComponentFunctionalByRegionId;
@@ -408,9 +451,14 @@ exports.addComponent = addComponent;
 exports.updateComponent = updateComponent;
 exports.deleteComponentById = deleteComponentById;
 exports.getComponentTypeAll = getComponentTypeAll;
+exports.sortChildComponents = sortChildComponents;
 
 // FOR DEBUGGING
-getComponentByRegionId(1).then(data => console.dir(data));
+// getComponentByRegionId(1)
+// .then(data => {
+//     sortChildComponents(data)
+//     .then(test => console.dir(test));
+// })
 // getComponentByFacilityId(1).then(data => console.dir(data));
 //getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)

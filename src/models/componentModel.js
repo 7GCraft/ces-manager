@@ -57,4 +57,25 @@ module.exports = class Component {
             this.parent = null;
         }
     }
+
+    /**
+     * Gets all the children of the component.
+     * Creates an empty list if the component has no children.
+     * @returns {Array} array of component objects.
+     */
+    getChildren() {
+        if (this.children) return this.children;
+        else {
+            this.children = [];
+            return this.children;
+        }
+    }
+
+    /**
+     * Sets the children of the component.
+     * @param {Array} children array of component objects.
+     */
+    setChildren(children) {
+        this.children = children;
+    }
 }
