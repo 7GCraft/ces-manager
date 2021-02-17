@@ -418,18 +418,17 @@ const sortChildComponents = async (components) => {
         else parentComponents.push(component);
     }
 
+    console.log(parentComponents);
+    console.log(childComponents);
+
     while (childComponents.length > 0) {
         let newParentComponents = [];
 
         for (let parentComponent of parentComponents) {
-            parentComponent.getChildren();
             let childComponentsNum = childComponents.length;
 
             for (let i = 0; i < childComponentsNum; i++) {
                 if (childComponents[i].parentId === parentComponent.componentId) {
-                    let children = parentComponent.getChildren();
-                    children.push(childComponents[i]);
-                    parentComponent.setChildren(children);
                     newParentComponents.push(childComponents[i]);
                     childComponents.splice(i, 1);
                     childComponentsNum = childComponents.length;
@@ -437,7 +436,7 @@ const sortChildComponents = async (components) => {
             }
         }
 
-        parentComponents.concat(newParentComponents);
+        parentComponents = parentComponents.concat(newParentComponents);
     }
 
     return parentComponents;
@@ -454,11 +453,11 @@ exports.getComponentTypeAll = getComponentTypeAll;
 exports.sortChildComponents = sortChildComponents;
 
 // FOR DEBUGGING
-// getComponentByRegionId(1)
-// .then(data => {
-//     sortChildComponents(data)
-//     .then(test => console.dir(test));
-// })
+getComponentByRegionId(1)
+.then(data => {
+    sortChildComponents(data)
+    .then(test => console.dir(test));
+})
 // getComponentByFacilityId(1).then(data => console.dir(data));
 //getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)
