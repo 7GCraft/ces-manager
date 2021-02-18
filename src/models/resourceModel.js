@@ -4,4 +4,12 @@ module.exports = class Resource {
         this.ResourceName = ResourceName;
         this.ResourceTierID = ResourceTierID;
     }
+
+    /**
+     * Sets the trade power of the resource.
+     * @param {Number} tradePower must be a double.
+     */
+    setTradePower(tradePower) {
+        this.tradePower = tradePower;
+    }
 }

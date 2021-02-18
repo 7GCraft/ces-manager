@@ -187,6 +187,70 @@ const getComponentFunctionalByRegionId = async (id) => {
 }
 
 /**
+ * Gets all functional components of the given IDs.
+ * @param {Array} ids must be an array of integers.
+ * @returns {Array} array of component objects if successful, null otherwise.
+ */
+const getComponentFunctionalByIds = async (ids) => {
+    const rawComponents = await knex
+        .select(constants.TABLE_COMPONENT + '.' + '*')
+        .from(constants.TABLE_COMPONENT)
+        .innerJoin(
+            constants.TABLE_FACILITY,
+            constants.TABLE_COMPONENT + '.' + constants.COLUMN_FACILITY_ID,
+            constants.TABLE_FACILITY + '.' + constants.COLUMN_FACILITY_ID
+        )
+        .whereIn(constants.COLUMN_COMPONENT_ID, ids)
+        .andWhere(constants.TABLE_FACILITY + '.' + constants.COLUMN_IS_FUNCTIONAL, 1)
+        .catch(e => {
+            console.error(e);
+        });
+
+    const componentTypes = await getComponentTypeAll();
+    
+    const resources = await resourceServices.getResourceAll();
+    
+    if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
+
+    let components = [];
+
+    for (let rawComponent of rawComponents) {
+        let componentValue = rawComponent.value;
+
+        if (rawComponent.componentTypeId === 3) {
+            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
+        }
+
+        let component = new Component(
+            rawComponent.componentId,
+            rawComponent.name,
+            componentTypes[rawComponent.componentTypeId - 1],
+            rawComponent.regionId,
+            rawComponent.facilityId,
+            componentValue,
+            rawComponent.activationTime,
+            rawComponent.isChild,
+            rawComponent.parentId
+        );
+
+        components.push(component);
+    }
+
+    for (let component of components) {
+        if (component.isChild) {
+            for (let parentComponent of components) {
+                if (component.parentId === parentComponent.componentId) {
+                    component.parent = parentComponent;
+                    break;
+                }
+            }
+        }
+    }
+
+    return components;
+}
+
+/**
  * Gets all components that don't belong to a facility in a given region.
  * @param {Number} id must be an integer.
  * @returns {Array} array of component objects if successful, null otherwise.
@@ -449,6 +513,7 @@ const sortChildComponents = async (components) => {
 exports.getComponentByRegionId = getComponentByRegionId;
 exports.getComponentByFacilityId = getComponentByFacilityId;
 exports.getComponentFunctionalByRegionId = getComponentFunctionalByRegionId;
+exports.getComponentFunctionalByIds = getComponentFunctionalByIds;
 exports.getComponentUnusedByRegionId = getComponentUnusedByRegionId;
 exports.addComponent = addComponent;
 exports.updateComponent = updateComponent;

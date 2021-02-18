@@ -37,7 +37,8 @@
         "COLUMN_FACILITY_ID": "facilityId",
         "COLUMN_REGION_ID": "regionId",
         "COLUMN_RESOURCE_TIER_ID": "resourceTierId",
-        "COLUMN_STATE_ID": "stateId"
+        "COLUMN_STATE_ID": "stateId",
+        "COLUMN_TRADE_AGREEMENT_ID": "tradeAgreementId"
     },
     "paths": {
         "biomeModel": "../models/biomeModel",
@@ -53,6 +54,7 @@
         "stateListItemModel": "../models/stateListItemModel",
         "stateModel": "../models/stateModel",
         "tradeAgreementModel": "../models/tradeAgreementModel",
+        "traderModel": "../models/traderModel",
         "componentServices": "./componentServices",
         "facilityServices": "./facilityServices",
         "regionServices": "./regionServices",
