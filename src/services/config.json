@@ -16,6 +16,8 @@
         "TABLE_RESOURCE": "MsResource",
         "TABLE_RESOURCE_TIER": "MsResourceTier",
         "TABLE_STATE": "MsState",
+        "TABLE_TRADE_AGREEMENT_DETALI": "DetailTradeAgreement",
+        "TABLE_TRADE_AGREEMENT_HEADER": "HeaderTradeAgreement",
         "COLUMN_NAME": "name",
         "COLUMN_POPULATION": "population",
         "COLUMN_DESC": "desc",
@@ -50,10 +52,12 @@
         "resourceTierModel": "../models/resourceTierModel",
         "stateListItemModel": "../models/stateListItemModel",
         "stateModel": "../models/stateModel",
+        "tradeAgreementModel": "../models/tradeAgreementModel",
         "componentServices": "./componentServices",
         "facilityServices": "./facilityServices",
         "regionServices": "./regionServices",
         "resourceServices": "./resourceServices",
-        "stateServices": "./stateServices"
+        "stateServices": "./stateServices",
+        "tradeAgreementServices": "./tradeAgreementServices"
     }
 }
