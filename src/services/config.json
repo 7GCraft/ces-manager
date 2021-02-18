@@ -16,7 +16,7 @@
         "TABLE_RESOURCE": "MsResource",
         "TABLE_RESOURCE_TIER": "MsResourceTier",
         "TABLE_STATE": "MsState",
-        "TABLE_TRADE_AGREEMENT_DETALI": "DetailTradeAgreement",
+        "TABLE_TRADE_AGREEMENT_DETAIL": "DetailTradeAgreement",
         "TABLE_TRADE_AGREEMENT_HEADER": "HeaderTradeAgreement",
         "COLUMN_NAME": "name",
         "COLUMN_POPULATION": "population",
