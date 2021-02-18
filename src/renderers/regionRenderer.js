@@ -120,7 +120,7 @@ function getFacilitiesInfo() {
             let moneyOutput = (facility.moneyOutput == 0) ? '' : '<span class="valueMoney">Money Output: ' + facility.moneyOutput + '</span><br/>';
             let resource = (facility.resource == null) ? '' : '<span class="valueResource">Resource: ' + facility.resource.ResourceName + '</span><br/>';
 
-            let noOutput = (foodOutput == '' && moneyOutput == '' && resource == '') ? 'No Output for this facility' : ''
+            let noOutput = (foodOutput == '' && moneyOutput == '' && resource == '') ? 'No Output for this facility<br/>' : ''
             $('#facilityList').append(
                 
                 '<div class="card">'+
@@ -157,16 +157,18 @@ function getFacilitiesInfo() {
     ipcRenderer.once('Component:getComponentByFacilityIdOK', (e, res) => {
         console.log(facilityIds);
         res.forEach(components => {
-            components.forEach(component => {
-                let facilityId = facilityIds.find( id => id == component.facilityId);
-
-                if(!component.isChild){
-                    $('#FacilityComponents'+facilityId).append('<li id="ComponentFacility'+component.componentId+'"><b>'+component.componentName+'</b></li>')
-                }
-                else{
-                    $('#ComponentFacility'+component.parentId).append('<ul><li id="ComponentFacility'+component.componentId+'"><b>'+component.componentName+'</b></li></ul>')
-                }
-            })
+            if(components != null){
+                components.forEach(component => {
+                    let facilityId = facilityIds.find( id => id == component.facilityId);
+    
+                    if(!component.isChild){
+                        $('#FacilityComponents'+facilityId).append('<li id="ComponentFacility'+component.componentId+'"><b>'+component.componentName+'</b></li>')
+                    }
+                    else{
+                        $('#ComponentFacility'+component.parentId).append('<ul><li id="ComponentFacility'+component.componentId+'"><b>'+component.componentName+'</b></li></ul>')
+                    }
+                })
+            }
         })
         
     })

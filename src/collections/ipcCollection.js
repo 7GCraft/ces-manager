@@ -1,5 +1,4 @@
 const {ipcMain, BrowserWindow, ipcRenderer, remote} = require('electron');
-const path = require('path');
 const state = require('../services/stateServices');
 const resource = require('../services/resourceServices');
 const region = require('../services/regionServices');
@@ -59,7 +58,7 @@ function stateBridge() {
     ipcMain.on('State:getStateInfo', function(e, arg){
         let response = state.getStateById(arg);
         response.then( (result) => {
-            //console.log(result);
+            console.log(result);
             e.sender.send("State:getStateInfoOK", result)
         })
     })
@@ -222,7 +221,6 @@ function componentBridge() {
                 })
             })));
         }).then(results => {
-            console.log(results);
             e.sender.send("Component:getComponentByFacilityIdOK", results);
         })
     });
