@@ -35,7 +35,7 @@ function getRegionInfo(){
 
     ipcRenderer.send('Region:getBiomesForAdd');
     ipcRenderer.once('Region:getBiomesForAddOK', (e, res) => {
-        console.log(res);
+        //console.log(res);
         
         res.forEach(biome => {
             $('#selBiome').append($('<option>', {
@@ -111,26 +111,65 @@ function getRegionInfo(){
 }
 
 function getFacilitiesInfo() {
+    let facilityIds = [];
     ipcRenderer.send('Facility:getFacilitiesByRegion',  parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
         $('#selFacility').append('<option selected value="">NONE</option>');
         res.forEach(facility => {
-            // $('#facilityList').append(
-            //     '<div class="accordion-item">'+
-            //     ' <h2 class="accordion-header" id="FacilityHeading'+facility.facilityId+'">'+
-            //     '<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">'+
-            //       facility.facilityName
-            //     +'</button>'+
-            //   '</h2>'+
-            //     '</div>'
-            // )
+            let foodOutput = (facility.foodOutput == 0) ? '' : '<span class="valueFood">Food Output: ' + facility.foodOutput + '</span><br/>';
+            let moneyOutput = (facility.moneyOutput == 0) ? '' : '<span class="valueMoney">Money Output: ' + facility.moneyOutput + '</span><br/>';
+            let resource = (facility.resource == null) ? '' : '<span class="valueResource">Resource: ' + facility.resource.ResourceName + '</span><br/>';
 
+            let noOutput = (foodOutput == '' && moneyOutput == '' && resource == '') ? 'No Output for this facility' : ''
+            $('#facilityList').append(
+                
+                '<div class="card">'+
+                    '<div class="card-header" id="FacilityHeading'+facility.facilityId+'">'+
+                        ' <h2 class="mb-0">'+
+                            '<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#FacilityCollapse'+facility.facilityId+'"" aria-expanded="false" aria-controls="FacilityCollapse'+facility.facilityId+'">'+
+                            facility.facilityName
+                            +'</button>'+
+                        '</h2>'+
+                    '</div>'+
+                    '<div id="FacilityCollapse'+facility.facilityId+'" class="collapse" aria-labelledby="FacilityHeading'+facility.facilityId+'" data-parent="#facilityList">'+
+                        '<div class="card-body">'+
+                        '<div class="row">'+
+                        '<div class="column" id="Facility'+facility.facilityId+'">'+
+                            foodOutput + moneyOutput + resource + noOutput +
+                        '</div>'+
+                        '<div class="column"><ul  id="FacilityComponents'+facility.facilityId+'"></ul></div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
+                '</div>'
+            )
+            facilityIds.push(facility.facilityId);
             $('#selFacility').append($('<option>', {
                 value: facility.facilityId,
                 text: facility.facilityName
             }));
         });
     });
+
+    
+
+    ipcRenderer.send('Component:getComponentByFacilityId', parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.once('Component:getComponentByFacilityIdOK', (e, res) => {
+        console.log(facilityIds);
+        res.forEach(components => {
+            components.forEach(component => {
+                let facilityId = facilityIds.find( id => id == component.facilityId);
+
+                if(!component.isChild){
+                    $('#FacilityComponents'+facilityId).append('<li id="ComponentFacility'+component.componentId+'"><b>'+component.componentName+'</b></li>')
+                }
+                else{
+                    $('#ComponentFacility'+component.parentId).append('<ul><li id="ComponentFacility'+component.componentId+'"><b>'+component.componentName+'</b></li></ul>')
+                }
+            })
+        })
+        
+    })
 
 }
 
@@ -150,7 +189,7 @@ function getComponentsInfo() {
 
     ipcRenderer.send('Component:getAllComponentTypes');
     ipcRenderer.once('Component:getAllComponentTypesOK', (e, res)=>{
-        console.log(res);
+        //console.log(res);
         res.forEach(componentType => {
             $('#selComponentType').append($('<option>', {
                 value: componentType.componentTypeId,
@@ -217,7 +256,7 @@ function frmUpdateRegion_onSubmit() {
         regionObj['population'] = parseInt($('#nmbPopulation').val());
         regionObj['desc'] = $('#txtDescRegion').val();
 
-        console.log(regionObj);
+        //console.log(regionObj);
 
         ipcRenderer.send('Region:updateRegion', regionObj);
         ipcRenderer.once('Region:updateRegionOK', (e, res) => {
@@ -266,13 +305,13 @@ function addUpdateComponent_handler(){
         $('#componentParentField').hide();
         $('#selFacility').attr('disabled', false);
         $('#chkChild').attr('disabled', false);
-        console.log($('#hdnComponentId').val());
+        //console.log($('#hdnComponentId').val());
     })
 
     $('#selComponentType').on('change', () => {
         $('#txtValue').val('');
         $('#selResource').val(null);
-        console.log($('#selComponentType').val());
+        //console.log($('#selComponentType').val());
         if($('#selComponentType').val() == 3){
             $('#txtValue').hide();
             $('#selResource').show();
@@ -404,7 +443,7 @@ function setComponentList(res){
                 component.activationTime
                 +'"><b>'+
                 component.componentName
-                +'</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component'+component.componentId+'")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component'+component.componentId+'")> <span class="parentComponent"><span id="value'+
+                +'</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component'+component.componentId+'")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component'+component.componentId+'")> <span class="parentComponent"><span class="value'+
                 component.componentId
                 +'">'+
                 valueText
@@ -416,22 +455,22 @@ function setComponentList(res){
 
                 switch(component.componentType.componentTypeId){
                     case 1:
-                        $('#value'+component.componentId).attr('class', ' valuePopulation');
+                        $('.value'+component.componentId).attr('class', ' valuePopulation');
                         break;
                     case 2:
-                        $('#value'+component.componentId).attr('class', 'valueBuilding');
+                        $('.value'+component.componentId).attr('class', ' valueBuilding');
                         break;
                     case 3:
-                        $('#value'+component.componentId).attr('class', 'valueResource');
+                        $('.value'+component.componentId).attr('class', ' valueResource');
                         break;
                     case 4:
-                        $('#value'+component.componentId).attr('class', 'valueFood');
+                        $('.value'+component.componentId).attr('class', ' valueFood');
                         break;
                     case 5:
-                        $('#value'+component.componentId).attr('class', 'valueMoney');
+                        $('.value'+component.componentId).attr('class', ' valueMoney');
                         break;
                     case 6:
-                        $('#value'+component.componentId).attr('class', ' valueSpecial');
+                        $('.value'+component.componentId).attr('class', ' valueSpecial');
                         break;
                 }
             }
@@ -496,13 +535,6 @@ function setComponentList(res){
                 }
             })
 
-        $('.valuePopulation').css('color', '#e68a2e');
-        $('.valueBuilding').css('color', 'brown');
-        $('.valueResource').css('color', 'purple');
-        $('.valueFood').css('color', 'green');
-        $('.valueMoney').css('color', '#d1b422');
-        $('.valueSpecial').css('color', '#23b8cc');
-
         //console.log(childComponents);
     }
     else{
@@ -562,7 +594,7 @@ function populateUpdateComponentForm(componentId){
         $('#selFacility').attr('disabled', false);
     }
     $('#nmbActivation').val(activationTime);
-    console.log($('#hdnComponentId').val());
+    //console.log($('#hdnComponentId').val());
 }
 
 function setComponentIdForDelete(componentId){

@@ -93,7 +93,6 @@ function stateBridge() {
 
 function regionBridge(){
     ipcMain.on('Region:getAllRegionsByStateId', (e) => {
-        let states = []
         let response = state.getStateList();
         response.then((result) => {
             return Promise.all(result.map((state)=>{
@@ -207,6 +206,24 @@ function componentBridge() {
         })
         .then(result2 => {
             e.sender.send("Component:getComponentListOK", result2);
+        })
+    });
+
+    ipcMain.on('Component:getComponentByFacilityId', (e, arg) => {
+        let response = facility.getFacilityByRegionId(arg);
+        response.then(result => {
+            return Promise.all((result.map(facility => {
+                return component.getComponentByFacilityId(facility.facilityId)
+                .then(components => {
+                    return component.sortChildComponents(components)
+                    .then(sortedComponents => {
+                        return sortedComponents;
+                    })
+                })
+            })));
+        }).then(results => {
+            console.log(results);
+            e.sender.send("Component:getComponentByFacilityIdOK", results);
         })
     });
 
