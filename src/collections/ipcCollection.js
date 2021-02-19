@@ -198,6 +198,7 @@ function facilityBridge() {
 
     
     ipcMain.on('Facility:addFacility', (e, args) => {
+        console.log(args);
         let response = facility.addFacility(args);
         response.then(result => {
             e.sender.send("Facility:addFacilityOK", result);
@@ -242,15 +243,20 @@ function componentBridge() {
     ipcMain.on('Component:getComponentByFacilityId', (e, arg) => {
         let response = facility.getFacilityByRegionId(arg);
         response.then(result => {
-            return Promise.all((result.map(facility => {
-                return component.getComponentByFacilityId(facility.facilityId)
-                .then(components => {
-                    return component.sortChildComponents(components)
-                    .then(sortedComponents => {
-                        return sortedComponents;
+            if(result != null){
+                return Promise.all((result.map(facility => {
+                    return component.getComponentByFacilityId(facility.facilityId)
+                    .then(components => {
+                        return component.sortChildComponents(components)
+                        .then(sortedComponents => {
+                            return sortedComponents;
+                        })
                     })
-                })
-            })));
+                })));
+            }
+            else{
+                return false;
+            }
         }).then(results => {
             e.sender.send("Component:getComponentByFacilityIdOK", results);
         })
