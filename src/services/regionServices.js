@@ -19,7 +19,9 @@ const getRegionListAll = async () => {
         .select([
             constants.COLUMN_REGION_ID,
             constants.TABLE_REGION + '.' + constants.COLUMN_NAME,
-            constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state'
+            constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state',
+            constants.COLUMN_POPULATION,
+            constants.COLUMN_TAX_RATE
         ])
         .from(constants.TABLE_REGION)
         .leftJoin(
@@ -48,6 +50,8 @@ const getRegionListAll = async () => {
             }
         }
 
+        moneyOutput += rawRegion.population * 100 * rawRegion.taxRate;
+
         let regionListItem = new RegionListItem (
             rawRegion.regionId,
             rawRegion.name,
@@ -72,7 +76,9 @@ const getRegionListByStateId = async (stateId) => {
         .select([
             constants.COLUMN_REGION_ID,
             constants.TABLE_REGION + '.' + constants.COLUMN_NAME,
-            constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state'
+            constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state',
+            constants.COLUMN_POPULATION,
+            constants.COLUMN_TAX_RATE
         ])
         .from(constants.TABLE_REGION)
         .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, stateId)
@@ -101,6 +107,8 @@ const getRegionListByStateId = async (stateId) => {
                 moneyOutput += facility.moneyOutput;
             }
         }
+
+        moneyOutput += rawRegion.population * 100 * rawRegion.taxRate;
 
         let regionListItem = new RegionListItem (
             rawRegion.regionId,
@@ -143,7 +151,8 @@ const getRegionByStateId = async (id) => {
             constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_GROWTH_MODIFIER,
             constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_SHRINKAGE_MODIFIER,
             constants.TABLE_REGION + '.' + constants.COLUMN_POPULATION,
-            constants.TABLE_REGION + '.' + constants.COLUMN_DESC + ' AS regionDesc'
+            constants.TABLE_REGION + '.' + constants.COLUMN_DESC + ' AS regionDesc',
+            constants.TABLE_REGION + '.' + constants.COLUMN_TAX_RATE
         ])
         .from(constants.TABLE_REGION)
         .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, id)
@@ -202,7 +211,8 @@ const getRegionByStateId = async (id) => {
                     rawRegion.corruptionName,
                     rawRegion.corruptionRate
                 ),
-                desc: rawRegion.regionDesc
+                desc: rawRegion.regionDesc,
+                taxRate: rawRegion.taxRate
             }
         );
     
@@ -243,7 +253,8 @@ const getRegionById = async (id) => {
             constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_GROWTH_MODIFIER,
             constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_SHRINKAGE_MODIFIER,
             constants.TABLE_REGION + '.' + constants.COLUMN_POPULATION,
-            constants.TABLE_REGION + '.' + constants.COLUMN_DESC + ' AS regionDesc'
+            constants.TABLE_REGION + '.' + constants.COLUMN_DESC + ' AS regionDesc',
+            constants.TABLE_REGION + '.' + constants.COLUMN_TAX_RATE
         ])
         .from(constants.TABLE_REGION)
         .where(constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID, id)
@@ -274,8 +285,6 @@ const getRegionById = async (id) => {
     if (rawRegion.length === 0) return null;
 
     rawRegion = rawRegion[0];
-
-    //console.log(rawRegion);
     
     let region = new Region(
         id,
@@ -303,7 +312,8 @@ const getRegionById = async (id) => {
                 rawRegion.corruptionName,
                 rawRegion.corruptionRate
             ),
-            desc: rawRegion.regionDesc
+            desc: rawRegion.regionDesc,
+            taxRate: rawRegion.taxRate
         }
     );
 
@@ -345,7 +355,8 @@ const addRegion = async (region) => {
             biomeId: region.biome.biomeId,
             developmentId: region.development.developmentId,
             population: region.population,
-            desc: region.desc
+            desc: region.desc,
+            taxRate: region.taxRate
         })
         .into(constants.TABLE_REGION)
         .catch(e => {
@@ -373,7 +384,8 @@ const updateRegion = async (region) => {
             biomeId: region.biome.biomeId,
             developmentId: region.development.developmentId,
             population: region.population,
-            desc: region.desc
+            desc: region.desc,
+            taxRate: region.taxRate
         })
         .catch(e => {
             console.error(e);
