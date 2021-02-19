@@ -27,12 +27,14 @@ module.exports = class Facility {
         this.foodOutput = 0;
         this.moneyOutput = 0;
         this.resource = null;
+        this.usedPopulation = 0;
 
         if (components !== null) {
             for (let component of components) {
                 if (component.componentType.componentTypeId === 4) this.foodOutput += component.value;
                 else if (component.componentType.componentTypeId === 5) this.moneyOutput += component.value;
                 else if (component.componentType.componentTypeId === 3) this.resource = component.value;
+                else if (component.componentType.componentTypeId === 1) this.usedPopulation += component.value;
             }
         }
     }

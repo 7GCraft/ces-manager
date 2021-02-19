@@ -67,6 +67,7 @@ module.exports = class Region {
         this.totalFoodConsumed = 0;
         this.productiveResources = [];
         this.expectedPopulationGrowth = 0;
+        this.usedPopulation = 0;
 
         if (facilities !== null) {
             for (let facility of facilities) {
@@ -79,6 +80,8 @@ module.exports = class Region {
                     if (facility.resource !== null) {
                         this.productiveResources.push(facility.resource);
                     }
+
+                    this.usedPopulation += facility.usedPopulation;
                 }
             }
         }
