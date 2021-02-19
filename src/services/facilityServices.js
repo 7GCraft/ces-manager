@@ -22,7 +22,7 @@ const getFacilityByRegionId = async (id) => {
     let components = await componentServices.getComponentByRegionId(id);
     let sortedComponents =  await componentServices.sortChildComponents(components);
 
-    if (rawFacilities.length === 0 || sortedComponents.length === 0) return null;
+    if (rawFacilities.length === 0 || sortedComponents === null) return null;
     
     let facilities = [];
 
