@@ -87,7 +87,7 @@ const updateFacility = async (facility) => {
 
     let newIsFunctional = 0;
 
-    if (component.isFunctional) newIsFunctional = 1;
+    if (facility.isFunctional) newIsFunctional = 1;
 
     await knex(constants.TABLE_FACILITY)
         .where({facilityId: facility.facilityId})

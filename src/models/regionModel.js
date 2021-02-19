@@ -70,13 +70,15 @@ module.exports = class Region {
 
         if (facilities !== null) {
             for (let facility of facilities) {
-                if (facility.foodOutput > 0) this.totalFoodProduced += facility.foodOutput;
-                else if (facility.foodOutput < 0) this.totalFoodConsumed += facility.foodOutput;
-                
-                this.totalIncome += facility.moneyOutput;
-    
-                if (facility.resource !== null) {
-                    if (facility.isFunctional) this.productiveResources.push(facility.resource);
+                if (facility.isFunctional) {
+                    if (facility.foodOutput > 0) this.totalFoodProduced += facility.foodOutput;
+                    else if (facility.foodOutput < 0) this.totalFoodConsumed += facility.foodOutput;
+                    
+                    this.totalIncome += facility.moneyOutput;
+        
+                    if (facility.resource !== null) {
+                        this.productiveResources.push(facility.resource);
+                    }
                 }
             }
         }
