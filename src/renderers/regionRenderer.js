@@ -140,9 +140,9 @@ function getFacilitiesInfo() {
                             '<button id="btnFacility'+facility.facilityId+'" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#FacilityCollapse'+facility.facilityId+'"" aria-expanded="false" aria-controls="FacilityCollapse'+facility.facilityId+'">'+
                             facility.facilityName
                             +'</button>&nbsp;'+
-                            '<input type="image" id="imgUpdateFacility'+facility.facilityId+'" src="../images/icons/edit.png" style="height: 15px; width:15px;" onclick=showUpdateFacilityNameTextbox(this.id)>'+
                             '<input type="textbox" id="txtUpdateFacility'+facility.facilityId+'" data-facility-id="'+facility.facilityId
-                            +'" data-functional="'+facility.isFunctional+'" style="height: 25px; width:200px; font-size:16px;" onkeyup="if(event.keyCode === 13){updateFacilityName(this.id);}" >'+
+                            +'" data-functional="'+facility.isFunctional+'" style="height: 25px; width:200px; font-size:16px;" onkeyup="if(event.keyCode === 13){updateFacilityName(this.id);}" >&nbsp;&nbsp;'+
+                            '<input type="image" id="imgUpdateFacility'+facility.facilityId+'" src="../images/icons/edit.png" style="height: 15px; width:15px;" onclick=toggleUpdateFacilityNameTextbox(this.id)>'+
                         '</h2>'+
                     '</div>'+
                     '<div id="FacilityCollapse'+facility.facilityId+'" class="collapse" aria-labelledby="FacilityHeading'+facility.facilityId+'" data-parent="#facilityList">'+
@@ -350,11 +350,10 @@ function addFacility_handler() {
 }
 
 
-function showUpdateFacilityNameTextbox(imgId) {
+function toggleUpdateFacilityNameTextbox(imgId) {
     facilityId = imgId.replace('imgUpdateFacility', '');
 
-    $('#'+imgId).hide();
-    $('#txtUpdateFacility'+facilityId).show();
+    $('#txtUpdateFacility'+facilityId).toggle();
 }
 
 function updateFacilityName(txtUpdateFacilityNameId){
@@ -373,7 +372,6 @@ function updateFacilityName(txtUpdateFacilityNameId){
         if(res){
             $('#btnFacility'+facilityId).text(facilityName);
             
-            $('#imgUpdateFacility'+facilityId).show();
             $('#txtUpdateFacility'+facilityId).hide();
         }
         else{
