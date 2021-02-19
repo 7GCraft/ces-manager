@@ -18,18 +18,36 @@ $(function(){
 function getStateInfo(){
     ipcRenderer.send("State:getStateInfo", parseInt(window.process.argv.slice(-1)));
     ipcRenderer.on("State:getStateInfoOK", function(e, res){
+        let count = 1;
         $('#lblStateName').text(res.stateName);
         $('#lblDescription').text(res.desc);
         $('#lblStateTreasury').text(res.treasuryAmt);
         $('#lblTotalIncome').text(res.TotalIncome);
+        $('#lblExpenses').text(res.expenses);
         $('#lblFoodProduced').text(res.TotalFoodProduced);
         $('#lblFoodConsumed').text(res.TotalFoodConsumed);
         $('#lblFoodAvailable').text(res.TotalFoodAvailable);
+        $('#lblPopulation').text(res.TotalPopulation);
         $('#lblAvgDevelopment').text(res.AvgDevLevel);
 
         $('#txtStateName').val(res.stateName);
         $('#nmbTreasury').val(res.treasuryAmt);
         $('#txtDescription').val(res.desc);
+
+        res.ProductiveResources.forEach(resource => {
+            let tierStr = () => {
+                switch(resource.ResourceTierID){
+                    case 1: return 'Tier I';
+                    case 2: return 'Tier II';
+                    case 3: return 'Tier III';
+                    case 4: return 'Tier IV';
+                    case 5: return 'Tier V';
+                    case 6: return 'Tier VI';
+                }
+            }
+            $('#tblResources').append('<tr><th scope="row">'+count+'</th><td>'+resource.ResourceName+'</td><td>'+tierStr()+'</td></tr>')
+            count++;
+        })
     });
 
     ipcRenderer.send("State:getRegionsForState", parseInt(window.process.argv.slice(-1)));

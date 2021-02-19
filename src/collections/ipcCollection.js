@@ -1,5 +1,4 @@
 const {ipcMain, BrowserWindow, ipcRenderer, remote} = require('electron');
-const path = require('path');
 const state = require('../services/stateServices');
 const resource = require('../services/resourceServices');
 const region = require('../services/regionServices');
@@ -59,7 +58,7 @@ function stateBridge() {
     ipcMain.on('State:getStateInfo', function(e, arg){
         let response = state.getStateById(arg);
         response.then( (result) => {
-            //console.log(result);
+            console.log(result);
             e.sender.send("State:getStateInfoOK", result)
         })
     })
@@ -93,7 +92,6 @@ function stateBridge() {
 
 function regionBridge(){
     ipcMain.on('Region:getAllRegionsByStateId', (e) => {
-        let states = []
         let response = state.getStateList();
         response.then((result) => {
             return Promise.all(result.map((state)=>{
@@ -207,6 +205,23 @@ function componentBridge() {
         })
         .then(result2 => {
             e.sender.send("Component:getComponentListOK", result2);
+        })
+    });
+
+    ipcMain.on('Component:getComponentByFacilityId', (e, arg) => {
+        let response = facility.getFacilityByRegionId(arg);
+        response.then(result => {
+            return Promise.all((result.map(facility => {
+                return component.getComponentByFacilityId(facility.facilityId)
+                .then(components => {
+                    return component.sortChildComponents(components)
+                    .then(sortedComponents => {
+                        return sortedComponents;
+                    })
+                })
+            })));
+        }).then(results => {
+            e.sender.send("Component:getComponentByFacilityIdOK", results);
         })
     });
 

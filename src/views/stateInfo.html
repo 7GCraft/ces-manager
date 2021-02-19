@@ -28,9 +28,11 @@
 
                 Treasury : <span id="lblStateTreasury"></span> <br>
                 Total Income : <span id="lblTotalIncome"></span> <br>
+                Expenses : <span id="lblExpenses"></span> <br>
                 Total Food Produced : <span id="lblFoodProduced"></span> <br>
                 Total Food Consumed : <span id="lblFoodConsumed"></span> <br>
                 Total Food Available : <span id="lblFoodAvailable"></span> <br>
+                Total Population : <span id="lblPopulation"></span> <br>
                 Average Development Level : <span id="lblAvgDevelopment"></span>
                 <br><br>
 
@@ -44,7 +46,20 @@
                 
             </div>
         </div>
-        <div class="tab-pane fade" id="nav-resources" role="tabpanel" aria-labelledby="nav-resources-tab">...</div>
+        <div class="tab-pane fade" id="nav-resources" role="tabpanel" aria-labelledby="nav-resources-tab">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Resource</th>
+                        <th scope="col">Resource Tier</th>
+                    </tr>
+                </thead>
+                <tbody id="tblResources">
+
+                </tbody>
+            </table>
+        </div>
         <div class="tab-pane fade" id="nav-tradeAgreements" role="tabpanel" aria-labelledby="nav-tradeAgreements-tab">...</div>
       </div>
 
