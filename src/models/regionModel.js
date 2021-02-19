@@ -83,6 +83,8 @@ module.exports = class Region {
             }
         }
 
+        this.totalIncome -= this.totalIncome * this.corruption.corruptionRate;
+
         this.totalFoodAvailable = this.totalFoodProduced + this.totalFoodConsumed;
         if (baseGrowth !== null) {
             if (baseGrowth > 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.growthModifier);
