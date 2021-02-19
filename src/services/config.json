@@ -30,6 +30,7 @@
         "COLUMN_IS_CHILD": "isChild",
         "COLUMN_IS_FUNCTIONAL": "isFunctional",
         "COLUMN_EXPENSES": "expenses",
+        "COLUMN_TAX_RATE": "taxRate",
         "COLUMN_BIOME_ID": "biomeId",
         "COLUMN_COMPONENT_ID": "componentId",
         "COLUMN_CORRUPTION_ID": "corruptionId",
