@@ -196,11 +196,35 @@ function facilityBridge() {
         });
     });
 
+    
+    ipcMain.on('Facility:addFacility', (e, args) => {
+        let response = facility.addFacility(args);
+        response.then(result => {
+            e.sender.send("Facility:addFacilityOK", result);
+        });
+    });
+
     ipcMain.on('Facility:updateFacility', (e, args) => {
         let response = facility.updateFacility(args);
         response.then(result => {
             e.sender.send("Facility:updateFacilityOK", result);
         });
+    });
+
+    ipcMain.on('Facility:deleteFacility', (e, args) => {
+        if(args['deleteOnly']){
+            let response = facility.deleteFacilityById(args['facilityId']);
+            response.then(result => {
+                e.sender.send("Facility:deleteFacilityOK", result);
+            });
+        }
+        else{
+            let response = facility.destroyFacilityById(args['facilityId']);
+            response.then(result => {
+                e.sender.send("Facility:deleteFacilityOK", result);
+            });
+        }
+
     });
 }
 

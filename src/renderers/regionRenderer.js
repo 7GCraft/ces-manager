@@ -15,8 +15,10 @@ $(function(){
     frmUpdateRegion_onSubmit();
     //delete region
     btnDeleteRegion_onClick();
-    //handler for facility update and add
-    addUpdateFacility_handler();
+    //handler for facility  add
+    addFacility_handler();
+    //handle delete facility
+    deleteFacility_handler();
     //handles events for addUpdateComponent
     addUpdateComponent_handler();
     //handle delete component events
@@ -133,7 +135,7 @@ function getFacilitiesInfo() {
             $('#facilityList').append(
                 
                 '<div class="card">'+
-                    '<div class="card-header" id="FacilityHeading'+facility.facilityId+'" style="float: left;">'+
+                    '<div class="card-header" id="FacilityHeading'+facility.facilityId+'">'+
                         ' <h2 class="mb-0">'+
                             '<button id="btnFacility'+facility.facilityId+'" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#FacilityCollapse'+facility.facilityId+'"" aria-expanded="false" aria-controls="FacilityCollapse'+facility.facilityId+'">'+
                             facility.facilityName
@@ -148,7 +150,9 @@ function getFacilitiesInfo() {
                         '<div class="row">'+
                         '<div class="column" id="Facility'+facility.facilityId+'">'+
                             foodOutput + moneyOutput + resource + noOutput +
-                            'Functional:   <input type="checkbox" id="chkFunctional'+facility.facilityId+'" data-facility-name = "'+facility.facilityName+'" onclick=updateFunctional(this.id)>'+
+                            'Functional:   <input type="checkbox" id="chkFunctional'+facility.facilityId+'" data-facility-name = "'+facility.facilityName+'" onclick=updateFunctional(this.id)><br/><br/>'+
+                            '<button class="btn btn-danger" id="btnOpenDeleteFacility" data-toggle="modal" data-target="#mdlDeleteFacility" onclick="setFacilityIdForDelete(this.parentNode.id, true);">Delete Facility</button>&nbsp&nbsp'+
+                            '<button class="btn btn-danger" id="btnOpenDeleteFacility" data-toggle="modal" data-target="#mdlDeleteFacility" onclick="setFacilityIdForDelete(this.parentNode.id, false);">Destroy Facility</button>'+
                         '</div>'+
                         '<div class="column"><ul  id="FacilityComponents'+facility.facilityId+'"></ul></div>'+
                         '</div>'+
@@ -318,8 +322,129 @@ function btnDeleteRegion_onClick() {
     })
 }
 
-function addUpdateFacility_handler() {
-    
+function addFacility_handler() {
+    $('#frmAddFacility').on('submit', e => {
+        e.preventDefault();
+
+        facilityObj = {}
+        facilityObj['regionId'] = parseInt(window.process.argv.slice(-1));
+        facilityObj['facilityName'] = $('#txtFacilityName').val();
+        if($('#chkFunctional').is(':checked')){
+            facilityObj['isFunctional'] = true;
+        }
+        else{
+            facilityObj['isFunctional'] = false;
+        }
+
+        ipcRenderer.send('Facility:addFacility', facilityObj);
+        ipcRenderer.once('Facility:addFacilityOK', (e, res) => {
+            if(res){
+                alert("Successfully added facility");
+                ipcRenderer.send("ReloadPageOnUpdate");
+            }
+            else{
+                $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding facility</div>');
+            }
+        })
+    })
+}
+
+
+function showUpdateFacilityNameTextbox(imgId) {
+    facilityId = imgId.replace('imgUpdateFacility', '');
+
+    $('#'+imgId).hide();
+    $('#txtUpdateFacility'+facilityId).show();
+}
+
+function updateFacilityName(txtUpdateFacilityNameId){
+    let facilityId = txtUpdateFacilityNameId.replace('txtUpdateFacility', '');
+    let facilityName = $('#'+txtUpdateFacilityNameId).val();
+    let isFunctional = $('#'+txtUpdateFacilityNameId).data('functional');
+
+    facilityObj = {}
+    facilityObj['facilityId'] = facilityId;
+    facilityObj['regionId'] = parseInt(window.process.argv.slice(-1));
+    facilityObj['facilityName'] = facilityName;
+    facilityObj['isFunctional'] = isFunctional;
+
+    ipcRenderer.send('Facility:updateFacility', facilityObj);
+    ipcRenderer.once('Facility:updateFacilityOK', (e, res) => {
+        if(res){
+            $('#btnFacility'+facilityId).text(facilityName);
+            
+            $('#imgUpdateFacility'+facilityId).show();
+            $('#txtUpdateFacility'+facilityId).hide();
+        }
+        else{
+            $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating facility</div>');
+        }
+    })
+}
+
+function updateFunctional(checkFunctionalId) {
+    let facilityId = checkFunctionalId.replace('chkFunctional', '');
+    let facilityName = $('#'+checkFunctionalId).data('facilityName');
+    let isFunctional = ($('#'+checkFunctionalId).is(':checked')) ? true : false;
+
+    facilityObj = {}
+    facilityObj['facilityId'] = facilityId;
+    facilityObj['regionId'] = parseInt(window.process.argv.slice(-1));
+    facilityObj['facilityName'] = facilityName;
+    facilityObj['isFunctional'] = isFunctional;
+
+    ipcRenderer.send('Facility:updateFacility', facilityObj);
+    ipcRenderer.once('Facility:updateFacilityOK', (e, res) => {
+        if(res){
+            if(isFunctional){
+                $('#FacilityHeading'+facilityId).css('background-color', '#c9f0f2');
+            }
+            else{
+                $('#FacilityHeading'+facilityId).css('background-color', '#f2c9c9');
+            }
+
+            getRegionInfo(false);
+        }
+        else{
+            $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating facility</div>');
+        }
+    })
+}
+
+
+function setFacilityIdForDelete(facilityId, deleteOnly){
+    console.log(facilityId);
+    $('#btnDeleteFacility').attr('data-facility-id', facilityId);
+
+    if(deleteOnly){
+        $('#btnDeleteFacility').attr('data-delete-only', true);
+    }
+    else{
+        $('#btnDeleteFacility').attr('data-delete-only', false);
+    }
+}
+
+function deleteFacility_handler() {
+    $('#btnDeleteFacility').on('click', (e) => {
+        e.preventDefault();
+        let facilityId = $('#btnDeleteFacility').data('facilityId').replace('Facility', '');
+        let deleteOnly = $('#btnDeleteFacility').data('deleteOnly')
+
+        let args = {'facilityId' : facilityId, 'deleteOnly' : deleteOnly}
+        
+        ipcRenderer.send('Facility:deleteFacility', args);
+        ipcRenderer.once('Facility:deleteFacilityOK', (e, res) => {
+            if(res){
+                alert("Successfully deleted facility");
+                ipcRenderer.send("ReloadPageOnUpdate");
+            }
+            else{
+                $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting facility</div>')
+            }
+
+            $('#mdlDeleteFacility').modal('toggle');
+        })
+    })
 }
 
 function addUpdateComponent_handler(){
@@ -435,7 +560,7 @@ function deleteComponent_handler() {
         let componentId = $('#btnDeleteComponent').data('componentId').replace('Component', '');
         
         ipcRenderer.send('Component:deleteComponent', componentId);
-        ipcRenderer.on('Component:deleteComponentOK', (e, res) => {
+        ipcRenderer.once('Component:deleteComponentOK', (e, res) => {
             if(res){
                 alert("Successfully deleted component");
                 ipcRenderer.send("ReloadPageOnUpdate");
@@ -571,68 +696,6 @@ function setComponentList(res){
         $('#componentsList').append('<li>NO COMPONENTS AVAILABLE</li>')
     }
 }
-function showUpdateFacilityNameTextbox(imgId) {
-    facilityId = imgId.replace('imgUpdateFacility', '');
-
-    $('#'+imgId).hide();
-    $('#txtUpdateFacility'+facilityId).show();
-}
-
-function updateFacilityName(txtUpdateFacilityNameId){
-    let facilityId = txtUpdateFacilityNameId.replace('txtUpdateFacility', '');
-    let facilityName = $('#'+txtUpdateFacilityNameId).val();
-    let isFunctional = $('#'+txtUpdateFacilityNameId).data('functional');
-
-    facilityObj = {}
-    facilityObj['facilityId'] = facilityId;
-    facilityObj['regionId'] = parseInt(window.process.argv.slice(-1));
-    facilityObj['facilityName'] = facilityName;
-    facilityObj['isFunctional'] = isFunctional;
-
-    console.log(facilityObj);
-
-    ipcRenderer.send('Facility:updateFacility', facilityObj);
-    ipcRenderer.once('Facility:updateFacilityOK', (e, res) => {
-        if(res){
-            $('#btnFacility'+facilityId).text(facilityName);
-            
-            $('#imgUpdateFacility'+facilityId).show();
-            $('#txtUpdateFacility'+facilityId).hide();
-        }
-        else{
-            $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating facility</div>');
-        }
-    })
-}
-
-function updateFunctional(checkFunctionalId) {
-    let facilityId = checkFunctionalId.replace('chkFunctional', '');
-    let facilityName = $('#'+checkFunctionalId).data('facilityName');
-    let isFunctional = ($('#'+checkFunctionalId).is(':checked')) ? true : false;
-
-    facilityObj = {}
-    facilityObj['facilityId'] = facilityId;
-    facilityObj['regionId'] = parseInt(window.process.argv.slice(-1));
-    facilityObj['facilityName'] = facilityName;
-    facilityObj['isFunctional'] = isFunctional;
-
-    ipcRenderer.send('Facility:updateFacility', facilityObj);
-    ipcRenderer.once('Facility:updateFacilityOK', (e, res) => {
-        if(res){
-            if(isFunctional){
-                $('#FacilityHeading'+facilityId).css('background-color', '#c9f0f2');
-            }
-            else{
-                $('#FacilityHeading'+facilityId).css('background-color', '#f2c9c9');
-            }
-
-            getRegionInfo(false);
-        }
-        else{
-            $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating facility</div>');
-        }
-    })
-}
 
 function populateUpdateComponentForm(componentId){
     let splicedComponentId = componentId.replace('Component', '');
@@ -689,6 +752,7 @@ function populateUpdateComponentForm(componentId){
     //console.log($('#hdnComponentId').val());
 }
 
+
 function setComponentIdForDelete(componentId){
-        $('#btnDeleteComponent').attr('data-component-id', componentId);
+    $('#btnDeleteComponent').attr('data-component-id', componentId);
 }

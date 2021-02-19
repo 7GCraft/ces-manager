@@ -60,7 +60,7 @@ const addFacility = async (facility) => {
 
     let newIsFunctional = 0;
 
-    if (component.isFunctional) newIsFunctional = 1;
+    if (facility.isFunctional) newIsFunctional = 1;
 
     await knex
         .insert({
