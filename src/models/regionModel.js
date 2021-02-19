@@ -1,11 +1,29 @@
 const config = require('../services/config.json');
-const constants = config.constants;
-const Biome = require(config.paths.biomeModel);
 const Corruption = require(config.paths.corruptionModel);
 const Development = require(config.paths.developmentModel);
 
 module.exports = class Region {
-    constructor(regionId, regionName, state, biome, {development = null, population = null, corruption = null, desc = null} = { }) {
+    /**
+     * Constructor for region objects.
+     * @param {Number} regionId must be an integer.
+     * @param {String} regionName must be a string.
+     * @param {State} state must be a state object.
+     * @param {Biome} biome must be a biome object.
+     * @param {Object} params must be an object.
+     */
+    constructor(
+        regionId,
+        regionName,
+        state,
+        biome,
+        {
+            development = null,
+            population = null,
+            corruption = null,
+            desc = null,
+            taxRate = 0.1
+        } = { }
+    ) {
         this.regionId = regionId;
         this.regionName = regionName;
         this.state = state;
@@ -54,6 +72,8 @@ module.exports = class Region {
         } else {
             this.desc = desc;
         }
+
+        this.taxRate = taxRate;
     }
 
     /**
@@ -83,6 +103,7 @@ module.exports = class Region {
             }
         }
 
+        this.totalIncome += this.population * 100 * this.taxRate;
         this.totalIncome -= this.totalIncome * this.corruption.corruptionRate;
 
         this.totalFoodAvailable = this.totalFoodProduced + this.totalFoodConsumed;
