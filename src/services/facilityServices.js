@@ -198,7 +198,7 @@ exports.destroyFacilityById = destroyFacilityById;
 exports.assignFacilityComponents = assignFacilityComponents;
 
 // FOR DEBUGGING
- //getFacilityByRegionId(2).then(data => console.dir(data));
+getFacilityByRegionId(2).then(data => console.dir(data));
 // deleteFacilityById(3).then(data => console.dir(data));
 // destroyFacilityById(4).then(data => console.dir(data));
 // assignFacilityComponents(1, [3]);
