@@ -193,8 +193,15 @@ function facilityBridge() {
         let response = facility.getFacilityByRegionId(arg);
         response.then(result => {
             e.sender.send("Facility:getFacilitiesByRegionOK", result);
-        })
-    })
+        });
+    });
+
+    ipcMain.on('Facility:updateFacility', (e, args) => {
+        let response = facility.updateFacility(args);
+        response.then(result => {
+            e.sender.send("Facility:updateFacilityOK", result);
+        });
+    });
 }
 
 function componentBridge() {

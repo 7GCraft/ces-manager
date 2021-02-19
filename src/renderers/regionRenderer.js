@@ -15,6 +15,8 @@ $(function(){
     frmUpdateRegion_onSubmit();
     //delete region
     btnDeleteRegion_onClick();
+    //handler for facility update and add
+    addUpdateFacility_handler();
     //handles events for addUpdateComponent
     addUpdateComponent_handler();
     //handle delete component events
@@ -136,6 +138,8 @@ function getFacilitiesInfo() {
                         '<div class="row">'+
                         '<div class="column" id="Facility'+facility.facilityId+'">'+
                             foodOutput + moneyOutput + resource + noOutput +
+                            'Functional:   <input type="checkbox" id="chkFunctional'+facility.facilityId+'" data-facility-id="'+facility.facilityId
+                            +'" data-facility-name = "'+facility.facilityName+'" onclick=updateFunctional(this.id)>'+
                         '</div>'+
                         '<div class="column"><ul  id="FacilityComponents'+facility.facilityId+'"></ul></div>'+
                         '</div>'+
@@ -143,6 +147,16 @@ function getFacilitiesInfo() {
                 '</div>'+
                 '</div>'
             )
+
+            if(facility.isFunctional){
+                $('#FacilityHeading'+facility.facilityId).css('background-color', '#c9f0f2');
+                $('#chkFunctional'+facility.facilityId).prop('checked', true);
+            }
+            else{
+                $('#FacilityHeading'+facility.facilityId).css('background-color', '#f2c9c9');
+                $('#chkFunctional'+facility.facilityId).prop('checked', false);
+            }
+
             facilityIds.push(facility.facilityId);
             $('#selFacility').append($('<option>', {
                 value: facility.facilityId,
@@ -292,6 +306,10 @@ function btnDeleteRegion_onClick() {
             $('#mdlDeleteRegion').modal('toggle');
         });
     })
+}
+
+function addUpdateFacility_handler() {
+    
 }
 
 function addUpdateComponent_handler(){
@@ -542,6 +560,33 @@ function setComponentList(res){
     else{
         $('#componentsList').append('<li>NO COMPONENTS AVAILABLE</li>')
     }
+}
+
+function updateFunctional(checkFunctionalId) {
+    let facilityId = checkFunctionalId.replace('chkFunctional', '');
+    let facilityName = $('#'+checkFunctionalId).data('facilityName');
+    let isFunctional = ($('#'+checkFunctionalId).is(':checked')) ? true : false;
+
+    facilityObj = {}
+    facilityObj['facilityId'] = facilityId;
+    facilityObj['regionId'] = parseInt(window.process.argv.slice(-1));
+    facilityObj['name'] = facilityName;
+    facilityObj['isFunctional'] = isFunctional;
+
+    ipcRenderer.send('Facility:updateFacility', facilityObj);
+    ipcRenderer.once('Facility:updateFacilityOK', (e, res) => {
+        if(res){
+            if(isFunctional){
+                $('#FacilityHeading'+facilityId).css('background-color', '#c9f0f2');
+            }
+            else{
+                $('#FacilityHeading'+facilityId).css('background-color', '#f2c9c9');
+            }
+        }
+        else{
+            $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating facility</div>');
+        }
+    })
 }
 
 function populateUpdateComponentForm(componentId){
