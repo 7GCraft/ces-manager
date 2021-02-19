@@ -3,6 +3,7 @@ module.exports = class Resource {
         this.ResourceID = ResourceID;
         this.ResourceName = ResourceName;
         this.ResourceTierID = ResourceTierID;
+        this.tradePower = 0;
     }
 
     /**

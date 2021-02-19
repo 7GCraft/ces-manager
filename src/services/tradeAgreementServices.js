@@ -102,7 +102,7 @@ const getTradeAgreementAll = async (returnsList = true) => {
 
     for (let stateKey of Object.keys(stateDict)) {
         for (let key of Object.keys(stateDict[stateKey].tradeAgreements)) {
-            let trader = new Trader(stateDict[stateKey].state, stateDict[stateKey].tradeAgreements[key]);
+            let trader = new Trader(stateDict[stateKey].state, {resources: stateDict[stateKey].tradeAgreements[key]});
 
             tradeAgreements[key].traders.push(trader);
         }
@@ -130,7 +130,172 @@ const getTradeAgreementAll = async (returnsList = true) => {
     return tradeAgreements;
 }
 
+/**
+ * Creates a new trade agreement.
+ * @param {TradeAgreement} tradeAgreement must be a trade agreement object. Must have traders with resource components.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const addTradeAgreement = async (tradeAgreement) => {
+    let resStatus = true;
+
+    let tradeAgreementId = await knex
+        .insert({
+            desc: tradeAgreement.desc
+        })
+        .into(constants.TABLE_TRADE_AGREEMENT_HEADER)
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+    
+    tradeAgreementId = tradeAgreementId[0];
+
+    if (!resStatus) return resStatus;
+
+    const traders = tradeAgreement.traders;
+
+    let promises = [];
+
+    for (let trader of traders) {
+        for (let resourceComponent of trader.resourceComponents) {
+            let promise = knex
+                .insert({
+                    tradeAgreementId: tradeAgreementId,
+                    stateId: trader.state.stateID,
+                    resourceComponentId: resourceComponent.componentId
+                })
+                .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+                .catch(e => {
+                    console.error(e);
+                    resStatus = false;
+                });
+
+            promises.push(promise);
+        }
+    }
+
+    await Promise.all(promises);
+
+    return resStatus;
+}
+
+/**
+ * Updates the information of a trade agreement.
+ * @param {TradeAgreement} tradeAgreement must be a trade agreement object. Must have traders with resource components.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const updateTradeAgreement = async (tradeAgreement) => {
+    let resStatus = true;
+
+    await knex(constants.TABLE_TRADE_AGREEMENT_HEADER)
+        .where({tradeAgreementId: tradeAgreement.tradeAgreementId})
+        .update({
+            desc: tradeAgreement.desc
+        })
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+    
+    if (!resStatus) return resStatus;
+
+    const traders = tradeAgreement.traders;
+
+    let promises = [];
+
+    for (let trader of traders) {
+        await knex(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+            .where({tradeAgreementId: tradeAgreement.tradeAgreementId})
+            .del()
+            .catch(e => {
+                console.error(e);
+                resStatus = false;
+            });
+
+        if (!resStatus) break;
+
+        for (let resourceComponent of trader.resourceComponents) {
+            let promise = knex
+                .insert({
+                    tradeAgreementId: tradeAgreement.tradeAgreementId,
+                    stateId: trader.state.stateID,
+                    resourceComponentId: resourceComponent.componentId
+                })
+                .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+                .catch(e => {
+                    console.error(e);
+                    resStatus = false;
+                });
+
+            promises.push(promise);
+        }
+    }
+
+    await Promise.all(promises);
+
+    return resStatus;
+}
+
+/**
+ * Deletes a trade agreement.
+ * @param {Number} id must be an integer.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const deleteTradeAgreementById = async (id) => {
+    let resStatus = true;
+
+    await knex(constants.TABLE_TRADE_AGREEMENT_HEADER)
+        .where({tradeAgreementId: id})
+        .del()
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+    
+    await knex(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+        .where({tradeAgreementId: id})
+        .del()
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+
+    return resStatus;
+}
+
 exports.getTradeAgreementAll = getTradeAgreementAll;
+exports.addTradeAgreement = addTradeAgreement;
+exports.updateTradeAgreement = updateTradeAgreement;
+exports.deleteTradeAgreementById = deleteTradeAgreementById;
 
 // getTradeAgreementAll()
 // .then(data => console.dir(data[0].traders));
+// addTradeAgreement({
+//     desc: "Test Trade Agreement",
+//     traders: [
+//         {
+//             state: {
+//                 stateID: 1
+//             },
+//             resourceComponents: [
+//                 {
+//                     componentId: 1
+//                 },
+//                 {
+//                     componentId: 2
+//                 }
+//             ]
+//         },
+//         {
+//             state: {
+//                 stateID: 2
+//             },
+//             resourceComponents: [
+//                 {
+//                     componentId: 3
+//                 }
+//             ]
+//         }
+//     ]
+// }).then(data => console.log(data));
+// deleteTradeAgreementById(7);

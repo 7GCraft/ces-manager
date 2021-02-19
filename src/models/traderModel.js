@@ -3,12 +3,15 @@ module.exports = class Trader {
      * Constructor for trader objects.
      * @param {State} state must be a state object.
      * @param {Array} resources must be an array of resource objects.
+     * @param {Array} resourceComponents must be an array of component objects.
      */
-    constructor(state, resources) {
+    constructor(state, {resources = null, resourceComponents = null} = { }) {
         this.state = state;
         this.resources = resources;
+        this.components = resourceComponents;
 
-        this.tradePower = this.getTradePower();
+        if (this.resources) this.tradePower = this.getTradePower();
+        else this.tradePower = 0;
     }
 
     /**
