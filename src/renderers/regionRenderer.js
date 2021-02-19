@@ -4,7 +4,7 @@ const $ = require('jquery');
 
 $(function(){
     //Get all region info
-    getRegionInfo();
+    getRegionInfo(true);
     //get all facility related info
     getFacilitiesInfo();
     //Get all component related info
@@ -23,52 +23,56 @@ $(function(){
     deleteComponent_handler();
 });
 
-function getRegionInfo(){
-    ipcRenderer.send('Region:getStatesForAdd');
-    ipcRenderer.once('Region:getStatesForAddOK', (e, res) => {
-        
-        res.forEach(state => {
-            $('#selState').append($('<option>', {
-                value: state.stateID,
-                text: state.stateName
-            }));
-        });
-    });
+function getRegionInfo(initial){
 
-    ipcRenderer.send('Region:getBiomesForAdd');
-    ipcRenderer.once('Region:getBiomesForAddOK', (e, res) => {
-        //console.log(res);
-        
-        res.forEach(biome => {
-            $('#selBiome').append($('<option>', {
-                value: biome.biomeId,
-                text: biome.biomeName
-            }));
+    if(initial){
+        ipcRenderer.send('Region:getStatesForAdd');
+        ipcRenderer.once('Region:getStatesForAddOK', (e, res) => {
+            
+            res.forEach(state => {
+                $('#selState').append($('<option>', {
+                    value: state.stateID,
+                    text: state.stateName
+                }));
+            });
         });
-    });
-
-    ipcRenderer.send('Region:getDevelopmentForAdd');
-    ipcRenderer.once('Region:getDevelopmentForAddOK', (e, res) => {
-        res.forEach(dev => {
-            $('#selDevelopment').append($('<option>', {
-                value: dev.developmentId,
-                text: dev.developmentName
-            }));
+    
+        ipcRenderer.send('Region:getBiomesForAdd');
+        ipcRenderer.once('Region:getBiomesForAddOK', (e, res) => {
+            //console.log(res);
+            
+            res.forEach(biome => {
+                $('#selBiome').append($('<option>', {
+                    value: biome.biomeId,
+                    text: biome.biomeName
+                }));
+            });
         });
-        
-    });
-
-    ipcRenderer.send('Region:getCorruptionForAdd');
-    ipcRenderer.once('Region:getCorruptionForAddOK', (e, res) => {
-        res.forEach(corruption => {
-            $('#selCorruption').append($('<option>', {
-                value: corruption.corruptionId,
-                text: corruption.corruptionName
-            }));
+    
+        ipcRenderer.send('Region:getDevelopmentForAdd');
+        ipcRenderer.once('Region:getDevelopmentForAddOK', (e, res) => {
+            res.forEach(dev => {
+                $('#selDevelopment').append($('<option>', {
+                    value: dev.developmentId,
+                    text: dev.developmentName
+                }));
+            });
+            
         });
-        
-    });
-
+    
+        ipcRenderer.send('Region:getCorruptionForAdd');
+        ipcRenderer.once('Region:getCorruptionForAddOK', (e, res) => {
+            res.forEach(corruption => {
+                $('#selCorruption').append($('<option>', {
+                    value: corruption.corruptionId,
+                    text: corruption.corruptionName
+                }));
+            });
+            
+        });
+    
+    }
+   
     ipcRenderer.send('Region:getRegionInfo', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Region:getRegionInfoOK', (e, res) => {
         $('#lblRegionName').text(res.regionName);
@@ -91,11 +95,14 @@ function getRegionInfo(){
         $('#lblCorruptionName').text(res.corruption.corruptionName);
         $('#lblCorruptionRate').text(res.corruption.corruptionRate * 100 + '%');
 
+        $('#lblResourcesProduced').empty();
+
         if(res.productiveResources.length > 0){
             res.productiveResources.forEach(resource => {
                 $('#lblResourcesProduced').append(resource.ResourceName + ', ')
             });
-            $('#lblResourcesProduced').val().slice(0, -2);
+            var strResource = $('#lblResourcesProduced').text().slice(0, -2);
+            $('#lblResourcesProduced').text(strResource);
         }
         else{
             $('#lblResourcesProduced').text("NONE");
@@ -126,11 +133,14 @@ function getFacilitiesInfo() {
             $('#facilityList').append(
                 
                 '<div class="card">'+
-                    '<div class="card-header" id="FacilityHeading'+facility.facilityId+'">'+
+                    '<div class="card-header" id="FacilityHeading'+facility.facilityId+'" style="float: left;">'+
                         ' <h2 class="mb-0">'+
-                            '<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#FacilityCollapse'+facility.facilityId+'"" aria-expanded="false" aria-controls="FacilityCollapse'+facility.facilityId+'">'+
+                            '<button id="btnFacility'+facility.facilityId+'" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#FacilityCollapse'+facility.facilityId+'"" aria-expanded="false" aria-controls="FacilityCollapse'+facility.facilityId+'">'+
                             facility.facilityName
-                            +'</button>'+
+                            +'</button>&nbsp;'+
+                            '<input type="image" id="imgUpdateFacility'+facility.facilityId+'" src="../images/icons/edit.png" style="height: 15px; width:15px;" onclick=showUpdateFacilityNameTextbox(this.id)>'+
+                            '<input type="textbox" id="txtUpdateFacility'+facility.facilityId+'" data-facility-id="'+facility.facilityId
+                            +'" data-functional="'+facility.isFunctional+'" style="height: 25px; width:200px; font-size:16px;" onkeyup="if(event.keyCode === 13){updateFacilityName(this.id);}" >'+
                         '</h2>'+
                     '</div>'+
                     '<div id="FacilityCollapse'+facility.facilityId+'" class="collapse" aria-labelledby="FacilityHeading'+facility.facilityId+'" data-parent="#facilityList">'+
@@ -138,8 +148,7 @@ function getFacilitiesInfo() {
                         '<div class="row">'+
                         '<div class="column" id="Facility'+facility.facilityId+'">'+
                             foodOutput + moneyOutput + resource + noOutput +
-                            'Functional:   <input type="checkbox" id="chkFunctional'+facility.facilityId+'" data-facility-id="'+facility.facilityId
-                            +'" data-facility-name = "'+facility.facilityName+'" onclick=updateFunctional(this.id)>'+
+                            'Functional:   <input type="checkbox" id="chkFunctional'+facility.facilityId+'" data-facility-name = "'+facility.facilityName+'" onclick=updateFunctional(this.id)>'+
                         '</div>'+
                         '<div class="column"><ul  id="FacilityComponents'+facility.facilityId+'"></ul></div>'+
                         '</div>'+
@@ -148,6 +157,7 @@ function getFacilitiesInfo() {
                 '</div>'
             )
 
+            $('#txtUpdateFacility'+facility.facilityId).hide();
             if(facility.isFunctional){
                 $('#FacilityHeading'+facility.facilityId).css('background-color', '#c9f0f2');
                 $('#chkFunctional'+facility.facilityId).prop('checked', true);
@@ -561,6 +571,39 @@ function setComponentList(res){
         $('#componentsList').append('<li>NO COMPONENTS AVAILABLE</li>')
     }
 }
+function showUpdateFacilityNameTextbox(imgId) {
+    facilityId = imgId.replace('imgUpdateFacility', '');
+
+    $('#'+imgId).hide();
+    $('#txtUpdateFacility'+facilityId).show();
+}
+
+function updateFacilityName(txtUpdateFacilityNameId){
+    let facilityId = txtUpdateFacilityNameId.replace('txtUpdateFacility', '');
+    let facilityName = $('#'+txtUpdateFacilityNameId).val();
+    let isFunctional = $('#'+txtUpdateFacilityNameId).data('functional');
+
+    facilityObj = {}
+    facilityObj['facilityId'] = facilityId;
+    facilityObj['regionId'] = parseInt(window.process.argv.slice(-1));
+    facilityObj['facilityName'] = facilityName;
+    facilityObj['isFunctional'] = isFunctional;
+
+    console.log(facilityObj);
+
+    ipcRenderer.send('Facility:updateFacility', facilityObj);
+    ipcRenderer.once('Facility:updateFacilityOK', (e, res) => {
+        if(res){
+            $('#btnFacility'+facilityId).text(facilityName);
+            
+            $('#imgUpdateFacility'+facilityId).show();
+            $('#txtUpdateFacility'+facilityId).hide();
+        }
+        else{
+            $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating facility</div>');
+        }
+    })
+}
 
 function updateFunctional(checkFunctionalId) {
     let facilityId = checkFunctionalId.replace('chkFunctional', '');
@@ -570,7 +613,7 @@ function updateFunctional(checkFunctionalId) {
     facilityObj = {}
     facilityObj['facilityId'] = facilityId;
     facilityObj['regionId'] = parseInt(window.process.argv.slice(-1));
-    facilityObj['name'] = facilityName;
+    facilityObj['facilityName'] = facilityName;
     facilityObj['isFunctional'] = isFunctional;
 
     ipcRenderer.send('Facility:updateFacility', facilityObj);
@@ -582,6 +625,8 @@ function updateFunctional(checkFunctionalId) {
             else{
                 $('#FacilityHeading'+facilityId).css('background-color', '#f2c9c9');
             }
+
+            getRegionInfo(false);
         }
         else{
             $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating facility</div>');
