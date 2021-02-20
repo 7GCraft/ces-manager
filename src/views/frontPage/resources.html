@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
     <template>
         <style>
-            
+
         </style>
         <div class="template" id="resources-template" data-tab="resources">
             <div id="resourceMessage">
@@ -16,16 +18,19 @@
             <h1>Resource Tiers</h1>
 
             <div id="listsOfResourceTiers">
-                
+
             </div>
-            
+
             <button class="btn btn-primary" id="btnUpdateResources">Save Current Resources</button>
 
-            <button class="btn btn-success" id="btnAddResource" data-toggle="modal" data-target="#mdlAddResource">Add New Resource</button>
+            <button class="btn btn-success" id="btnAddResource" data-toggle="modal" data-target="#mdlAddResource">Add
+                New Resource</button>
 
-            <button class="btn btn-danger" id="btnDeleteResource" data-toggle="modal" data-target="#mdlDeleteResource">Delete Resource(s)</button>
+            <button class="btn btn-danger" id="btnDeleteResource" data-toggle="modal"
+                data-target="#mdlDeleteResource">Delete Resource(s)</button>
 
-            <div class="modal fade" id="mdlAddResource" tabindex="-1" role="dialog" aria-labelledby="mdlAddResourceLabel" aria-hidden="true">
+            <div class="modal fade" id="mdlAddResource" tabindex="-1" role="dialog"
+                aria-labelledby="mdlAddResourceLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -36,11 +41,20 @@
                         </div>
                         <form id="frmAddResource">
                             <div class="modal-body">
-                                <label for="selResourceTier">Resource Tier </label>
-                                <select name="selResourceTier" id="selResourceTier" class="form-select form-select-sm"></select> <br>
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selResourceTier">Select Biome</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selResourceTier"
+                                            id="selResourceTier"></select>
+                                    </div>
+                                </div>
 
-                                <label for="txtResourceName">Resource Name</label>
-                                <input type="text" id="txtResourceName">
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="txtResourceName">Region Name</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="txtResourceName" required>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <input type="submit" class="btn btn-primary"></input>
@@ -50,7 +64,8 @@
                 </div>
             </div>
 
-            <div class="modal fade" id="mdlDeleteResource" tabindex="-1" role="dialog" aria-labelledby="mdlDeleteResourceLabel" aria-hidden="true">
+            <div class="modal fade" id="mdlDeleteResource" tabindex="-1" role="dialog"
+                aria-labelledby="mdlDeleteResourceLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -62,7 +77,8 @@
                         <form id="frmDeleteResource">
                             <div class="modal-body">
                                 <label for="selResourceDelete">Choose Resources to Delete </label>
-                                <select name="selResourceDelete" id="selResourceDelete" multiple class="form-select form-select-sm"></select> <br>
+                                <select name="selResourceDelete" id="selResourceDelete" multiple
+                                    class="form-select form-select-sm"></select> <br>
 
                             </div>
                             <div class="modal-footer">
@@ -73,7 +89,7 @@
                 </div>
             </div>
         </div>
-            
+
         <script>
             var _el;
 
@@ -93,12 +109,13 @@
             function isBefore(el1, el2) {
                 if (el2.parentNode === el1.parentNode)
                     for (var cur = el1.previousSibling; cur && cur.nodeType !== 9; cur = cur.previousSibling)
-                    if (cur === el2)
-                        return true;
+                        if (cur === el2)
+                            return true;
                 return false;
             }
         </script>
-    <script src="renderers/frontPageRenderer.js"></script>
+        <script src="renderers/frontPageRenderer.js"></script>
     </template>
 </body>
+
 </html>
