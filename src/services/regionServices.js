@@ -21,13 +21,19 @@ const getRegionListAll = async () => {
             constants.TABLE_REGION + '.' + constants.COLUMN_NAME,
             constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state',
             constants.COLUMN_POPULATION,
-            constants.COLUMN_TAX_RATE
+            constants.COLUMN_TAX_RATE,
+            constants.COLUMN_RATE + ' AS corruptionRate'
         ])
         .from(constants.TABLE_REGION)
         .leftJoin(
             constants.TABLE_STATE,
             constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID,
             constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID
+        )
+        .leftJoin(
+            constants.TABLE_CORRUPTION,
+            constants.TABLE_REGION + '.' + constants.COLUMN_CORRUPTION_ID,
+            constants.TABLE_CORRUPTION + '.' + constants.COLUMN_CORRUPTION_ID
         )
         .catch(e => {
             console.error(e);
@@ -51,6 +57,7 @@ const getRegionListAll = async () => {
         }
 
         moneyOutput += rawRegion.population * 100 * rawRegion.taxRate;
+        moneyOutput -= moneyOutput * rawRegion.corruptionRate;
 
         let regionListItem = new RegionListItem (
             rawRegion.regionId,
@@ -78,7 +85,8 @@ const getRegionListByStateId = async (stateId) => {
             constants.TABLE_REGION + '.' + constants.COLUMN_NAME,
             constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state',
             constants.COLUMN_POPULATION,
-            constants.COLUMN_TAX_RATE
+            constants.COLUMN_TAX_RATE,
+            constants.COLUMN_RATE + ' AS corruptionRate'
         ])
         .from(constants.TABLE_REGION)
         .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, stateId)
@@ -86,6 +94,11 @@ const getRegionListByStateId = async (stateId) => {
             constants.TABLE_STATE,
             constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID,
             constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID
+        )
+        .leftJoin(
+            constants.TABLE_CORRUPTION,
+            constants.TABLE_REGION + '.' + constants.COLUMN_CORRUPTION_ID,
+            constants.TABLE_CORRUPTION + '.' + constants.COLUMN_CORRUPTION_ID
         )
         .catch(e => {
             console.error(e);
@@ -109,6 +122,7 @@ const getRegionListByStateId = async (stateId) => {
         }
 
         moneyOutput += rawRegion.population * 100 * rawRegion.taxRate;
+        moneyOutput -= moneyOutput * rawRegion.corruptionRate;
 
         let regionListItem = new RegionListItem (
             rawRegion.regionId,
