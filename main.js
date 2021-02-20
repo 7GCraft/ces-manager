@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const { title } = require('process');
 const pageRouter = path.join(__dirname, 'src', 'pages.js');
-const ipcs = require(path.join(__dirname, 'src', 'collections', 'ipcCollection.js'));
+const ipcs = require(path.join(__dirname, 'src', 'handlers', 'ipcEventHandler'));
 
 let win;
 
