@@ -408,8 +408,8 @@ exports.addTradeAgreement = addTradeAgreement;
 exports.updateTradeAgreement = updateTradeAgreement;
 exports.deleteTradeAgreementById = deleteTradeAgreementById;
 
-getTradeAgreementAll()
-.then(data => console.dir(data[0].traders));
+// getTradeAgreementAll()
+// .then(data => console.dir(data[0].traders));
 // addTradeAgreement({
 //     desc: "Test Trade Agreement",
 //     traders: [

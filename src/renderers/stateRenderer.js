@@ -58,6 +58,45 @@ function getStateInfo(){
        
     });
 
+    ipcRenderer.send('Trade:getTradeAgreementsByStateId', parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.once('Trade:getTradeAgreementsByStateIdOK', (e, res) => {
+          
+        res.forEach(agreement => {
+            let resourceProducedFirstState = () => {
+                let resourceStr1 = '';
+                agreement.traders[0].resources.forEach(resource => {
+                    resourceStr1 += resource.ResourceName + ', ';
+                })
+                resourceStr1 = resourceStr1.slice(0, -2);
+                return resourceStr1;
+            }
+
+            let resourceProducedSecondState = () => {
+                let resourceStr2 = '';
+                agreement.traders[1].resources.forEach(resource => {
+                    resourceStr2 += resource.ResourceName + ', ';
+                })
+                resourceStr2 = resourceStr2.slice(0, -2);
+                return resourceStr2;
+            }
+
+
+            $('#tradeAgreements')
+            .append(
+                '<tr>'+
+                    '<td>'+agreement.traders[0].state.stateName+'</td>'+
+                    '<td>'+resourceProducedFirstState()+'</td>'+
+                    '<td>'+agreement.traders[0].tradePower * 100 + '%</td>'+
+                    '<td>'+parseFloat(agreement.traders[0].tradeValue).toFixed(2)+'</td>'+
+                    '<td>'+agreement.traders[1].state.stateName+'</td>'+
+                    '<td>'+resourceProducedSecondState()+'</td>'+
+                    '<td>'+agreement.traders[1].tradePower * 100 + '%</td>'+
+                    '<td>'+parseFloat(agreement.traders[1].tradeValue).toFixed(2)+'</td>'+
+                +'</tr>'
+            );
+        })
+    })
+
     fs.readdir('src/images', (err, files) => {
         if(err){
             console.log(err)
