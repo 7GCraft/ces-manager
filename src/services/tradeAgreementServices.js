@@ -131,6 +131,145 @@ const getTradeAgreementAll = async (returnsList = true) => {
 }
 
 /**
+ * Gets all trade agreements that the state of the given ID is part of.
+ * @param {Number} stateId must be an integer.
+ * @param {Boolean} returnsList must be a boolean.
+ * @returns {Array} array of trade agreement objects if successful, null otherwise.
+ */
+const getTradeAgreementByStateId = async (stateId, returnsList = true) => {
+    let rawTradeAgreementIds = await knex(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+        .distinct(constants.COLUMN_TRADE_AGREEMENT_ID)
+        .where(constants.COLUMN_STATE_ID, stateId)
+        .catch(e => {
+            console.error(e);
+        });
+    
+    if (rawTradeAgreementIds.length === 0) return null;
+
+    let tradeAgreementIds = [];
+
+    for (let rawTradeAgreementId of rawTradeAgreementIds) {
+        tradeAgreementIds.push(rawTradeAgreementId.tradeAgreementId);
+    }
+
+    let rawTradeAgreementHeaders = await knex
+        .select('*')
+        .from(constants.TABLE_TRADE_AGREEMENT_HEADER)
+        .whereIn(constants.COLUMN_TRADE_AGREEMENT_ID, tradeAgreementIds)
+        .catch(e => {
+            console.error(e);
+        });
+    
+    let rawTradeAgreementDetails = await knex
+        .select('*')
+        .from(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+        .whereIn(constants.COLUMN_TRADE_AGREEMENT_ID, tradeAgreementIds)
+        .catch(e => {
+            console.error(e);
+        });
+
+    if (rawTradeAgreementHeaders.length === 0 || rawTradeAgreementDetails.length === 0) return null;
+
+    let stateDict = { };
+    let componentDict = { };
+
+    let stateIds = [];
+    let componentIds = [];
+
+    for (let rawTradeAgreementDetail of rawTradeAgreementDetails) {
+        let key = rawTradeAgreementDetail.tradeAgreementId;
+
+        if (stateDict[rawTradeAgreementDetail.stateId] === undefined) {
+            stateDict[rawTradeAgreementDetail.stateId] = { 
+                state: null,
+                tradeAgreements: {
+                    [rawTradeAgreementDetail.tradeAgreementId]: []
+                }
+             };
+            stateIds.push(rawTradeAgreementDetail.stateId);
+        } else if (stateDict[rawTradeAgreementDetail.stateId].tradeAgreements[key] === undefined) {
+            stateDict[rawTradeAgreementDetail.stateId].tradeAgreements[key] = [];
+        }
+
+        if (componentDict[rawTradeAgreementDetail.resourceComponentId] === undefined) {
+            componentDict[rawTradeAgreementDetail.resourceComponentId] = {
+                stateId: rawTradeAgreementDetail.stateId,
+                tradeAgreementId: rawTradeAgreementDetail.tradeAgreementId,
+                resource: null
+            };
+            componentIds.push(rawTradeAgreementDetail.resourceComponentId);
+        }
+    }
+
+    let states = await stateServices.getStateAllByIds(stateIds);
+
+    let components = await componentServices.getComponentFunctionalByIds(componentIds);
+
+    let resourceTiers = await resourceServices.getResourceTierAll();
+
+    if (states === null || components === null) return null;
+
+    for (let state of states) {
+        stateDict[state.stateID.toString()].state = state;
+    }
+
+    for (let component of components) {
+        for (let resourceTier of resourceTiers) {
+            if (resourceTier.ResourceTierID === component.value.ResourceTierID) {
+                component.value.setTradePower(resourceTier.ResourceTierTradePower);
+            }
+        }
+        componentDict[component.componentId].resource = component.value;
+    }
+
+    for (let key of Object.keys(componentDict)) {
+        let component = componentDict[key];
+        stateDict[component.stateId.toString()].tradeAgreements[component.tradeAgreementId].push(component.resource);
+    }
+
+    let tradeAgreements = { };
+
+    for (let rawTradeAgreementHeader of rawTradeAgreementHeaders) {
+        let tradeAgreement = new TradeAgreement(
+            rawTradeAgreementHeader.tradeAgreementId,
+            [],
+            rawTradeAgreementHeader.desc
+        );
+
+        tradeAgreements[rawTradeAgreementHeader.tradeAgreementId] = tradeAgreement;
+    }
+
+    for (let stateKey of Object.keys(stateDict)) {
+        for (let key of Object.keys(stateDict[stateKey].tradeAgreements)) {
+            let trader = new Trader(stateDict[stateKey].state, {resources: stateDict[stateKey].tradeAgreements[key]});
+
+            tradeAgreements[key].traders.push(trader);
+        }
+    }
+
+    let tradeAgreementList = [];
+
+    for (let key of Object.keys(tradeAgreements)) {
+        tradeAgreementList.push(tradeAgreements[key]);
+    }
+
+    for (let tradeAgreement of tradeAgreementList) {
+        let totalValue = 0;
+
+        for (let trader of tradeAgreement.traders) {
+            totalValue += trader.state.TotalIncome;
+        }
+
+        for (let trader of tradeAgreement.traders) {
+            trader.setTradeValue(totalValue - trader.state.TotalIncome);
+        }
+    }
+
+    if (returnsList) return tradeAgreementList;
+    return tradeAgreements;
+}
+
+/**
  * Creates a new trade agreement.
  * @param {TradeAgreement} tradeAgreement must be a trade agreement object. Must have traders with resource components.
  * @returns {Boolean} true if successful, false otherwise.
@@ -264,6 +403,7 @@ const deleteTradeAgreementById = async (id) => {
 }
 
 exports.getTradeAgreementAll = getTradeAgreementAll;
+exports.getTradeAgreementByStateId = getTradeAgreementByStateId;
 exports.addTradeAgreement = addTradeAgreement;
 exports.updateTradeAgreement = updateTradeAgreement;
 exports.deleteTradeAgreementById = deleteTradeAgreementById;
@@ -299,3 +439,4 @@ exports.deleteTradeAgreementById = deleteTradeAgreementById;
 //     ]
 // }).then(data => console.log(data));
 // deleteTradeAgreementById(7);
+// getTradeAgreementByStateId(8).then(data => console.log(data));
