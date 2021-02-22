@@ -82,6 +82,7 @@ function getRegionInfo(initial){
         $('#lblBiome').text(res.biome.biomeName)
         $('#lblOwner').text(res.state.stateName);
         $('#lblPopulation').text(res.population);
+        $('#lblTaxRate').text(res.taxRate * 100 + '%');
         $('#lblTotalRegionIncome').text(res.totalIncome);
         $('#lblRegionFoodProduced').text(res.totalFoodProduced);
         $('#lblRegionFoodConsumed').text(res.totalFoodConsumed);
@@ -116,6 +117,7 @@ function getRegionInfo(initial){
         $('#selBiome').val(res.biome.biomeId)
         $('#selDevelopment').val(res.development.developmentId)
         $('#nmbPopulation').val(res.population);
+        $('#nmbTaxRate').val(res.taxRate);
         $('#txtDescRegion').val(res.desc);
     });
     
@@ -293,6 +295,7 @@ function frmUpdateRegion_onSubmit() {
         regionObj['development'] = {'developmentId' :parseInt( $('#selDevelopment').val())};
         regionObj['population'] = parseInt($('#nmbPopulation').val());
         regionObj['desc'] = $('#txtDescRegion').val();
+        regionObj['taxRate'] = parseFloat($('#nmbTaxRate').val());
 
         //console.log(regionObj);
 

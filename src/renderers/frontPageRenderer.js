@@ -178,8 +178,9 @@ function getAllRegionsByStateId() {
           regionObj['development'] = {'developmentId' :parseInt( $('#selDevelopment').val())};
           regionObj['population'] = parseInt($('#nmbPopulation').val());
           regionObj['desc'] = $('#txtDescRegion').val();
+          regionObj['taxRate'] = parseFloat($('#nmbTaxRate').val());
 
-          console.log(regionObj);
+          //console.log(regionObj);
 
         ipcRenderer.send('Region:addRegion', regionObj);
         ipcRenderer.once('Region:addRegionOK', (e, res) => {

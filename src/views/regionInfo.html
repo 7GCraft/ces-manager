@@ -30,6 +30,7 @@
                 Biome                       : <span id="lblBiome"></span><br>
                 Belongs To                  : <span id="lblOwner"></span><br>
                 Population                  : <span id="lblPopulation"></span><br>
+                Tax Rate                    : <span id="lblTaxRate"></span> <br>
                 Total Region Income         : <span id="lblTotalRegionIncome"></span> <br>
                 Total Region Food Produced  : <span id="lblRegionFoodProduced"></span> <br>
                 Total Region Food Consumed  : <span id="lblRegionFoodConsumed"></span> <br>
@@ -115,7 +116,10 @@
                         <select name="selDevelopment" id="selDevelopment"></select><br/>
                         
                         <label for="nmbPopulation">Population</label>
-                        <input type="number" id="nmbPopulation" ><br/>
+                        <input type="number" id="nmbPopulation" min="0" max="100"><br/>
+
+                        <label for="nmbTaxRate">Tax Rate</label>
+                        <input type="number" id="nmbTaxRate" min="0" max="1" step="0.001"><br/>
 
                         <label for="txtDescRegion">Description</label>
                         <input type="text" id="txtDescRegion" ><br/>
