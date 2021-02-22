@@ -11,7 +11,7 @@ module.exports = class State {
      * Summarises the secondary stats of the state.
      * @param {Array} regions must be an array of region objects.
      */
-    summarise(regions) {
+    summarise(regions, tradeAgreements = null) {
         this.TotalIncome = 0;
         this.TotalFoodProduced = 0;
         this.TotalFoodConsumed = 0;
@@ -34,6 +34,16 @@ module.exports = class State {
             }
 
             this.AvgDevLevel = Math.round(totalDevLevel / regionNum);
+        }
+
+        if (tradeAgreements !== null) {
+            for (let tradeAgreement of tradeAgreements) {
+                for (let trader of tradeAgreement.traders) {
+                    if (trader.state.stateID === this.stateID) {
+                        this.TotalIncome += trader.tradeValue;
+                    }
+                }
+            }
         }
 
         this.TotalFoodAvailable = this.TotalFoodProduced - this.TotalFoodConsumed;

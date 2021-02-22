@@ -62,13 +62,13 @@ const getTradeAgreementAll = async (returnsList = true) => {
         }
     }
 
-    let states = await stateServices.getStateAllByIds(stateIds);
+    let states = await stateServices.getStateAllByIdsWithoutTrade(stateIds);
 
     let components = await componentServices.getComponentFunctionalByIds(componentIds);
 
     let resourceTiers = await resourceServices.getResourceTierAll();
 
-    if (states === null || components === null) return null;
+    if (states === null || components === null || resourceTiers === null) return null;
 
     for (let state of states) {
         stateDict[state.stateID.toString()].state = state;
@@ -201,7 +201,7 @@ const getTradeAgreementByStateId = async (stateId, returnsList = true) => {
         }
     }
 
-    let states = await stateServices.getStateAllByIds(stateIds);
+    let states = await stateServices.getStateAllByIdsWithoutTrade(stateIds);
 
     let components = await componentServices.getComponentFunctionalByIds(componentIds);
 
