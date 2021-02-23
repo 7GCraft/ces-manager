@@ -301,7 +301,7 @@ const addTradeAgreement = async (tradeAgreement) => {
                 let promise = knex
                     .insert({
                         tradeAgreementId: tradeAgreementId,
-                        stateId: trader.state.stateID,
+                        stateId: trader.state.stateId,
                         resourceComponentId: resourceComponent.componentId
                     })
                     .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)
@@ -360,7 +360,7 @@ const updateTradeAgreement = async (tradeAgreement) => {
                 let promise = knex
                     .insert({
                         tradeAgreementId: tradeAgreementId,
-                        stateId: trader.state.stateID,
+                        stateId: trader.state.stateId,
                         resourceComponentId: resourceComponent.componentId
                     })
                     .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)

@@ -362,8 +362,8 @@ function getAllTradeAgreements() {
         e.preventDefault();
 
         let tradeAgreementId = $('#selTradeAgreement').val();
-        let firstStateId =  $('#selFirstState').val();
-        let secondStateId =  $('#selSecondState').val();
+        let firstStateId =  parseInt($('#selFirstState').val());
+        let secondStateId =  parseInt($('#selSecondState').val());
         let firstResourceRawComponents = $('#selFirstResource').val();
         let secondResourceRawComponents = $('#selSecondResource').val();
         let description =  $('#txtAgreementDesc').val();
@@ -372,7 +372,7 @@ function getAllTradeAgreements() {
             let componentArray = []
             if(firstResourceRawComponents.length > 0){
                 firstResourceRawComponents.forEach(componentId => {
-                    let componentObj = {'componentId' : componentId};
+                    let componentObj = {'componentId' : parseInt(componentId)};
                     componentArray.push(componentObj);
                 })
             }
@@ -386,7 +386,7 @@ function getAllTradeAgreements() {
             let componentArray = []
             if(secondResourceRawComponents.length > 0){
                 secondResourceRawComponents.forEach(componentId => {
-                    let componentObj = {'componentId' : componentId};
+                    let componentObj = {'componentId' : parseInt(componentId)};
                     componentArray.push(componentObj);
                 })
             }
