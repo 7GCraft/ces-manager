@@ -129,7 +129,7 @@ function getFacilitiesInfo() {
     ipcRenderer.send('Facility:getFacilitiesByRegion',  parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
         dataAvailable = true;
-        $('#selFacility').append('<option selected value="">NONE</option>');
+        $('#selFacility').append('<option disabled selected value>NONE</option>');
         if(res != null){
             res.forEach(facility => {
                 let foodOutput = (facility.foodOutput == 0) ? '' : '<span class="valueFood">Food Output: ' + facility.foodOutput + '</span><br/>';
@@ -211,7 +211,7 @@ function getComponentsInfo() {
     ipcRenderer.send('Component:getComponentList', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Component:getComponentListOK', (e, res) => {
        setComponentList(res);
-       $('#selParent').append('<option selected value="">NONE</option>');
+       $('#selParent').append('<option disabled selected value>NONE</option>');
 
        if(res != null){
         res.forEach(component => {
@@ -238,7 +238,7 @@ function getComponentsInfo() {
 
     ipcRenderer.send('Resource:getAllResourceTiers');
     ipcRenderer.once('Resource:getAllResourceTiersOk', function(e, res){
-        $('#selResource').append('<option selected value="">NONE</option>');
+        $('#selResource').append('<option disabled selected value>NONE</option>');
         if(res != null){
             res.forEach(resourceTier => {
                 resourceTier.Resources.forEach(resource => {

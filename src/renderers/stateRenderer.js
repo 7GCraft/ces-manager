@@ -17,7 +17,7 @@ $(function(){
 
 function getStateInfo(){
     ipcRenderer.send("State:getStateInfo", parseInt(window.process.argv.slice(-1)));
-    ipcRenderer.on("State:getStateInfoOK", function(e, res){
+    ipcRenderer.once("State:getStateInfoOK", function(e, res){
         let count = 1;
         $('#lblStateName').text(res.stateName);
         $('#lblDescription').text(res.desc);
@@ -51,7 +51,7 @@ function getStateInfo(){
     });
 
     ipcRenderer.send("State:getRegionsForState", parseInt(window.process.argv.slice(-1)));
-    ipcRenderer.on("State:getRegionsForStateOK", (e, res) => {
+    ipcRenderer.once("State:getRegionsForStateOK", (e, res) => {
         res.forEach(region => {
             $('#listOfRegions').append('<li class="individualRegion" id="Region'+region.RegionID+'" onclick=openRegionPage(this.getAttribute("id"))><a href=#>'+region.RegionName+'</a><span class="totalIncome">'+region.RegionTotalIncome+'</span><span class="totalFood">'+region.RegionTotalFood+'</span></li>')
         });

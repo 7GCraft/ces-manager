@@ -27,6 +27,9 @@ function handleButtonandSubmitCalls() {
     //Add Region
     frmAddRegion_onSubmit();
 
+    //Add update Trade Agreements
+    addUpdateAgreement_handler()
+
     //Update Resources (resources.html)
     btnUpdateResources_onClick();
     //Add Resource
@@ -89,9 +92,21 @@ function getAllRegionsByStateId() {
 
     ipcRenderer.send('Region:getStatesForAdd');
     ipcRenderer.once('Region:getStatesForAddOK', (e, res) => {
+        $('#selFirstState').append('<option disabled selected value> -- Select first state -- </option>');
+        $('#selSecondState').append('<option disabled selected value> -- Select second state -- </option>');
         
         res.forEach(state => {
             $('#selState').append($('<option>', {
+                value: state.stateID,
+                text: state.stateName
+            }));
+
+            $('#selFirstState').append($('<option>', {
+                value: state.stateID,
+                text: state.stateName
+            }));
+
+            $('#selSecondState').append($('<option>', {
                 value: state.stateID,
                 text: state.stateName
             }));
@@ -136,7 +151,7 @@ function getAllRegionsByStateId() {
 function getAllTradeAgreements() {
     ipcRenderer.send('Trade:getAllTradeAgreements');
     ipcRenderer.once('Trade:getAllTradeAgreementsOK', (e, res) => {
-        
+        $('#selTradeAgreement').append('<option disabled selected value> -- Select a trade agreement -- </option>');
         res.forEach(agreement => {
             let resourceProducedFirstState = () => {
                 let resourceStr1 = '';
@@ -170,10 +185,18 @@ function getAllTradeAgreements() {
                     '<td>'+parseFloat(agreement.traders[1].tradeValue).toFixed(2)+'</td>'+
                 +'</tr>'
             );
+
+            $('#selTradeAgreement')
+            .append($('<option />')
+                .val(agreement.tradeAgreementId)
+                .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
+                .attr('data-first-state-id', agreement.traders[0].state.stateID).attr('data-second-state-id', agreement.traders[1].state.stateID)
+            );
         })
 
         
     });
+
 }
 
 /**
@@ -241,6 +264,89 @@ function getAllTradeAgreements() {
         });
       })
   }
+
+  
+
+  function addUpdateAgreement_handler() {
+    $('#btnAddAgreement').on('click', () => {
+        $('#selTradeAgreementField').hide();
+        $('#agreementFields').show();
+    })
+
+    $('#btnUpdateAgreement').on('click', () => {
+        $('#selTradeAgreementField').show();
+        $('#agreementFields').hide();
+    })
+
+    $('#selTradeAgreement').on('change', () => {
+        $('#agreementFields').show();
+
+        let firstStateId = $('#selTradeAgreement').find(':selected').data('firstStateId');
+        let secondStateId = $('#selTradeAgreement').find(':selected').data('secondStateId');
+
+        console.log(secondStateId)
+
+        $('#selFirstState').val(firstStateId);
+        $('#selSecondState').val(secondStateId);
+
+        $('#selFirstResource').empty();
+        $('#selSecondResource').empty();
+
+        let stateIds = [firstStateId, secondStateId];
+
+        ipcRenderer.send('Component:getMultipleUsedResourceComponentListByState',  stateIds);
+        ipcRenderer.once('Component:getMultipleUsedResourceComponentListByStateOK', (e, res) => {
+            if(res[0] != null){
+                res[0].forEach(resourceComponent => {
+                    $('#selFirstResource').append($('<option>', {
+                        value: resourceComponent.componentId,
+                        text: resourceComponent.value.ResourceName
+                    }));
+                })
+            }
+
+            if(res[1] != null){
+                res[1].forEach(resourceComponent => {
+                    $('#selSecondResource').append($('<option>', {
+                        value: resourceComponent.componentId,
+                        text: resourceComponent.value.ResourceName
+                    }));
+                })
+            }
+        })
+    })
+
+    $('#selFirstState').on('change', () => {
+        $('#selFirstResource').empty();
+        ipcRenderer.send('Component:getUsedResourceComponentListByState',  $('#selFirstState').val());
+        ipcRenderer.once('Component:getUsedResourceComponentListByStateOK', (e, res) => {
+
+            if(res != null){
+                res.forEach(resourceComponent => {
+                    $('#selFirstResource').append($('<option>', {
+                        value: resourceComponent.componentId,
+                        text: resourceComponent.value.ResourceName
+                    }));
+                })
+            }
+        })
+    })
+
+    $('#selSecondState').on('change', () => {
+        $('#selSecondResource').empty();
+        ipcRenderer.send('Component:getUsedResourceComponentListByState',  $('#selSecondState').val());
+        ipcRenderer.once('Component:getUsedResourceComponentListByStateOK', (e, res) => {
+            if(res != null){
+                res.forEach(resourceComponent => {
+                        $('#selSecondResource').append($('<option>', {
+                            value: resourceComponent.componentId,
+                            text: resourceComponent.value.ResourceName
+                        }));
+                })
+            }
+        })
+    })
+}
 
   function btnUpdateResources_onClick(){
     $('#btnUpdateResources').on('click', function(e){

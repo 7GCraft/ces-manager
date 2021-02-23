@@ -35,11 +35,54 @@
             </table>
 
             
-            <button class="btn btn-success" id="btnAddAgreement" data-toggle="modal" data-target="#mdlAddAgreement">Add New Trade Agreement</button>
+            <button class="btn btn-success" id="btnAddAgreement" data-toggle="modal" data-target="#mdlAddUpdateAgreement">Add New Trade Agreement</button>
 
-            <button class="btn btn-primary" id="btnUpdateAgreement" data-toggle="modal" data-target="#mdlUpdateAgreement">Update Existing Trade Agreement</button>
+            <button class="btn btn-primary" id="btnUpdateAgreement" data-toggle="modal" data-target="#mdlAddUpdateAgreement">Update Existing Trade Agreement</button>
 
             <button class="btn btn-danger" id="btnDeleteAgreement" data-toggle="modal" data-target="#mdlDeleteAgreement">Delete Trade Agreement(s)</button>
+        </div>
+
+        <div class="modal fade" id="mdlAddUpdateAgreement" tabindex="-1" role="dialog" aria-labelledby="mdlAddUpdateAgreementLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mdlAddUpdateAgreementLabel">Add or Update Trade Agreement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="frmAddAgreementt">
+                        <div class="modal-body">
+                            <div id="selTradeAgreementField">
+                                <label for="selTradeAgreement">Select Trade Agreement</label>
+                                <select name="selTradeAgreement" id="selTradeAgreement" required></select><br/>
+                            </div>
+
+                            <div class="row" id="agreementFields">
+                                <div class="column">
+                                    <label for="selFirstState">Select First State</label>
+                                    <select name="selState" id="selFirstState" required></select><br/>
+
+                                    <label for="selFirstResource">Select Resource(s)</label>
+                                    <select name="selFirstResource" id="selFirstResource" multiple class="form-select" required></select> <br>
+    
+    
+                                </div>
+                                <div class="column">
+                                    <label for="selSecondState">Select Second State</label>
+                                    <select name="selState" id="selSecondState" required></select><br/>
+    
+                                    <label for="selSecondResource">Select Resource(s)</label>
+                                    <select name="selSecondResource" id="selSecondResource" multiple class="form-select" required></select> <br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-primary"></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </template>
 </body>
