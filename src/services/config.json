@@ -33,6 +33,7 @@
         "COLUMN_TAX_RATE": "taxRate",
         "COLUMN_BIOME_ID": "biomeId",
         "COLUMN_COMPONENT_ID": "componentId",
+        "COLUMN_COMPONENT_TYPE_ID": "componentTypeId",
         "COLUMN_CORRUPTION_ID": "corruptionId",
         "COLUMN_DEVELOPMENT_ID": "developmentId",
         "COLUMN_FACILITY_ID": "facilityId",
