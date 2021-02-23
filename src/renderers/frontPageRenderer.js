@@ -370,19 +370,29 @@ function getAllTradeAgreements() {
 
         let firstResourceComponents = () => {
             let componentArray = []
-            firstResourceRawComponents.forEach(componentId => {
-                let componentObj = {'componentId' : componentId};
-                componentArray.push(componentObj);
-            })
+            if(firstResourceRawComponents.length > 0){
+                firstResourceRawComponents.forEach(componentId => {
+                    let componentObj = {'componentId' : componentId};
+                    componentArray.push(componentObj);
+                })
+            }
+            else{
+                componentArray = null
+            }
             return componentArray;
         }
 
         let secondResourceComponents = () => {
             let componentArray = []
-            secondResourceRawComponents.forEach(componentId => {
-                let componentObj = {'componentId' : componentId};
-                componentArray.push(componentObj);
-            })
+            if(secondResourceRawComponents.length > 0){
+                secondResourceRawComponents.forEach(componentId => {
+                    let componentObj = {'componentId' : componentId};
+                    componentArray.push(componentObj);
+                })
+            }
+            else{
+                componentArray = null
+            }
             return componentArray;
         }
         let tradeAgreementObj = {};
