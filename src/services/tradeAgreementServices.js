@@ -296,20 +296,22 @@ const addTradeAgreement = async (tradeAgreement) => {
     let promises = [];
 
     for (let trader of traders) {
-        for (let resourceComponent of trader.resourceComponents) {
-            let promise = knex
-                .insert({
-                    tradeAgreementId: tradeAgreementId,
-                    stateId: trader.state.stateID,
-                    resourceComponentId: resourceComponent.componentId
-                })
-                .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)
-                .catch(e => {
-                    console.error(e);
-                    resStatus = false;
-                });
-
-            promises.push(promise);
+        if (trader.resourceComponents !== null) {
+            for (let resourceComponent of trader.resourceComponents) {
+                let promise = knex
+                    .insert({
+                        tradeAgreementId: tradeAgreementId,
+                        stateId: trader.state.stateID,
+                        resourceComponentId: resourceComponent.componentId
+                    })
+                    .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+                    .catch(e => {
+                        console.error(e);
+                        resStatus = false;
+                    });
+    
+                promises.push(promise);
+            }
         }
     }
 
@@ -353,20 +355,22 @@ const updateTradeAgreement = async (tradeAgreement) => {
 
         if (!resStatus) break;
 
-        for (let resourceComponent of trader.resourceComponents) {
-            let promise = knex
-                .insert({
-                    tradeAgreementId: tradeAgreement.tradeAgreementId,
-                    stateId: trader.state.stateID,
-                    resourceComponentId: resourceComponent.componentId
-                })
-                .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)
-                .catch(e => {
-                    console.error(e);
-                    resStatus = false;
-                });
-
-            promises.push(promise);
+        if (trader.resourceComponents !== null) {
+            for (let resourceComponent of trader.resourceComponents) {
+                let promise = knex
+                    .insert({
+                        tradeAgreementId: tradeAgreementId,
+                        stateId: trader.state.stateID,
+                        resourceComponentId: resourceComponent.componentId
+                    })
+                    .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+                    .catch(e => {
+                        console.error(e);
+                        resStatus = false;
+                    });
+    
+                promises.push(promise);
+            }
         }
     }
 
