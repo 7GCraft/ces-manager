@@ -187,6 +187,76 @@ const getComponentFunctionalByRegionId = async (id) => {
 }
 
 /**
+ * Gets all functional resource components of a given state.
+ * @param {Number} id must be an integer.
+ * @returns {Array} array of component objects if successful, null otherwise. 
+ */
+const getComponentResourceFunctionalByStateId = async (id) => {
+    const rawComponents = await knex
+        .select(constants.TABLE_COMPONENT + '.' + '*')
+        .from(constants.TABLE_COMPONENT)
+        .innerJoin(
+            constants.TABLE_FACILITY,
+            constants.TABLE_COMPONENT + '.' + constants.COLUMN_FACILITY_ID,
+            constants.TABLE_FACILITY + '.' + constants.COLUMN_FACILITY_ID
+        )
+        .leftJoin(
+            constants.TABLE_REGION,
+            constants.TABLE_COMPONENT + '.' + constants.COLUMN_REGION_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID
+        )
+        .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, id)
+        .andWhere(constants.TABLE_FACILITY + '.' + constants.COLUMN_IS_FUNCTIONAL, 1)
+        .andWhere(constants.COLUMN_COMPONENT_TYPE_ID, 3)
+        .catch(e => {
+            console.error(e);
+        });
+
+    const componentTypes = await getComponentTypeAll();
+    
+    const resources = await resourceServices.getResourceAll();
+    
+    if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
+
+    let components = [];
+
+    for (let rawComponent of rawComponents) {
+        let componentValue = rawComponent.value;
+
+        if (rawComponent.componentTypeId === 3) {
+            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
+        }
+
+        let component = new Component(
+            rawComponent.componentId,
+            rawComponent.name,
+            componentTypes[rawComponent.componentTypeId - 1],
+            rawComponent.regionId,
+            rawComponent.facilityId,
+            componentValue,
+            rawComponent.activationTime,
+            rawComponent.isChild,
+            rawComponent.parentId
+        );
+
+        components.push(component);
+    }
+
+    for (let component of components) {
+        if (component.isChild) {
+            for (let parentComponent of components) {
+                if (component.parentId === parentComponent.componentId) {
+                    component.parent = parentComponent;
+                    break;
+                }
+            }
+        }
+    }
+
+    return components;
+}
+
+/**
  * Gets all functional components of the given IDs.
  * @param {Array} ids must be an array of integers.
  * @returns {Array} array of component objects if successful, null otherwise.
@@ -513,6 +583,7 @@ const sortChildComponents = async (components) => {
 exports.getComponentByRegionId = getComponentByRegionId;
 exports.getComponentByFacilityId = getComponentByFacilityId;
 exports.getComponentFunctionalByRegionId = getComponentFunctionalByRegionId;
+exports.getComponentResourceFunctionalByStateId = getComponentResourceFunctionalByStateId;
 exports.getComponentFunctionalByIds = getComponentFunctionalByIds;
 exports.getComponentUnusedByRegionId = getComponentUnusedByRegionId;
 exports.addComponent = addComponent;
@@ -532,3 +603,4 @@ exports.sortChildComponents = sortChildComponents;
 // deleteComponentById(5)
 //     .then(data => console.log(data));
 // getComponentFunctionalByRegionId(1).then(data => console.log(data));
+// getComponentResourceFunctionalByStateId(8).then(data => console.log(data));
