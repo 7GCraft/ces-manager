@@ -153,6 +153,7 @@ function getAllTradeAgreements() {
     ipcRenderer.once('Trade:getAllTradeAgreementsOK', (e, res) => {
         $('#selTradeAgreement').append('<option disabled selected value> -- Select a trade agreement -- </option>');
         res.forEach(agreement => {
+            console.log(agreement);
             let resourceProducedFirstState = () => {
                 let resourceStr1 = '';
                 agreement.traders[0].resources.forEach(resource => {
@@ -183,9 +184,10 @@ function getAllTradeAgreements() {
                     '<td>'+resourceProducedSecondState()+'</td>'+
                     '<td>'+agreement.traders[1].tradePower * 100 + '%</td>'+
                     '<td>'+parseFloat(agreement.traders[1].tradeValue).toFixed(2)+'</td>'+
+                    '<td>'+agreement.desc+'</td>'+
                 +'</tr>'
             );
-
+            
             $('#selTradeAgreement')
             .append($('<option />')
                 .val(agreement.tradeAgreementId)
@@ -269,11 +271,21 @@ function getAllTradeAgreements() {
 
   function addUpdateAgreement_handler() {
     $('#btnAddAgreement').on('click', () => {
+        $("#selTradeAgreement").val($("#selTradeAgreement option:first").val());
+        $("#selFirstState").val($("#selFirstState option:first").val());
+        $("#selSecondState").val($("#selSecondState option:first").val());
+        $('#txtAgreementDesc').val('');
+
         $('#selTradeAgreementField').hide();
         $('#agreementFields').show();
     })
 
     $('#btnUpdateAgreement').on('click', () => {
+        $("#selTradeAgreement").val($("#selTradeAgreement option:first").val());
+        $("#selFirstState").val($("#selFirstState option:first").val());
+        $("#selSecondState").val($("#selSecondState option:first").val());
+        $('#txtAgreementDesc').val('');
+
         $('#selTradeAgreementField').show();
         $('#agreementFields').hide();
     })
@@ -304,7 +316,6 @@ function getAllTradeAgreements() {
                     }));
                 })
             }
-
             if(res[1] != null){
                 res[1].forEach(resourceComponent => {
                     $('#selSecondResource').append($('<option>', {
@@ -345,6 +356,77 @@ function getAllTradeAgreements() {
                 })
             }
         })
+    })
+
+    $('#frmAddUpdateAgreement').on('submit', (e) => {
+        e.preventDefault();
+
+        let tradeAgreementId = $('#selTradeAgreement').val();
+        let firstStateId =  $('#selFirstState').val();
+        let secondStateId =  $('#selSecondState').val();
+        let firstResourceRawComponents = $('#selFirstResource').val();
+        let secondResourceRawComponents = $('#selSecondResource').val();
+        let description =  $('#txtAgreementDesc').val();
+
+        let firstResourceComponents = () => {
+            let componentArray = []
+            firstResourceRawComponents.forEach(componentId => {
+                let componentObj = {'componentId' : componentId};
+                componentArray.push(componentObj);
+            })
+            return componentArray;
+        }
+
+        let secondResourceComponents = () => {
+            let componentArray = []
+            secondResourceRawComponents.forEach(componentId => {
+                let componentObj = {'componentId' : componentId};
+                componentArray.push(componentObj);
+            })
+            return componentArray;
+        }
+        let tradeAgreementObj = {};
+
+        tradeAgreementObj['desc'] = description;
+        tradeAgreementObj['traders'] = [{'state' : {'stateId' : firstStateId}, 'resourceComponents' : firstResourceComponents()}, {'state' : {'stateId' : secondStateId}, 'resourceComponents' : secondResourceComponents()}]
+
+        if(tradeAgreementId == null){
+            //console.log(tradeAgreementObj);
+            ipcRenderer.send('Trade:addTradeAgreement', tradeAgreementObj);
+            ipcRenderer.once('Trade:addTradeAgreementOK', (e, res) => {
+                if(res){
+                    $('#tradeAgreementMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully added trade agreement</div>')
+                    $('#tradeAgreements').empty();
+                    $('#selTradeAgreements').empty();
+
+                    getAllTradeAgreements();
+                }
+                else{
+                    $('#tradeAgreementMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding trade agreement</div>')
+                }
+
+                $('#mdlAddUpdateAgreement').modal('toggle');
+            })
+        }
+        else{
+            tradeAgreementObj['tradeAgreementId'] = tradeAgreementId;
+            //console.log(tradeAgreementObj);
+            ipcRenderer.send('Trade:updateTradeAgreement', tradeAgreementObj);
+            ipcRenderer.once('Trade:updateTradeAgreementOK', (e, res) => {
+                if(res){
+                    $('#tradeAgreementMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully updated trade agreement</div>')
+                    $('#tradeAgreements').empty();
+                    $('#selTradeAgreements').empty();
+
+                    getAllTradeAgreements();
+                }
+                else{
+                    $('#tradeAgreementMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating trade agreement</div>')
+                }
+
+                $('#mdlAddUpdateAgreement').modal('toggle');
+            })
+        }
     })
 }
 

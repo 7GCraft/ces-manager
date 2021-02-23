@@ -73,7 +73,6 @@ const getUsedComponentListByRegion = (e, arg) => {
 const getUsedResourceComponentListByState = (e, arg) => {
     let response = component.getComponentResourceFunctionalByStateId(arg);
     response.then(result => {
-        console.log(result);
         e.sender.send("Component:getUsedResourceComponentListByStateOK", result);
     })
 }
@@ -87,12 +86,9 @@ const getMultipleUsedResourceComponentListByState = (e, args) => {
             return component.getComponentResourceFunctionalByStateId(stateId);
         }))
     }
-
     response().then(result => {
         e.sender.send('Component:getMultipleUsedResourceComponentListByStateOK', result);
     })
-    
-    
 }
 
 /**

@@ -7,27 +7,31 @@
 <body>
     <template>
         <div class="container template" id="tradeAgreementList-template" data-tab="tradeAgreementList">
+            <div id="tradeAgreementMessage">
+
+            </div>
             <h1>Trade Agreements List</h1>
             <br>
             <table class="table table-bordered table-striped">
                 <thead class="thead-dark" style="text-align: center;">
-                        <tr>
-                            <th rowspan="1" colspan="4" >
-                                First State
-                            </th>
-                            <th rowspan="1" colspan="4">
-                                Second State
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>State Name</th>
-                            <th>Resources Traded</th>
-                            <th>Trade Power</th>
-                            <th>Trade Value</th>
-                            <th>State Name</th>
-                            <th>Resources Traded</th>
-                            <th>Trade Power</th>
-                            <th>Trade Value</th>
+                    <tr>
+                        <th rowspan="1" colspan="4" >
+                            First State
+                        </th>
+                        <th rowspan="1" colspan="4">
+                            Second State
+                        </th>
+                        <th rowspan="2">Description</th>
+                    </tr>
+                    <tr>
+                        <th>State Name</th>
+                        <th>Resources Traded</th>
+                        <th>Trade Power</th>
+                        <th>Trade Value</th>
+                        <th>State Name</th>
+                        <th>Resources Traded</th>
+                        <th>Trade Power</th>
+                        <th>Trade Value</th>
                     </tr>
                 </thead>
                 <tbody id="tradeAgreements">
@@ -51,20 +55,20 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form id="frmAddAgreementt">
+                    <form id="frmAddUpdateAgreement">
                         <div class="modal-body">
                             <div id="selTradeAgreementField">
                                 <label for="selTradeAgreement">Select Trade Agreement</label>
-                                <select name="selTradeAgreement" id="selTradeAgreement" required></select><br/>
+                                <select name="selTradeAgreement" id="selTradeAgreement"></select><br/>
                             </div>
 
-                            <div class="row" id="agreementFields">
+                            <div class="row container-fluid" id="agreementFields">
                                 <div class="column">
                                     <label for="selFirstState">Select First State</label>
                                     <select name="selState" id="selFirstState" required></select><br/>
 
                                     <label for="selFirstResource">Select Resource(s)</label>
-                                    <select name="selFirstResource" id="selFirstResource" multiple class="form-select" required></select> <br>
+                                    <select name="selFirstResource" id="selFirstResource" multiple class="form-select"></select> <br>
     
     
                                 </div>
@@ -73,8 +77,11 @@
                                     <select name="selState" id="selSecondState" required></select><br/>
     
                                     <label for="selSecondResource">Select Resource(s)</label>
-                                    <select name="selSecondResource" id="selSecondResource" multiple class="form-select" required></select> <br>
+                                    <select name="selSecondResource" id="selSecondResource" multiple class="form-select"></select> <br>
                                 </div>
+
+                                    &nbsp;&nbsp;<label for="txtAgreementDesc">Description</label>&nbsp;
+                                    <input type="text" id="txtAgreementDesc" ><br/>
                             </div>
                         </div>
                         <div class="modal-footer">

@@ -92,6 +92,7 @@ function getStateInfo(){
                     '<td>'+resourceProducedSecondState()+'</td>'+
                     '<td>'+agreement.traders[1].tradePower * 100 + '%</td>'+
                     '<td>'+parseFloat(agreement.traders[1].tradeValue).toFixed(2)+'</td>'+
+                    '<td>'+agreement.desc+'</td>'+
                 +'</tr>'
             );
         })
