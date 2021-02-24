@@ -28,7 +28,7 @@ const getStateList = async () => {
 
         stateList.push(state);
     }
-
+    
     return stateList;
 }
 
