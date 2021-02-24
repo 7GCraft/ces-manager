@@ -208,18 +208,7 @@ function frmAddRegion_onSubmit() {
         regionObj['development'] = { 'developmentId': parseInt($('#selDevelopment').val()) };
         regionObj['population'] = parseInt($('#nmbPopulation').val());
         regionObj['desc'] = $('#txtDescRegion').val();
-
-        console.log(regionObj);
-          regionObj['regionName'] = $('#txtRegionName').val();
-          regionObj['state'] = {'stateId' : parseInt($('#selState').val())};
-          regionObj['corruption'] = {'corruptionId': parseInt($('#selCorruption').val())};
-          regionObj['biome'] = {'biomeId' : parseInt($('#selBiome').val())};
-          regionObj['development'] = {'developmentId' :parseInt( $('#selDevelopment').val())};
-          regionObj['population'] = parseInt($('#nmbPopulation').val());
-          regionObj['desc'] = $('#txtDescRegion').val();
-          regionObj['taxRate'] = parseFloat($('#nmbTaxRate').val());
-
-          //console.log(regionObj);
+        regionObj['taxRate'] = parseFloat($('#nmbTaxRate').val());
 
         ipcRenderer.send('Region:addRegion', regionObj);
         ipcRenderer.once('Region:addRegionOK', (e, res) => {
