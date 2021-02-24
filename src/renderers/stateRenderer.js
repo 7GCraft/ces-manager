@@ -64,19 +64,27 @@ function getStateInfo(){
         res.forEach(agreement => {
             let resourceProducedFirstState = () => {
                 let resourceStr1 = '';
-                agreement.traders[0].resources.forEach(resource => {
-                    resourceStr1 += resource.ResourceName + ', ';
-                })
-                resourceStr1 = resourceStr1.slice(0, -2);
+                if (agreement.traders[0].resources !== null) {
+                    agreement.traders[0].resources.forEach(resource => {
+                        resourceStr1 += resource.ResourceName + ', ';
+                    })
+                    resourceStr1 = resourceStr1.slice(0, -2);
+                } else {
+                    resourceStr1 = 'No traded resources.';
+                }
                 return resourceStr1;
             }
 
             let resourceProducedSecondState = () => {
                 let resourceStr2 = '';
-                agreement.traders[1].resources.forEach(resource => {
-                    resourceStr2 += resource.ResourceName + ', ';
-                })
-                resourceStr2 = resourceStr2.slice(0, -2);
+                if (agreement.traders[1].resources !== null) {
+                    agreement.traders[1].resources.forEach(resource => {
+                        resourceStr2 += resource.ResourceName + ', ';
+                    })
+                    resourceStr2 = resourceStr2.slice(0, -2);
+                } else {
+                    resourceStr2 = 'No traded resources.';
+                }
                 return resourceStr2;
             }
 
