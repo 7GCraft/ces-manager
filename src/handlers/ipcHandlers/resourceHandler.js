@@ -1,4 +1,4 @@
-const { ipcMain, BrowserWindow } = require('electron');
+const { ipcMain } = require('electron');
 const resource = require('../../services/resourceServices');
 
 const handle = () => {

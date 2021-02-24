@@ -1,10 +1,14 @@
+const { ipcMain } = require('electron');
 const general = require('../../services/generalServices');
 
-const advanceSeason = (e) =>{
-    let response = general.advanceSeason();
-    response.then(result =>{
-        e.sender.send("Advancing Season",result)
-    })
-
+const handle = () => {
+    ipcMain.on('General:Advancing Season', advanceSeason);
 }
-ipcMain.on('General:Advancing Season',advanceSeason);
+module.exports = handle;
+
+const advanceSeason = (e) => {
+    let response = general.advanceSeason();
+    response.then(result => {
+        e.sender.send("Advancing Season", result)
+    })
+}
