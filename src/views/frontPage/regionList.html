@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
 </head>
+
 <body>
     <template>
         <div class="container template" id="regionList-template" data-tab="regionList">
@@ -15,34 +17,70 @@
             </div>
 
             <div id="listOfRegionsByState">
-                
+
             </div>
 
-            <button class="btn btn-success" id="btnAddRegion" data-toggle="modal" data-target="#mdlAddRegion">Add Region</button>
+            <button class="btn btn-success" id="btnAddRegion" data-toggle="modal" data-target="#mdlAddRegion">Add
+                Region</button>
 
-            <div class="modal fade" id="mdlAddRegion" tabindex="-1" role="dialog" aria-labelledby="mdlAddRegionLabel" aria-hidden="true">
+            <div class="modal fade" id="mdlAddRegion" tabindex="-1" role="dialog" aria-labelledby="mdlAddRegionLabel"
+                aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="mdlAddRegionLabel">Add State</h5>
+                            <h5 class="modal-title" id="mdlAddRegionLabel">Add Region</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form id="frmAddRegion">
+                        <form id="frmAddRegion" class="needs-validation" novalidate>
                             <div class="modal-body">
-                                <label for="txtRegionName">Region Name</label>
-                                <input type="text" id="txtRegionName" required><br/>
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="txtRegionName">Region Name</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="txtRegionName">
+                                        <span class="invalid-feedback">Region name cannot be empty</span>
+                                    </div>
+                                </div>
 
-                                <label for="selState">Select State</label>
-                                <select name="selState" id="selState" required></select><br/>
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selState">Select Name</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selState" id="selState"></select>
+                                    </div>
+                                </div>
 
-                                <label for="selCorruption">Select Corruption Level</label>
-                                <select name="selCorruption" id="selCorruption"></select><br/>
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selCorruption">Select Corruption
+                                        Level</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selCorruption" id="selCorruption"></select>
+                                    </div>
+                                </div>
 
-                                <label for="selBiome">Select Biome</label>
-                                <select name="selBiome" id="selBiome" required></select><br/>
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selBiome">Select Biome</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selBiome" id="selBiome"></select>
+                                    </div>
+                                </div>
 
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selDevelopment">Select Biome</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selDevelopment" id="selDevelopment"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="nmbPopulation">Population</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" type="number" id="nmbPopulation" required>
+                                        <span class="invalid-feedback" id="nmbPopulationMessage">
+                                            Population cannot be empty
+                                        </span>
+                                    </div>
+                                </div>
                                 <label for="selDevelopment">Select Development Level</label>
                                 <select name="selDevelopment" id="selDevelopment"></select><br/>
                                 
@@ -52,8 +90,11 @@
                                 <label for="nmbTaxRate">Tax Rate</label>
                                 <input type="number" id="nmbTaxRate" min="0" max="1" step=".001"><br/>
 
-                                <label for="txtDescRegion">Description</label>
-                                <input type="text" id="txtDescRegion" ><br/>
+                                <div class="form-group">
+                                    <label for="txtDescRegion">Description</label>
+                                    <textarea class="form-control" name="txtDescRegion" id="txtDescRegion" cols="30"
+                                        rows="3"></textarea>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <input type="submit" class="btn btn-primary"></input>
@@ -66,4 +107,5 @@
         </div>
     </template>
 </body>
+
 </html>
