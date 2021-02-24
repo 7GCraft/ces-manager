@@ -2,6 +2,7 @@ const config = require('./config.json');
 
 const stateServices = require(config.paths.stateServices);
 const regionServices = require(config.paths.regionServices);
+const tradeAgreementServices = require(config.paths.tradeAgreementServices);
 
 /**
  * Advances the economy by one season.
@@ -17,6 +18,16 @@ const advanceSeason = async () => {
 
     for (let state of states) {
         let seasonalIncome = state.TotalIncome;
+
+        let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
+
+        for (let tradeAgreement of tradeAgreements) {
+            for (let trader of tradeAgreement.traders) {
+                if (trader.state.stateID === state.stateID) {
+                    seasonalIncome += trader.tradeValue;
+                }
+            }
+        }
 
         seasonalIncome -= state.expenses;
 

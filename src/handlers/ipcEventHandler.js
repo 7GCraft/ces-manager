@@ -3,6 +3,7 @@ const stateHandler = require('./ipcHandlers/stateHandler');
 const regionHandler = require('./ipcHandlers/regionHandler');
 const facilityHandler = require('./ipcHandlers/facilityHandler');
 const componentHandler = require('./ipcHandlers/componentHandler');
+const tradeAgreementHandler = require('./ipcHandlers/tradeAgreementHandler');
 const resourceHandler = require('./ipcHandlers/resourceHandler');
 
 const initializeIpcMains = () => {
@@ -10,6 +11,7 @@ const initializeIpcMains = () => {
     regionHandler();
     facilityHandler();
     componentHandler();
+    tradeAgreementHandler();
     resourceHandler();
     miscellaneous();
 };
