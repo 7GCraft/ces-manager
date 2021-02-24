@@ -436,24 +436,24 @@ const updateTradeAgreement = async (tradeAgreement) => {
 
     const traders = tradeAgreement.traders;
 
+    await knex(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+        .where({tradeAgreementId: tradeAgreement.tradeAgreementId})
+        .del()
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+
     let promises = [];
 
+    if (!resStatus) return resStatus;
+
     for (let trader of traders) {
-        await knex(constants.TABLE_TRADE_AGREEMENT_DETAIL)
-            .where({tradeAgreementId: tradeAgreement.tradeAgreementId})
-            .del()
-            .catch(e => {
-                console.error(e);
-                resStatus = false;
-            });
-
-        if (!resStatus) break;
-
         if (trader.resourceComponents !== null) {
             for (let resourceComponent of trader.resourceComponents) {
-                let promise = knex
+                let promise = await knex
                     .insert({
-                        tradeAgreementId: tradeAgreementId,
+                        tradeAgreementId: tradeAgreement.tradeAgreementId,
                         stateId: trader.state.stateId,
                         resourceComponentId: resourceComponent.componentId
                     })
@@ -468,7 +468,7 @@ const updateTradeAgreement = async (tradeAgreement) => {
         }  else {
             let promise = knex
                 .insert({
-                    tradeAgreementId: tradeAgreementId,
+                    tradeAgreementId: tradeAgreement.tradeAgreementId,
                     stateId: trader.state.stateId,
                     resourceComponentId: null
                 })
