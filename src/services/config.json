@@ -31,6 +31,7 @@
         "COLUMN_IS_FUNCTIONAL": "isFunctional",
         "COLUMN_EXPENSES": "expenses",
         "COLUMN_TAX_RATE": "taxRate",
+        "COLUMN_ACTIVATION_TIME": "activationTime",
         "COLUMN_BIOME_ID": "biomeId",
         "COLUMN_COMPONENT_ID": "componentId",
         "COLUMN_COMPONENT_TYPE_ID": "componentTypeId",

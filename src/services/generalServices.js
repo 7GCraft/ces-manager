@@ -1,4 +1,6 @@
 const config = require('./config.json');
+const constants = config.constants;
+const knex = require('knex')(config.knexConfig);
 
 const stateServices = require(config.paths.stateServices);
 const regionServices = require(config.paths.regionServices);
@@ -41,7 +43,27 @@ const advanceSeason = async () => {
         }
     }
 
+    resStatus = await reduceActivationTimeAll();
+
     return resStatus;
 };
+
+/**
+ * Reduces the activation time of all components by 1 if it's not 0.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const reduceActivationTimeAll = async () => {
+    let resStatus = true;
+
+    await knex(constants.TABLE_COMPONENT)
+        .where(constants.COLUMN_ACTIVATION_TIME, '>', 0)
+        .decrement(constants.COLUMN_ACTIVATION_TIME, 1)
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+
+    return resStatus;
+}
 
 exports.advanceSeason = advanceSeason;
