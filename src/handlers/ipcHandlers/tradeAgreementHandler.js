@@ -6,6 +6,7 @@ const handle = () => {
     ipcMain.on('Trade:getTradeAgreementsByStateId', getTradeAgreementsByStateId);
     ipcMain.on('Trade:addTradeAgreement', addTradeAgreement);
     ipcMain.on('Trade:updateTradeAgreement', updateTradeAgreement);
+    ipcMain.on('Trade:deleteTradeAgreement', deleteTradeAgreement);
 };
 module.exports = handle;
 
@@ -55,4 +56,15 @@ const updateTradeAgreement = (e, args) => {
     }).catch((err) => {
         console.log(err);
     });
+}
+
+/**
+ * Deletes an existing trade agreement.
+ * @param {*} e 
+ * @param {Number} arg must be an integer.
+ */
+const deleteTradeAgreement = (e, arg) => {
+    let response = trade.deleteTradeAgreementById(arg);
+    response.then(result => e.sender.send('Trade:deleteTradeAgreementOK', result))
+        .catch(err => console.error(err));
 }

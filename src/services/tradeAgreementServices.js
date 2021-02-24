@@ -70,11 +70,14 @@ const getTradeAgreementAll = async (returnsList = true) => {
                 // add it to the component dictionary
                 componentDict[rawTradeAgreementDetail.resourceComponentId] = {
                     stateId: rawTradeAgreementDetail.stateId,
-                    tradeAgreementId: rawTradeAgreementDetail.tradeAgreementId,
+                    tradeAgreementIds: [],
                     resource: null
                 };
+                componentDict[rawTradeAgreementDetail.resourceComponentId].tradeAgreementIds.push(rawTradeAgreementDetail.tradeAgreementId);
                 // add the resource component ID to the component IDs list
                 componentIds.push(rawTradeAgreementDetail.resourceComponentId);
+            } else if (componentDict[rawTradeAgreementDetail.resourceComponentId].stateId === rawTradeAgreementDetail.stateId) {
+                componentDict[rawTradeAgreementDetail.resourceComponentId].tradeAgreementIds.push(rawTradeAgreementDetail.tradeAgreementId);
             }
         } else {
             let newNullComponent = {
@@ -116,7 +119,9 @@ const getTradeAgreementAll = async (returnsList = true) => {
 
     for (let key of Object.keys(componentDict)) {
         let component = componentDict[key];
-        stateDict[component.stateId.toString()].tradeAgreements[component.tradeAgreementId].push(component.resource);
+        for (let tradeAgreementId of component.tradeAgreementIds) {
+            stateDict[component.stateId.toString()].tradeAgreements[tradeAgreementId].push(component.resource);
+        }
     }
 
     for (let nullComponent of nullComponents) {
@@ -244,11 +249,14 @@ const getTradeAgreementByStateId = async (stateId, returnsList = true) => {
                     // add it to the component dictionary
                     componentDict[rawTradeAgreementDetail.resourceComponentId] = {
                         stateId: rawTradeAgreementDetail.stateId,
-                        tradeAgreementId: rawTradeAgreementDetail.tradeAgreementId,
+                        tradeAgreementIds: [],
                         resource: null
                     };
+                    componentDict[rawTradeAgreementDetail.resourceComponentId].tradeAgreementIds.push(rawTradeAgreementDetail.tradeAgreementId);
                     // add the resource component ID to the component IDs list
                     componentIds.push(rawTradeAgreementDetail.resourceComponentId);
+                } else if (componentDict[rawTradeAgreementDetail.resourceComponentId].stateId === rawTradeAgreementDetail.stateId) {
+                    componentDict[rawTradeAgreementDetail.resourceComponentId].tradeAgreementIds.push(rawTradeAgreementDetail.tradeAgreementId);
                 }
             } else {
                 let newNullComponent = {
@@ -290,8 +298,10 @@ const getTradeAgreementByStateId = async (stateId, returnsList = true) => {
     
         for (let key of Object.keys(componentDict)) {
             let component = componentDict[key];
-            stateDict[component.stateId.toString()].tradeAgreements[component.tradeAgreementId].push(component.resource);
-        }
+            for (let tradeAgreementId of component.tradeAgreementIds) {
+                stateDict[component.stateId.toString()].tradeAgreements[tradeAgreementId].push(component.resource);
+            }
+        }    
     
         for (let nullComponent of nullComponents) {
             stateDict[nullComponent.stateId.toString()].tradeAgreements[nullComponent.tradeAgreementId] = null;
@@ -382,6 +392,20 @@ const addTradeAgreement = async (tradeAgreement) => {
     
                 promises.push(promise);
             }
+        } else {
+            let promise = knex
+                .insert({
+                    tradeAgreementId: tradeAgreementId,
+                    stateId: trader.state.stateId,
+                    resourceComponentId: null
+                })
+                .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+                .catch(e => {
+                    console.error(e);
+                    resStatus = false;
+                });
+
+            promises.push(promise);
         }
     }
 
@@ -441,6 +465,20 @@ const updateTradeAgreement = async (tradeAgreement) => {
     
                 promises.push(promise);
             }
+        }  else {
+            let promise = knex
+                .insert({
+                    tradeAgreementId: tradeAgreementId,
+                    stateId: trader.state.stateId,
+                    resourceComponentId: null
+                })
+                .into(constants.TABLE_TRADE_AGREEMENT_DETAIL)
+                .catch(e => {
+                    console.error(e);
+                    resStatus = false;
+                });
+                
+            promises.push(promise);
         }
     }
 

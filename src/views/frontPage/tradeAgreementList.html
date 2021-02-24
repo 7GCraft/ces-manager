@@ -91,6 +91,29 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="mdlDeleteAgreement" tabindex="-1" role="dialog" aria-labelledby="mdlDeleteAgreementLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mdlDeleteAgreementLabel">Delete Trade Agreement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="frmDeleteAgreement">
+                        <div class="modal-body">
+                            <label for="selAgreementDelete">Choose Agreements to Delete </label>
+                            <select name="selAgreementDelete" id="selAgreementDelete" multiple class="form-select form-select-sm"></select> <br>
+
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-primary"></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </template>
 </body>
 </html>

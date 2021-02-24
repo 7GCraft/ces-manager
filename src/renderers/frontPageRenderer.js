@@ -30,6 +30,9 @@ function handleButtonandSubmitCalls() {
     //Add update Trade Agreements
     addUpdateAgreement_handler()
 
+    // delete trade agreement
+    frmDeleteAgreement_onSubmit()
+
     //Update Resources (resources.html)
     btnUpdateResources_onClick();
     //Add Resource
@@ -151,24 +154,37 @@ function getAllRegionsByStateId() {
 function getAllTradeAgreements() {
     ipcRenderer.send('Trade:getAllTradeAgreements');
     ipcRenderer.once('Trade:getAllTradeAgreementsOK', (e, res) => {
+        // emptying previous contents
+        $('#tradeAgreements').empty();
+        $('#selTradeAgreement').empty();
+        $('#selAgreementDelete').empty();
+
         $('#selTradeAgreement').append('<option disabled selected value> -- Select a trade agreement -- </option>');
         res.forEach(agreement => {
             console.log(agreement);
             let resourceProducedFirstState = () => {
                 let resourceStr1 = '';
-                agreement.traders[0].resources.forEach(resource => {
-                    resourceStr1 += resource.ResourceName + ', ';
-                })
-                resourceStr1 = resourceStr1.slice(0, -2);
+                if (agreement.traders[0].resources !== null) {
+                    agreement.traders[0].resources.forEach(resource => {
+                        resourceStr1 += resource.ResourceName + ', ';
+                    })
+                    resourceStr1 = resourceStr1.slice(0, -2);
+                } else {
+                    resourceStr1 = 'No traded resources.';
+                }
                 return resourceStr1;
             }
 
             let resourceProducedSecondState = () => {
                 let resourceStr2 = '';
-                agreement.traders[1].resources.forEach(resource => {
-                    resourceStr2 += resource.ResourceName + ', ';
-                })
-                resourceStr2 = resourceStr2.slice(0, -2);
+                if (agreement.traders[1].resources !== null) {
+                    agreement.traders[1].resources.forEach(resource => {
+                        resourceStr2 += resource.ResourceName + ', ';
+                    })
+                    resourceStr2 = resourceStr2.slice(0, -2);
+                } else {
+                    resourceStr2 = 'No traded resources.';
+                }
                 return resourceStr2;
             }
 
@@ -193,6 +209,13 @@ function getAllTradeAgreements() {
                 .val(agreement.tradeAgreementId)
                 .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
                 .attr('data-first-state-id', agreement.traders[0].state.stateID).attr('data-second-state-id', agreement.traders[1].state.stateID)
+            );
+
+            // appends all existing trade agreements to the trade agreements to delete select
+            $('#selAgreementDelete')
+            .append($('<option />')
+                .val(agreement.tradeAgreementId)
+                .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
             );
         })
 
@@ -425,8 +448,6 @@ function getAllTradeAgreements() {
             ipcRenderer.once('Trade:updateTradeAgreementOK', (e, res) => {
                 if(res){
                     $('#tradeAgreementMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully updated trade agreement</div>')
-                    $('#tradeAgreements').empty();
-                    $('#selTradeAgreements').empty();
 
                     getAllTradeAgreements();
                 }
@@ -438,6 +459,30 @@ function getAllTradeAgreements() {
             })
         }
     })
+}
+
+/**
+ * Handles deleting a trade agreement.
+ */
+function frmDeleteAgreement_onSubmit() {
+    $('#frmDeleteAgreement').on('submit', (e) => {
+        e.preventDefault();
+
+        let selectedTradeAgreement = $('#selAgreementDelete').val();
+        ipcRenderer.send("Trade:deleteTradeAgreement", selectedTradeAgreement);
+        ipcRenderer.once("Trade:deleteTradeAgreementOK", (e, res) => {
+            if(res){
+                $('#tradeAgreementMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully deleted trade agreement</div>')
+
+                getAllTradeAgreements();
+            }
+            else{
+                $('#tradeAgreementMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting trade agreement</div>')
+            }
+
+            $('#mdlDeleteAgreement').modal('toggle');
+        });
+    });
 }
 
   function btnUpdateResources_onClick(){
