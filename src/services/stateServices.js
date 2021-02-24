@@ -12,6 +12,7 @@ const State = require(config.paths.stateModel);
  * @returns {Array} Array of state list item objects if successful, null otherwise.
  */
 const getStateList = async () => {
+    console.log("GET STATE LIST CALLED!");
     let rawStateList = await knex
         .select([constants.COLUMN_STATE_ID, constants.COLUMN_NAME])
         .from(constants.TABLE_STATE)
@@ -29,6 +30,7 @@ const getStateList = async () => {
         stateList.push(state);
     }
 
+    console.log("Returning state list...");
     return stateList;
 }
 
@@ -37,6 +39,7 @@ const getStateList = async () => {
  * @returns {Array} array of state objects if successful, null otherwise.
  */
 const getStateAll = async () => {
+    console.log("GET STATE ALL CALLED!");
     let rawStates = await knex
         .select('*')
         .from(constants.TABLE_STATE)
@@ -66,6 +69,7 @@ const getStateAll = async () => {
         states.push(state);
     }
 
+    console.log("Returning all states...");
     return states;
 }
 
