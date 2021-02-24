@@ -37,7 +37,6 @@ const getStateList = async () => {
  * @returns {Array} array of state objects if successful, null otherwise.
  */
 const getStateAll = async () => {
-    console.log("GET STATE ALL CALLED!");
     let rawStates = await knex
         .select('*')
         .from(constants.TABLE_STATE)
@@ -67,7 +66,6 @@ const getStateAll = async () => {
         states.push(state);
     }
 
-    console.log("Returning all states...");
     return states;
 }
 
