@@ -60,7 +60,7 @@ const openStatePage = (e, arg) => {
 const getStateInfo = (e, arg) => {
     let response = state.getStateById(arg);
     response.then((result) => {
-        console.log(result);
+        //console.log(result);
         e.sender.send("State:getStateInfoOK", result)
     })
 }

@@ -1,6 +1,7 @@
 const config = require('./config.json');
 const constants = config.constants;
 const regionServices = require(config.paths.regionServices);
+const tradeAgreementServices = require(config.paths.tradeAgreementServices);
 const knex = require('knex')(config.knexConfig);
 
 const StateListItem = require(config.paths.stateListItemModel);
@@ -58,7 +59,9 @@ const getStateAll = async () => {
 
         let regions = await regionServices.getRegionByStateId(state.stateID);
 
-        state.summarise(regions);
+        let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
+
+        state.summarise(regions, tradeAgreements);
 
         states.push(state);
     }
@@ -72,6 +75,46 @@ const getStateAll = async () => {
  * @returns {Array} array of state objects if successful, null otherwise.
  */
 const getStateAllByIds = async (ids) => {
+    let rawStates = await knex
+        .select('*')
+        .from(constants.TABLE_STATE)
+        .whereIn(constants.COLUMN_STATE_ID, ids)
+        .catch(e => {
+            console.error(e);
+        });
+
+    if (rawStates.length === 0) return null;
+
+    let states = [];
+
+    for (let rawState of rawStates) {
+        let state = new State(
+            rawState.stateId,
+            rawState.name,
+            rawState.treasuryAmt,
+            rawState.desc,
+            rawState.expenses
+        );
+
+        let regions = await regionServices.getRegionByStateId(state.stateID);
+
+        let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
+
+        state.summarise(regions, tradeAgreements);
+
+        states.push(state);
+    }
+
+    return states;
+}
+
+/**
+ * Gets all states of the given IDs.
+ * The states are summarised without taking into account trade.
+ * @param {Array} ids must be an array of integers.
+ * @returns {Array} array of state objects if successful, null otherwise.
+ */
+const getStateAllByIdsWithoutTrade = async (ids) => {
     let rawStates = await knex
         .select('*')
         .from(constants.TABLE_STATE)
@@ -125,7 +168,9 @@ const getStateById = async (id) => {
     
     let regions = await regionServices.getRegionByStateId(state.stateID);
 
-    state.summarise(regions);
+    let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
+
+    state.summarise(regions, tradeAgreements);
 
     return state;
 }
@@ -232,6 +277,7 @@ const deleteStateById = async (id) => {
 exports.getStateList = getStateList;
 exports.getStateById = getStateById;
 exports.getStateAllByIds = getStateAllByIds;
+exports.getStateAllByIdsWithoutTrade = getStateAllByIdsWithoutTrade;
 exports.addState = addState;
 exports.updateState = updateState;
 exports.updateStateTreasuryByStateId = updateStateTreasuryByStateId;
