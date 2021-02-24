@@ -48,9 +48,27 @@ function getStateList() {
     ipcRenderer.send('State:getStateList');
     ipcRenderer.once('State:getStateListOK', function (e, res) {
         console.log(res);
-        $('#stateContainer').append('<ul id="ulStateList"></ul>')
+        $('#stateContainer').append('<ul id="ulStateList"></ul>');
+        
+        $('#selFirstState').append('<option disabled selected value> -- Select first state -- </option>');
+        $('#selSecondState').append('<option disabled selected value> -- Select second state -- </option>');
         res.forEach(state => {
-            $('#ulStateList').append('<li><a class="states" href="#" data-id="State' + state.stateID + '"  onclick=openStatePage(this.getAttribute("data-id"))>' + state.stateName + '</a></li>')
+            $('#ulStateList').append('<li><a class="states" href="#" data-id="State' + state.stateID + '"  onclick=openStatePage(this.getAttribute("data-id"))>' + state.stateName + '</a></li>');
+
+            $('#selState').append($('<option>', {
+                value: state.stateID,
+                text: state.stateName
+            }));
+
+            $('#selFirstState').append($('<option>', {
+                value: state.stateID,
+                text: state.stateName
+            }));
+
+            $('#selSecondState').append($('<option>', {
+                value: state.stateID,
+                text: state.stateName
+            }));
         });
     });
 }
@@ -96,30 +114,6 @@ function getAllRegionsByStateId() {
 $('#StateRegion'+state.stateID).append('<li class="individualRegion" id="Region'+region.RegionID+'"><a href=#  onclick=openRegionPage(this.parentNode.getAttribute("id"))>'+region.RegionName+'</a><span class="totalIncome">'+region.RegionTotalIncome+'</span><span class="totalFood">'+region.RegionTotalFood+'</span></li>')
                 });
             }
-        });
-    });
-
-    ipcRenderer.send('Region:getStatesForAdd');
-    ipcRenderer.once('Region:getStatesForAddOK', (e, res) => {
-        $('#selFirstState').append('<option disabled selected value> -- Select first state -- </option>');
-        $('#selSecondState').append('<option disabled selected value> -- Select second state -- </option>');
-        
-
-        res.forEach(state => {
-            $('#selState').append($('<option>', {
-                value: state.stateID,
-                text: state.stateName
-            }));
-
-            $('#selFirstState').append($('<option>', {
-                value: state.stateID,
-                text: state.stateName
-            }));
-
-            $('#selSecondState').append($('<option>', {
-                value: state.stateID,
-                text: state.stateName
-            }));
         });
     });
 
