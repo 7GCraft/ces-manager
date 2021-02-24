@@ -47,7 +47,6 @@ const getResourceTierById = async function(id) {
  * @returns {Array} Array of resource tier objects if successful, null otherwise.
  */
 const getResourceTierAll = async function() {
-    console.log("GET RESOURCE TIER ALL CALLED!");
     let rawResourceTiers = await knex
         .select('*')
         .from(constants.TABLE_RESOURCE_TIER)
@@ -79,7 +78,6 @@ const getResourceTierAll = async function() {
         resourceTiers[resource.ResourceTierID - 1].Resources.push(resource);
     }
 
-    console.log("Returning all resource tiers...");
     return resourceTiers;
 };
 

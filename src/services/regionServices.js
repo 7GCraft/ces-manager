@@ -79,7 +79,6 @@ const getRegionListAll = async () => {
  * @returns {Array} Array of region list item objects if successful, null otherwise.
  */
 const getRegionListByStateId = async (stateId) => {
-    console.log("GET REGION LIST BY STATE ID CALLED!");
     let rawRegions = await knex
         .select([
             constants.COLUMN_REGION_ID,
@@ -135,8 +134,7 @@ const getRegionListByStateId = async (stateId) => {
 
         regionList.push(regionListItem);
     }
-    
-    console.log("Returning region list...");
+
     return regionList;
 }
 
