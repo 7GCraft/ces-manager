@@ -80,6 +80,12 @@ function getAllResourceTiers() {
 }
 
 function getAllRegionsByStateId() {
+    $('#selState').empty();
+    $('#selFirstState').empty();
+    $('#selSecondState').empty();
+    $('#selBiome').empty();
+    $('#selDevelopment').empty();
+    $('#selCorruption').empty();
     ipcRenderer.send('Region:getAllRegionsByStateId');
     ipcRenderer.once('Region:getAllRegionsByStateIdOK', (e, res) => {
         res.forEach(state => {
