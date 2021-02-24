@@ -147,6 +147,7 @@ function frmAddState_onSubmit() {
 
         stateObj["stateName"] = $('#txtStateName').val();
         stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
+        stateObj["expenses"] = ($('#nmbExpenses').val() == "") ? 0 : parseInt($('#nmbExpenses').val());
         stateObj["desc"] = $('#txtDescription').val();
 
         ipcRenderer.send('State:addState', stateObj);
