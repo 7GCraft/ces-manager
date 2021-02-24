@@ -5,7 +5,9 @@ const component = require('../../services/componentServices');
 const handle = () => {
     ipcMain.on('Component:getComponentList', getComponentList);
     ipcMain.on('Component:getComponentByFacilityId', getComponentByFacilityId);
-    ipcMain.on('Component:getUsedComponentList', getUsedComponentList);
+    ipcMain.on('Component:getUsedComponentList', getUsedComponentListByRegion);
+    ipcMain.on('Component:getUsedResourceComponentListByState', getUsedResourceComponentListByState);
+    ipcMain.on('Component:getMultipleUsedResourceComponentListByState', getMultipleUsedResourceComponentListByState);
     ipcMain.on('Component:getUnusedComponentList', getUnusedComponentList);
     ipcMain.on('Component:getAllComponentTypes', getAllComponentTypes);
     ipcMain.on('Component:addComponent', addComponent);
@@ -55,7 +57,7 @@ const getComponentByFacilityId = (e, arg) => {
 /**
  * Get used components by Region Id
  */
-const getUsedComponentList = (e, arg) => {
+const getUsedComponentListByRegion = (e, arg) => {
     let response = component.getComponentFunctionalByRegionId(arg);
     response.then(result => {
         return component.sortChildComponents(result);
@@ -63,6 +65,30 @@ const getUsedComponentList = (e, arg) => {
         .then(result2 => {
             e.sender.send("Component:getUsedComponentListOK", result2);
         })
+}
+
+/**
+ * Get used resource components by State Id
+ */
+const getUsedResourceComponentListByState = (e, arg) => {
+    let response = component.getComponentResourceFunctionalByStateId(arg);
+    response.then(result => {
+        e.sender.send("Component:getUsedResourceComponentListByStateOK", result);
+    })
+}
+
+/**
+ * Get multiple used resource components by State Id
+ */
+const getMultipleUsedResourceComponentListByState = (e, args) => {
+    let response = () => {
+        return Promise.all(args.map(stateId => {
+            return component.getComponentResourceFunctionalByStateId(stateId);
+        }))
+    }
+    response().then(result => {
+        e.sender.send('Component:getMultipleUsedResourceComponentListByStateOK', result);
+    })
 }
 
 /**

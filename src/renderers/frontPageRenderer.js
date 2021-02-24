@@ -1,6 +1,8 @@
+const { ipcMain } = require('electron');
 const electron = require('electron');
 const { ipcRenderer } = electron;
 const $ = require('jquery');
+const { advanceSeason } = require('../services/generalServices');
 
 $(function () {
     loadFrontPage();
@@ -16,6 +18,8 @@ function loadFrontPage() {
     getAllResourceTiers();
     //Get All regions by State ID
     getAllRegionsByStateId();
+    //get all trade agreements
+    getAllTradeAgreements();
 }
 
 function handleButtonandSubmitCalls() {
@@ -24,6 +28,12 @@ function handleButtonandSubmitCalls() {
 
     //Add Region
     frmAddRegion_onSubmit();
+
+    //Add update Trade Agreements
+    addUpdateAgreement_handler()
+
+    // delete trade agreement
+    frmDeleteAgreement_onSubmit()
 
     //Update Resources (resources.html)
     btnUpdateResources_onClick();
@@ -40,9 +50,27 @@ function getStateList() {
     ipcRenderer.send('State:getStateList');
     ipcRenderer.once('State:getStateListOK', function (e, res) {
         console.log(res);
-        $('#stateContainer').append('<ul id="ulStateList"></ul>')
+        $('#stateContainer').append('<ul id="ulStateList"></ul>');
+        
+        $('#selFirstState').append('<option disabled selected value> -- Select first state -- </option>');
+        $('#selSecondState').append('<option disabled selected value> -- Select second state -- </option>');
         res.forEach(state => {
-            $('#ulStateList').append('<li><a class="states" href="#" data-id="State' + state.stateID + '"  onclick=openStatePage(this.getAttribute("data-id"))>' + state.stateName + '</a></li>')
+            $('#ulStateList').append('<li><a class="states" href="#" data-id="State' + state.stateID + '"  onclick=openStatePage(this.getAttribute("data-id"))>' + state.stateName + '</a></li>');
+
+            $('#selState').append($('<option>', {
+                value: state.stateID,
+                text: state.stateName
+            }));
+
+            $('#selFirstState').append($('<option>', {
+                value: state.stateID,
+                text: state.stateName
+            }));
+
+            $('#selSecondState').append($('<option>', {
+                value: state.stateID,
+                text: state.stateName
+            }));
         });
     });
 }
@@ -72,6 +100,12 @@ function getAllResourceTiers() {
 }
 
 function getAllRegionsByStateId() {
+    $('#selState').empty();
+    $('#selFirstState').empty();
+    $('#selSecondState').empty();
+    $('#selBiome').empty();
+    $('#selDevelopment').empty();
+    $('#selCorruption').empty();
     ipcRenderer.send('Region:getAllRegionsByStateId');
     ipcRenderer.once('Region:getAllRegionsByStateIdOK', (e, res) => {
         res.forEach(state => {
@@ -79,20 +113,9 @@ function getAllRegionsByStateId() {
                 $('#listOfRegionsByState').append('<div class="regionContainer"><h5>' + state.stateName + '</h5><ul class="regionsList" id="StateRegion' + state.stateID + '"></ul></div>')
 
                 state.Regions.forEach(region => {
-                    $('#StateRegion' + state.stateID).append('<li class="individualRegion" id="Region' + region.RegionID + '" onclick=openRegionPage(this.getAttribute("id"))><a href=#>' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span></li>')
+$('#StateRegion'+state.stateID).append('<li class="individualRegion" id="Region'+region.RegionID+'"><a href=#  onclick=openRegionPage(this.parentNode.getAttribute("id"))>'+region.RegionName+'</a><span class="totalIncome">'+region.RegionTotalIncome+'</span><span class="totalFood">'+region.RegionTotalFood+'</span></li>')
                 });
             }
-        });
-    });
-
-    ipcRenderer.send('Region:getStatesForAdd');
-    ipcRenderer.once('Region:getStatesForAddOK', (e, res) => {
-
-        res.forEach(state => {
-            $('#selState').append($('<option>', {
-                value: state.stateID,
-                text: state.stateName
-            }));
         });
     });
 
@@ -131,6 +154,79 @@ function getAllRegionsByStateId() {
     });
 }
 
+function getAllTradeAgreements() {
+    ipcRenderer.send('Trade:getAllTradeAgreements');
+    ipcRenderer.once('Trade:getAllTradeAgreementsOK', (e, res) => {
+        // emptying previous contents
+        $('#tradeAgreements').empty();
+        $('#selTradeAgreement').empty();
+        $('#selAgreementDelete').empty();
+
+        $('#selTradeAgreement').append('<option disabled selected value> -- Select a trade agreement -- </option>');
+        res.forEach(agreement => {
+            console.log(agreement);
+            let resourceProducedFirstState = () => {
+                let resourceStr1 = '';
+                if (agreement.traders[0].resources !== null) {
+                    agreement.traders[0].resources.forEach(resource => {
+                        resourceStr1 += resource.ResourceName + ', ';
+                    })
+                    resourceStr1 = resourceStr1.slice(0, -2);
+                } else {
+                    resourceStr1 = 'No traded resources.';
+                }
+                return resourceStr1;
+            }
+
+            let resourceProducedSecondState = () => {
+                let resourceStr2 = '';
+                if (agreement.traders[1].resources !== null) {
+                    agreement.traders[1].resources.forEach(resource => {
+                        resourceStr2 += resource.ResourceName + ', ';
+                    })
+                    resourceStr2 = resourceStr2.slice(0, -2);
+                } else {
+                    resourceStr2 = 'No traded resources.';
+                }
+                return resourceStr2;
+            }
+
+
+            $('#tradeAgreements')
+            .append(
+                '<tr>'+
+                    '<td>'+agreement.traders[0].state.stateName+'</td>'+
+                    '<td>'+resourceProducedFirstState()+'</td>'+
+                    '<td>'+agreement.traders[0].tradePower * 100 + '%</td>'+
+                    '<td>'+parseFloat(agreement.traders[0].tradeValue).toFixed(2)+'</td>'+
+                    '<td>'+agreement.traders[1].state.stateName+'</td>'+
+                    '<td>'+resourceProducedSecondState()+'</td>'+
+                    '<td>'+agreement.traders[1].tradePower * 100 + '%</td>'+
+                    '<td>'+parseFloat(agreement.traders[1].tradeValue).toFixed(2)+'</td>'+
+                    '<td>'+agreement.desc+'</td>'+
+                +'</tr>'
+            );
+            
+            $('#selTradeAgreement')
+            .append($('<option />')
+                .val(agreement.tradeAgreementId)
+                .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
+                .attr('data-first-state-id', agreement.traders[0].state.stateID).attr('data-second-state-id', agreement.traders[1].state.stateID)
+            );
+
+            // appends all existing trade agreements to the trade agreements to delete select
+            $('#selAgreementDelete')
+            .append($('<option />')
+                .val(agreement.tradeAgreementId)
+                .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
+            );
+        })
+
+        
+    });
+
+}
+
 /**
  * End of Loading related functions
  */
@@ -147,6 +243,7 @@ function frmAddState_onSubmit() {
 
         stateObj["stateName"] = $('#txtStateName').val();
         stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
+        stateObj["expenses"] = ($('#nmbExpenses').val() == "") ? 0 : parseInt($('#nmbExpenses').val());
         stateObj["desc"] = $('#txtDescription').val();
 
         ipcRenderer.send('State:addState', stateObj);
@@ -225,8 +322,201 @@ function frmAddRegion_onSubmit() {
     })
 }
 
-function btnUpdateResources_onClick() {
-    $('#btnUpdateResources').on('click', function (e) {
+  function addUpdateAgreement_handler() {
+    $('#btnAddAgreement').on('click', () => {
+        $("#selTradeAgreement").val($("#selTradeAgreement option:first").val());
+        $("#selFirstState").val($("#selFirstState option:first").val());
+        $("#selSecondState").val($("#selSecondState option:first").val());
+        $('#txtAgreementDesc').val('');
+
+        $('#selTradeAgreementField').hide();
+        $('#agreementFields').show();
+    })
+
+    $('#btnUpdateAgreement').on('click', () => {
+        $("#selTradeAgreement").val($("#selTradeAgreement option:first").val());
+        $("#selFirstState").val($("#selFirstState option:first").val());
+        $("#selSecondState").val($("#selSecondState option:first").val());
+        $('#txtAgreementDesc').val('');
+
+        $('#selTradeAgreementField').show();
+        $('#agreementFields').hide();
+    })
+
+    $('#selTradeAgreement').on('change', () => {
+        $('#agreementFields').show();
+
+        let firstStateId = $('#selTradeAgreement').find(':selected').data('firstStateId');
+        let secondStateId = $('#selTradeAgreement').find(':selected').data('secondStateId');
+
+        console.log(secondStateId)
+
+        $('#selFirstState').val(firstStateId);
+        $('#selSecondState').val(secondStateId);
+
+        $('#selFirstResource').empty();
+        $('#selSecondResource').empty();
+
+        let stateIds = [firstStateId, secondStateId];
+
+        ipcRenderer.send('Component:getMultipleUsedResourceComponentListByState',  stateIds);
+        ipcRenderer.once('Component:getMultipleUsedResourceComponentListByStateOK', (e, res) => {
+            if(res[0] != null){
+                res[0].forEach(resourceComponent => {
+                    $('#selFirstResource').append($('<option>', {
+                        value: resourceComponent.componentId,
+                        text: resourceComponent.value.ResourceName
+                    }));
+                })
+            }
+            if(res[1] != null){
+                res[1].forEach(resourceComponent => {
+                    $('#selSecondResource').append($('<option>', {
+                        value: resourceComponent.componentId,
+                        text: resourceComponent.value.ResourceName
+                    }));
+                })
+            }
+        })
+    })
+
+    $('#selFirstState').on('change', () => {
+        $('#selFirstResource').empty();
+        ipcRenderer.send('Component:getUsedResourceComponentListByState',  $('#selFirstState').val());
+        ipcRenderer.once('Component:getUsedResourceComponentListByStateOK', (e, res) => {
+
+            if(res != null){
+                res.forEach(resourceComponent => {
+                    $('#selFirstResource').append($('<option>', {
+                        value: resourceComponent.componentId,
+                        text: resourceComponent.value.ResourceName
+                    }));
+                })
+            }
+        })
+    })
+
+    $('#selSecondState').on('change', () => {
+        $('#selSecondResource').empty();
+        ipcRenderer.send('Component:getUsedResourceComponentListByState',  $('#selSecondState').val());
+        ipcRenderer.once('Component:getUsedResourceComponentListByStateOK', (e, res) => {
+            if(res != null){
+                res.forEach(resourceComponent => {
+                        $('#selSecondResource').append($('<option>', {
+                            value: resourceComponent.componentId,
+                            text: resourceComponent.value.ResourceName
+                        }));
+                })
+            }
+        })
+    })
+
+    $('#frmAddUpdateAgreement').on('submit', (e) => {
+        e.preventDefault();
+
+        let tradeAgreementId = $('#selTradeAgreement').val();
+        let firstStateId =  parseInt($('#selFirstState').val());
+        let secondStateId =  parseInt($('#selSecondState').val());
+        let firstResourceRawComponents = $('#selFirstResource').val();
+        let secondResourceRawComponents = $('#selSecondResource').val();
+        let description =  $('#txtAgreementDesc').val();
+
+        let firstResourceComponents = () => {
+            let componentArray = []
+            if(firstResourceRawComponents.length > 0){
+                firstResourceRawComponents.forEach(componentId => {
+                    let componentObj = {'componentId' : parseInt(componentId)};
+                    componentArray.push(componentObj);
+                })
+            }
+            else{
+                componentArray = null
+            }
+            return componentArray;
+        }
+
+        let secondResourceComponents = () => {
+            let componentArray = []
+            if(secondResourceRawComponents.length > 0){
+                secondResourceRawComponents.forEach(componentId => {
+                    let componentObj = {'componentId' : parseInt(componentId)};
+                    componentArray.push(componentObj);
+                })
+            }
+            else{
+                componentArray = null
+            }
+            return componentArray;
+        }
+        let tradeAgreementObj = {};
+
+        tradeAgreementObj['desc'] = description;
+        tradeAgreementObj['traders'] = [{'state' : {'stateId' : firstStateId}, 'resourceComponents' : firstResourceComponents()}, {'state' : {'stateId' : secondStateId}, 'resourceComponents' : secondResourceComponents()}]
+
+        if(tradeAgreementId == null){
+            //console.log(tradeAgreementObj);
+            ipcRenderer.send('Trade:addTradeAgreement', tradeAgreementObj);
+            ipcRenderer.once('Trade:addTradeAgreementOK', (e, res) => {
+                if(res){
+                    $('#tradeAgreementMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully added trade agreement</div>')
+                    $('#tradeAgreements').empty();
+                    $('#selTradeAgreements').empty();
+
+                    getAllTradeAgreements();
+                }
+                else{
+                    $('#tradeAgreementMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding trade agreement</div>')
+                }
+
+                $('#mdlAddUpdateAgreement').modal('toggle');
+            })
+        }
+        else{
+            tradeAgreementObj['tradeAgreementId'] = tradeAgreementId;
+            //console.log(tradeAgreementObj);
+            ipcRenderer.send('Trade:updateTradeAgreement', tradeAgreementObj);
+            ipcRenderer.once('Trade:updateTradeAgreementOK', (e, res) => {
+                if(res){
+                    $('#tradeAgreementMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully updated trade agreement</div>')
+
+                    getAllTradeAgreements();
+                }
+                else{
+                    $('#tradeAgreementMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating trade agreement</div>')
+                }
+
+                $('#mdlAddUpdateAgreement').modal('toggle');
+            })
+        }
+    })
+}
+
+/**
+ * Handles deleting a trade agreement.
+ */
+function frmDeleteAgreement_onSubmit() {
+    $('#frmDeleteAgreement').on('submit', (e) => {
+        e.preventDefault();
+
+        let selectedTradeAgreement = $('#selAgreementDelete').val();
+        ipcRenderer.send("Trade:deleteTradeAgreement", selectedTradeAgreement);
+        ipcRenderer.once("Trade:deleteTradeAgreementOK", (e, res) => {
+            if(res){
+                $('#tradeAgreementMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully deleted trade agreement</div>')
+
+                getAllTradeAgreements();
+            }
+            else{
+                $('#tradeAgreementMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting trade agreement</div>')
+            }
+
+            $('#mdlDeleteAgreement').modal('toggle');
+        });
+    });
+}
+
+  function btnUpdateResources_onClick(){
+    $('#btnUpdateResources').on('click', function(e){
         let resourceJsonObj = [];
         let resourceTiers = $('#listsOfResourceTiers').find('.resourceSortable');
 
@@ -316,10 +606,7 @@ function frmDeleteResource_onSubmit() {
  * End of Button and Submit event related functions
  */
 //Called in home.html
-function nextSeason() {
-    const item = 'testVal';
-    ipcRenderer.send('test', item);
-}
+ipcRenderer.once
 
 //Called in getStateList()
 function openStatePage(ID) {
@@ -330,7 +617,14 @@ function openStatePage(ID) {
 
 //called on region click
 
-function openRegionPage(ID) {
-    let regionID = ID.replace('Region', '');
-    ipcRenderer.send('Region:openRegionPage', regionID);
-}
+$('#btnSeason').on('click',() =>{
+    ipcRenderer.send('General:AdvancingSeason');
+    ipcRenderer.once('General:AdvancingSeason',(e,res) =>{
+        if(res){
+            $('#nextSeasonMessage').append('<div>This is working</div>')
+        }
+        else{
+            $('#nextSeasonMessage').append('<div>Error not working</div>')
+        }
+    })
+})
