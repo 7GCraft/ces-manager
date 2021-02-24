@@ -1,6 +1,8 @@
+const { ipcMain } = require('electron');
 const electron = require('electron');
 const { ipcRenderer } = electron;
 const $ = require('jquery');
+const { advanceSeason } = require('../services/generalServices');
 
 $(function () {
     loadFrontPage();
@@ -604,10 +606,7 @@ function frmDeleteResource_onSubmit() {
  * End of Button and Submit event related functions
  */
 //Called in home.html
-function nextSeason() {
-    const item = 'testVal';
-    ipcRenderer.send('test', item);
-}
+ipcRenderer.once
 
 //Called in getStateList()
 function openStatePage(ID) {
@@ -618,7 +617,14 @@ function openStatePage(ID) {
 
 //called on region click
 
-function openRegionPage(ID) {
-    let regionID = ID.replace('Region', '');
-    ipcRenderer.send('Region:openRegionPage', regionID);
-}
+$('#btnSeason').on('click',() =>{
+    ipcRenderer.send('General:AdvancingSeason');
+    ipcRenderer.once('General:AdvancingSeason',(e,res) =>{
+        if(res){
+            $('#nextSeasonMessage').append('<div>This is working</div>')
+        }
+        else{
+            $('#nextSeasonMessage').append('<div>Error not working</div>')
+        }
+    })
+})
