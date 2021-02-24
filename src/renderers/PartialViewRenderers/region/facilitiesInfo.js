@@ -13,7 +13,6 @@ function getFacilitiesInfo() {
     ipcRenderer.send('Facility:getFacilitiesByRegion', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
         dataAvailable = true;
-        $('#selFacility').append('<option selected value="">NONE</option>');
         if (res != null) {
             res.forEach(facility => {
                 let foodOutput = (facility.foodOutput == 0) ? '' : '<span class="valueFood">Food Output: ' + facility.foodOutput + '</span><br/>';
@@ -61,10 +60,6 @@ function getFacilitiesInfo() {
                 }
 
                 facilityIds.push(facility.facilityId);
-                $('#selFacility').append($('<option>', {
-                    value: facility.facilityId,
-                    text: facility.facilityName
-                }));
             });
         }
     });
