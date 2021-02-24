@@ -9,6 +9,6 @@ module.exports = handle;
 const advanceSeason = (e) => {
     let response = general.advanceSeason();
     response.then(result => {
-        e.sender.send("Advancing Season", result)
+        e.sender.send("General:AdvancingSeasonOK", result)
     })
 }

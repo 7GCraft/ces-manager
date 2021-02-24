@@ -1,11 +1,10 @@
-const { app, remote } = require('electron');
 const electron = require('electron');
-const {ipcRenderer} = electron;
+const { ipcRenderer } = electron;
 const $ = require('jquery');
 const fs = require('fs');
 require('bootstrap');
 
-$(function(){
+$(function () {
     //Load all state info on page open
     getStateInfo();
     //Delete state
@@ -14,10 +13,9 @@ $(function(){
     frmUpdateState_onSubmit();
 })
 
-
-function getStateInfo(){
+function getStateInfo() {
     ipcRenderer.send("State:getStateInfo", parseInt(window.process.argv.slice(-1)));
-    ipcRenderer.once("State:getStateInfoOK", function(e, res){
+    ipcRenderer.once("State:getStateInfoOK", function (e, res) {
         let count = 1;
         $('#lblStateName').text(res.stateName);
         $('#lblDescription').text(res.desc);
@@ -37,7 +35,7 @@ function getStateInfo(){
 
         res.ProductiveResources.forEach(resource => {
             let tierStr = () => {
-                switch(resource.ResourceTierID){
+                switch (resource.ResourceTierID) {
                     case 1: return 'Tier I';
                     case 2: return 'Tier II';
                     case 3: return 'Tier III';
@@ -46,7 +44,7 @@ function getStateInfo(){
                     case 6: return 'Tier VI';
                 }
             }
-            $('#tblResources').append('<tr><th scope="row">'+count+'</th><td>'+resource.ResourceName+'</td><td>'+tierStr()+'</td></tr>')
+            $('#tblResources').append('<tr><th scope="row">' + count + '</th><td>' + resource.ResourceName + '</td><td>' + tierStr() + '</td></tr>')
             count++;
         })
     });
@@ -54,14 +52,14 @@ function getStateInfo(){
     ipcRenderer.send("State:getRegionsForState", parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once("State:getRegionsForStateOK", (e, res) => {
         res.forEach(region => {
-            $('#listOfRegions').append('<li class="individualRegion" id="Region'+region.RegionID+'" onclick=openRegionPage(this.getAttribute("id"))><a href=#>'+region.RegionName+'</a><span class="totalIncome">'+region.RegionTotalIncome+'</span><span class="totalFood">'+region.RegionTotalFood+'</span></li>')
+            $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '" onclick=openRegionPage(this.getAttribute("id"))><a href=#>' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span></li>')
         });
-       
+
     });
 
     ipcRenderer.send('Trade:getTradeAgreementsByStateId', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Trade:getTradeAgreementsByStateIdOK', (e, res) => {
-          
+
         res.forEach(agreement => {
             let resourceProducedFirstState = () => {
                 let resourceStr1 = '';
@@ -91,39 +89,39 @@ function getStateInfo(){
 
 
             $('#tradeAgreements')
-            .append(
-                '<tr>'+
-                    '<td>'+agreement.traders[0].state.stateName+'</td>'+
-                    '<td>'+resourceProducedFirstState()+'</td>'+
-                    '<td>'+agreement.traders[0].tradePower * 100 + '%</td>'+
-                    '<td>'+parseFloat(agreement.traders[0].tradeValue).toFixed(2)+'</td>'+
-                    '<td>'+agreement.traders[1].state.stateName+'</td>'+
-                    '<td>'+resourceProducedSecondState()+'</td>'+
-                    '<td>'+agreement.traders[1].tradePower * 100 + '%</td>'+
-                    '<td>'+parseFloat(agreement.traders[1].tradeValue).toFixed(2)+'</td>'+
-                    '<td>'+agreement.desc+'</td>'+
-                +'</tr>'
-            );
+                .append(
+                    '<tr>' +
+                    '<td>' + agreement.traders[0].state.stateName + '</td>' +
+                    '<td>' + resourceProducedFirstState() + '</td>' +
+                    '<td>' + agreement.traders[0].tradePower * 100 + '%</td>' +
+                    '<td>' + parseFloat(agreement.traders[0].tradeValue).toFixed(2) + '</td>' +
+                    '<td>' + agreement.traders[1].state.stateName + '</td>' +
+                    '<td>' + resourceProducedSecondState() + '</td>' +
+                    '<td>' + agreement.traders[1].tradePower * 100 + '%</td>' +
+                    '<td>' + parseFloat(agreement.traders[1].tradeValue).toFixed(2) + '</td>' +
+                    '<td>' + agreement.desc + '</td>' +
+                    +'</tr>'
+                );
         })
     })
 
     fs.readdir('src/images', (err, files) => {
-        if(err){
+        if (err) {
             console.log(err)
         }
-        else{
+        else {
 
-            for(let file of files) {
+            for (let file of files) {
                 let id = file.match(/(\d+)/);
 
-                if( parseInt(window.process.argv.slice(-1)) == id[0]){
+                if (parseInt(window.process.argv.slice(-1)) == id[0]) {
                     console.log(file);
-                    $('.jumbotron').css('background-image', 'url(../images/'+file+')');
+                    $('.jumbotron').css('background-image', 'url(../images/' + file + ')');
                     $('.jumbotron').css('background-size', 'contain');
                     break;
                 }
             }
-            
+
         }
     })
 }
@@ -134,11 +132,11 @@ function btnDeleteState_onClick() {
 
         ipcRenderer.send("State:deleteState", parseInt(window.process.argv.slice(-1)))
         ipcRenderer.once("State:deleteStateOK", (e, res) => {
-            if(res){
+            if (res) {
                 alert("Successfully deleted state");
                 ipcRenderer.send("ClosePageOnDelete");
             }
-            else{
+            else {
                 $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting state</div>')
             }
             $('#mdlDeleteState').modal('toggle');
@@ -152,7 +150,7 @@ function frmUpdateState_onSubmit() {
 
         let stateObj = {};
 
-        stateObj["stateID"] =  parseInt(window.process.argv.slice(-1))
+        stateObj["stateID"] = parseInt(window.process.argv.slice(-1))
         stateObj["stateName"] = $('#txtStateName').val();
         stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
         stateObj["expenses"] = ($('#nmbExpenses').val() == "") ? 0 : parseInt($('#nmbExpenses').val());
@@ -162,14 +160,14 @@ function frmUpdateState_onSubmit() {
 
         ipcRenderer.send("State:updateState", stateObj);
         ipcRenderer.once("State:updateStateOK", (e, res) => {
-            if(res){
+            if (res) {
                 // $('#stateMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully updated state</div>');
                 // $('.regionList').empty();
                 // getStateInfo();
                 alert("Successfully updated state");
                 ipcRenderer.send("ReloadPageOnUpdate");
             }
-            else{
+            else {
                 $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when updating state</div>');
             }
 
@@ -179,8 +177,7 @@ function frmUpdateState_onSubmit() {
 }
 
 //called on region click
-
-function openRegionPage(ID){
+function openRegionPage(ID) {
     let regionID = ID.replace('Region', '');
     ipcRenderer.send('Region:openRegionPage', regionID);
 }
