@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <template>
+        <div class="container-fluid template" data-tab="nav-components">
+            <div id="rbsComponentsDisplay">
+                <input type="radio" id="rbAll" name="componentDisplay" value="all" checked>
+                <label for="rbAll">All</label>
+                <input type="radio" id="rbUsed" name="componentDisplay" value="used">
+                <label for="rbUsed">Used</label>
+                <input type="radio" id="rbUnused" name="componentDisplay" value="unused">
+                <label for="rbUnused">Unused</label>
+            </div><br>
+            <div>
+                <ul id="componentsList">
+
+                </ul>
+                <button class="btn btn-success" id="btnAddComponent" data-toggle="modal"
+                    data-target="#mdlAddUpdateComponent">Add Component</button>
+            </div>
+            <div class="modal fade" id="mdlAddUpdateComponent" tabindex="-1" role="dialog"
+                aria-labelledby="mdlAddUpdateComponentLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="mdlAddUpdateComponentLabel">Add or Update Component</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="frmAddUpdateComponent">
+                            <div class="modal-body">
+                                <input type="hidden" name="hdnComponentId" id="hdnComponentId">
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="txtComponentName">Component Name</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="txtComponentName" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selComponentType">Select Component
+                                        Type</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selComponentType" id="selComponentType"
+                                            required></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selFacility">Select Facility</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selFacility" id="selFacility"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group form-check">
+                                    <input class="form-check-input" type="checkbox" id="chkChild" name="chkChild">
+                                    <label class="form-check-label" for="chkChild">IsChild</label>
+                                </div>
+
+                                <div class="form-group row" id="componentParentField">
+                                    <label class="col-sm-5 col-form-label" for="selParent">Select Parent
+                                        Component</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selParent" id="selParent"></select>
+                                    </div>
+                                </div>
+
+                                <!-- <div id="resourceValue">
+
+                        </div> -->
+                                <div class="form-group row" id="numTextValue">
+                                    <label class="col-sm-5 col-form-label" for="txtValue">Value</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" type="text" id="txtValue" name="value">
+                                        <select class="form-control" name="value" id="selResource"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="nmbActivation">Activation Time</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" type="number" id="nmbActivation" min="0" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-primary"></input>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="mdlDeleteComponent" tabindex="-1" role="dialog"
+                aria-labelledby="mdlDeleteComponentLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="mdlDeleteComponentLabel">Delete Component</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure?
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" id="btnDeleteComponent">Yes</button>
+                            <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="../renderers/PartialViewRenderers/region/componentsInfo.js" defer></script>
+        </div>
+    </template>
+</body>
+
+</html>

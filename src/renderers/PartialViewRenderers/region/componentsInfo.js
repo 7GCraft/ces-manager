@@ -1,6 +1,8 @@
 $(function () {
     //Get all component related info
     getComponentsInfo();
+    //Get all facilities for facility ddl
+    getFacilitiesList();
     //event handler for component display change
     rbsComponentsDisplay_onChange();
     //handles events for addUpdateComponent
@@ -50,6 +52,21 @@ function getComponentsInfo() {
                     }));
                 });
             });
+        }
+    });
+}
+
+function getFacilitiesList() {
+    let dataAvailable = false;
+    ipcRenderer.send('Facility:getFacilitiesByRegion', parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
+        dataAvailable = true;
+        $('#selFacility').append('<option selected value="">NONE</option>');
+        if (res != null) {
+            $('#selFacility').append($('<option>', {
+                value: facility.facilityId,
+                text: facility.facilityName
+            }));
         }
     });
 }

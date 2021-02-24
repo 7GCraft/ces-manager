@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <template>
+        <div class="container-fluid template" data-tab="nav-general">
+            Biome : <span id="lblBiome"></span><br>
+            Belongs To : <span id="lblOwner"></span><br>
+            Population : <span id="lblPopulation"></span><br>
+            Tax Rate : <span id="lblTaxRate"></span> <br>
+            Total Region Income : <span id="lblTotalRegionIncome"></span> <br>
+            Total Region Food Produced : <span id="lblRegionFoodProduced"></span> <br>
+            Total Region Food Consumed : <span id="lblRegionFoodConsumed"></span> <br>
+            Total Region Food Available : <span id="lblRegionFoodAvailable"></span> <br>
+            Expected Population Growth : <span id="lblPopulationGrowth"></span> <br>
+            Resources Produced : <span id="lblResourcesProduced"></span> <br><br>
+
+            <button class="btn btn-primary" id="btnUpdateRegion" data-toggle="modal"
+                data-target="#mdlUpdateRegion">Update Region</button>
+            <button class="btn btn-danger" id="btnOpenDeleteRegion" data-toggle="modal"
+                data-target="#mdlDeleteRegion">Delete Region</button>
+
+            <div class="modal fade" id="mdlUpdateRegion" tabindex="-1" role="dialog"
+                aria-labelledby="mdlUpdateRegionLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="mdlUpdateRegionLabel">Update Region</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="frmUpdateRegion">
+                            <div class="modal-body">
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="txtRegionName">Region Name</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" id="txtRegionName" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selState">Select State</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selState" id="selState"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selCorruption">Select Corruption
+                                        Level</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selCorruption" id="selCorruption"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selBiome">Select Biome</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selBiome" id="selBiome"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="selDevelopment">Select Development
+                                        Level</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="selDevelopment" id="selDevelopment"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="nmbPopulation">Population</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" type="number" id="nmbPopulation" min="0" max="100">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label" for="nmbTaxRate">Tax Rate</label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" type="number" id="nmbTaxRate" min="0" max="1" step="0.001">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="txtDescRegion">Description</label>
+                                    <textarea class="form-control" name="txtDescRegion" id="txtDescRegion" cols="30"
+                                        rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-primary"></input>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="mdlDeleteRegion" tabindex="-1" role="dialog"
+                aria-labelledby="mdlDeleteRegionLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="mdlDeleteRegionLabel">Delete Region</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure?
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" id="btnDeleteRegion">Yes</button>
+                            <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="../renderers/PartialViewRenderers/region/generalInfo.js" defer></script>
+        </div>
+    </template>
+</body>
+
+</html>
