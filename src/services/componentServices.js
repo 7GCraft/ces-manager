@@ -598,7 +598,7 @@ exports.sortChildComponents = sortChildComponents;
 //    sortChildComponents(data)
  //   .then(test => console.dir(test));
 //})
-//getComponentByFacilityId(1).then(data => console.dir(data));
+getComponentByFacilityId(1).then(data => console.dir(data));
 //getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)
 //     .then(data => console.log(data));

@@ -33,6 +33,7 @@ function getStateInfo(){
         $('#txtStateName').val(res.stateName);
         $('#nmbTreasury').val(res.treasuryAmt);
         $('#txtDescription').val(res.desc);
+        $('#nmbExpenses').val(res.expenses);
 
         res.ProductiveResources.forEach(resource => {
             let tierStr = () => {
@@ -154,6 +155,7 @@ function frmUpdateState_onSubmit() {
         stateObj["stateID"] =  parseInt(window.process.argv.slice(-1))
         stateObj["stateName"] = $('#txtStateName').val();
         stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
+        stateObj["expenses"] = ($('#nmbExpenses').val() == "") ? 0 : parseInt($('#nmbExpenses').val());
         stateObj["desc"] = $('#txtDescription').val();
 
         console.log(stateObj);
