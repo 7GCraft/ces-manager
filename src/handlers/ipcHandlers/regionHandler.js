@@ -34,7 +34,6 @@ const getAllRegionsByStateId = (e) => {
         }))
     })
         .then((regionsByState) => {
-            //console.log(regionsByStateArray);
             e.sender.send('Region:getAllRegionsByStateIdOK', regionsByState);
         });
 }

@@ -5,15 +5,15 @@ $(function () {
 
 function btnNextSeason_onclick() {
     $('#btnNextSeason').on('click', () => {
-        ipcRenderer.send('General:advanceToNextSeason');
-        ipcRenderer.once('General:advanceToNextSeasonOK', (e, res) => {
+        ipcRenderer.send('General:advancingSeason');
+        ipcRenderer.once('General:advancingSeasonOK', (e, res) => {
+            $('#mdlAdvanceSeason').modal('hide');
             if (res) {
-                $('#nextSeasonMessage').append('<div>This is working</div>')
+                $('#nextSeasonMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully advancing season</div>');
             }
             else {
-                $('#nextSeasonMessage').append('<div>Error not working</div>')
+                $('#nextSeasonMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when advancing season</div>');
             }
-            $('#mdlAdvanceSeason').modal('toggle');
         })
     })
 }
