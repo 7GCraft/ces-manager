@@ -89,19 +89,11 @@ module.exports = class Region {
         this.expectedPopulationGrowth = 0;
         this.usedPopulation = 0;
 
-        if (this.regionId === 3) console.log(this.totalFoodConsumed);
-
         if (facilities !== null) {
             for (let facility of facilities) {
                 if (facility.isFunctional) {
                     if (facility.foodOutput > 0) this.totalFoodProduced += facility.foodOutput;
                     else if (facility.foodOutput < 0) this.totalFoodConsumed -= facility.foodOutput;
-                    if (facility.foodOutput < 0) {
-                        if (this.regionId === 3) {
-                            console.log("NOW: " + this.totalFoodConsumed);
-                            console.log("CURR FACILITY: " + facility.foodOutput);
-                        }
-                    }
                     
                     
                     this.totalIncome += facility.moneyOutput;
