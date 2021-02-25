@@ -125,5 +125,3 @@ const getCurrentSeason = async () => {
 
 exports.advanceSeason = advanceSeason;
 exports.getCurrentSeason = getCurrentSeason;
-
-advanceSeason();
