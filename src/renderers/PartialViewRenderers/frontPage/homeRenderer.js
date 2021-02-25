@@ -9,7 +9,7 @@ function btnNextSeason_onclick() {
         ipcRenderer.once('General:advancingSeasonOK', (e, res) => {
             $('#mdlAdvanceSeason').modal('hide');
             if (res) {
-                $('#nextSeasonMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully advancing season</div>');
+                $('#nextSeasonMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully advanced to next season</div>');
             }
             else {
                 $('#nextSeasonMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when advancing season</div>');
