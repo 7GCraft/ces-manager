@@ -57,6 +57,7 @@ function getRegionInfo(initial) {
         $('#lblBiome').text(res.biome.biomeName)
         $('#lblOwner').text(res.state.stateName);
         $('#lblPopulation').text(res.population);
+        $('#lblUsedPopulation').text(res.usedPopulation);
         $('#lblTaxRate').text(res.taxRate * 100 + '%');
         $('#lblTotalRegionIncome').text(res.totalIncome);
         $('#lblRegionFoodProduced').text(res.totalFoodProduced);
