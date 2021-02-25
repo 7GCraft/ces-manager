@@ -46,7 +46,7 @@ module.exports = class State {
             }
         }
 
-        this.TotalFoodAvailable = this.TotalFoodProduced + this.TotalFoodConsumed;
+        this.TotalFoodAvailable = this.TotalFoodProduced - this.TotalFoodConsumed;
         this.BaseGrowth = this.TotalFoodAvailable / 5;
     }
 }

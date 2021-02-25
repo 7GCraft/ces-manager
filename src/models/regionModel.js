@@ -84,16 +84,25 @@ module.exports = class Region {
     summarise (facilities, baseGrowth = null) {
         this.totalIncome = 0;
         this.totalFoodProduced = 0;
-        this.totalFoodConsumed = 0;
+        this.totalFoodConsumed = this.population;
         this.productiveResources = [];
         this.expectedPopulationGrowth = 0;
         this.usedPopulation = 0;
+
+        if (this.regionId === 3) console.log(this.totalFoodConsumed);
 
         if (facilities !== null) {
             for (let facility of facilities) {
                 if (facility.isFunctional) {
                     if (facility.foodOutput > 0) this.totalFoodProduced += facility.foodOutput;
-                    else if (facility.foodOutput < 0) this.totalFoodConsumed += facility.foodOutput;
+                    else if (facility.foodOutput < 0) this.totalFoodConsumed -= facility.foodOutput;
+                    if (facility.foodOutput < 0) {
+                        if (this.regionId === 3) {
+                            console.log("NOW: " + this.totalFoodConsumed);
+                            console.log("CURR FACILITY: " + facility.foodOutput);
+                        }
+                    }
+                    
                     
                     this.totalIncome += facility.moneyOutput;
         
@@ -109,7 +118,7 @@ module.exports = class Region {
         this.totalIncome += this.population * 100 * this.taxRate;
         this.totalIncome -= this.totalIncome * this.corruption.corruptionRate;
 
-        this.totalFoodAvailable = this.totalFoodProduced + this.totalFoodConsumed;
+        this.totalFoodAvailable = this.totalFoodProduced - this.totalFoodConsumed;
         if (baseGrowth !== null) {
             if (baseGrowth > 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.growthModifier);
             else if (baseGrowth < 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.shrinkageModifier);
