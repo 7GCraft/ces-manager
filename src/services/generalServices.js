@@ -23,7 +23,7 @@ const advanceSeason = async () => {
 
         let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
 
-        if (tradeAgreements !== null) {
+        if (tradeAgreements != null) {
             for (let tradeAgreement of tradeAgreements) {
                 for (let trader of tradeAgreement.traders) {
                     if (trader.state.stateID === state.stateID) {
