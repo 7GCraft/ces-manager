@@ -18,62 +18,65 @@ function getAllTradeAgreements() {
         $('#selAgreementDelete').empty();
 
         $('#selTradeAgreement').append('<option disabled selected value> -- Select a trade agreement -- </option>');
-        res.forEach(agreement => {
-            let resourceProducedFirstState = () => {
-                let resourceStr1 = '';
-                if (agreement.traders[0].resources !== null) {
-                    agreement.traders[0].resources.forEach(resource => {
-                        resourceStr1 += resource.ResourceName + ', ';
-                    })
-                    resourceStr1 = resourceStr1.slice(0, -2);
-                } else {
-                    resourceStr1 = 'No traded resources.';
+
+        if(res != null){
+            res.forEach(agreement => {
+                let resourceProducedFirstState = () => {
+                    let resourceStr1 = '';
+                    if (agreement.traders[0].resources !== null) {
+                        agreement.traders[0].resources.forEach(resource => {
+                            resourceStr1 += resource.ResourceName + ', ';
+                        })
+                        resourceStr1 = resourceStr1.slice(0, -2);
+                    } else {
+                        resourceStr1 = 'No traded resources.';
+                    }
+                    return resourceStr1;
                 }
-                return resourceStr1;
-            }
-
-            let resourceProducedSecondState = () => {
-                let resourceStr2 = '';
-                if (agreement.traders[1].resources !== null) {
-                    agreement.traders[1].resources.forEach(resource => {
-                        resourceStr2 += resource.ResourceName + ', ';
-                    })
-                    resourceStr2 = resourceStr2.slice(0, -2);
-                } else {
-                    resourceStr2 = 'No traded resources.';
+    
+                let resourceProducedSecondState = () => {
+                    let resourceStr2 = '';
+                    if (agreement.traders[1].resources !== null) {
+                        agreement.traders[1].resources.forEach(resource => {
+                            resourceStr2 += resource.ResourceName + ', ';
+                        })
+                        resourceStr2 = resourceStr2.slice(0, -2);
+                    } else {
+                        resourceStr2 = 'No traded resources.';
+                    }
+                    return resourceStr2;
                 }
-                return resourceStr2;
-            }
-
-            $('#tradeAgreements')
-                .append(
-                    '<tr>' +
-                    '<td>' + agreement.traders[0].state.stateName + '</td>' +
-                    '<td>' + resourceProducedFirstState() + '</td>' +
-                    '<td>' + agreement.traders[0].tradePower * 100 + '%</td>' +
-                    '<td>' + parseFloat(agreement.traders[0].tradeValue).toFixed(2) + '</td>' +
-                    '<td>' + agreement.traders[1].state.stateName + '</td>' +
-                    '<td>' + resourceProducedSecondState() + '</td>' +
-                    '<td>' + agreement.traders[1].tradePower * 100 + '%</td>' +
-                    '<td>' + parseFloat(agreement.traders[1].tradeValue).toFixed(2) + '</td>' +
-                    '<td>' + agreement.desc + '</td>' +
-                    +'</tr>'
-                );
-
-            $('#selTradeAgreement')
-                .append($('<option />')
-                    .val(agreement.tradeAgreementId)
-                    .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
-                    .attr('data-first-state-id', agreement.traders[0].state.stateID).attr('data-second-state-id', agreement.traders[1].state.stateID)
-                );
-
-            // appends all existing trade agreements to the trade agreements to delete select
-            $('#selAgreementDelete')
-                .append($('<option />')
-                    .val(agreement.tradeAgreementId)
-                    .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
-                );
-        })
+    
+                $('#tradeAgreements')
+                    .append(
+                        '<tr>' +
+                        '<td>' + agreement.traders[0].state.stateName + '</td>' +
+                        '<td>' + resourceProducedFirstState() + '</td>' +
+                        '<td>' + agreement.traders[0].tradePower * 100 + '%</td>' +
+                        '<td>' + parseFloat(agreement.traders[0].tradeValue).toFixed(2) + '</td>' +
+                        '<td>' + agreement.traders[1].state.stateName + '</td>' +
+                        '<td>' + resourceProducedSecondState() + '</td>' +
+                        '<td>' + agreement.traders[1].tradePower * 100 + '%</td>' +
+                        '<td>' + parseFloat(agreement.traders[1].tradeValue).toFixed(2) + '</td>' +
+                        '<td>' + agreement.desc + '</td>' +
+                        +'</tr>'
+                    );
+    
+                $('#selTradeAgreement')
+                    .append($('<option />')
+                        .val(agreement.tradeAgreementId)
+                        .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
+                        .attr('data-first-state-id', agreement.traders[0].state.stateID).attr('data-second-state-id', agreement.traders[1].state.stateID)
+                    );
+    
+                // appends all existing trade agreements to the trade agreements to delete select
+                $('#selAgreementDelete')
+                    .append($('<option />')
+                        .val(agreement.tradeAgreementId)
+                        .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
+                    );
+            })
+        }
     });
 }
 

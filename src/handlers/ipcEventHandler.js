@@ -6,7 +6,6 @@ const facilityHandler = require('./ipcHandlers/facilityHandler');
 const componentHandler = require('./ipcHandlers/componentHandler');
 const tradeAgreementHandler = require('./ipcHandlers/tradeAgreementHandler');
 const resourceHandler = require('./ipcHandlers/resourceHandler');
-const generalHandler = require('./ipcHandlers/generalHandler');
 
 const initializeIpcMains = () => {
     generalHandler();
@@ -16,7 +15,6 @@ const initializeIpcMains = () => {
     componentHandler();
     tradeAgreementHandler();
     resourceHandler();
-    generalHandler();
     miscellaneous();
 };
 exports.initializeIpcMains = initializeIpcMains;
