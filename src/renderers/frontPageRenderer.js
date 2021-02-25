@@ -2,7 +2,6 @@ const { ipcMain } = require('electron');
 const electron = require('electron');
 const { ipcRenderer } = electron;
 const $ = require('jquery');
-const { advanceSeason } = require('../services/generalServices');
 
 $(function () {
     loadFrontPage();
@@ -23,6 +22,9 @@ function loadFrontPage() {
 }
 
 function handleButtonandSubmitCalls() {
+    //Advance to next season
+    advanceToNextSeason();
+
     //Add state
     frmAddState_onSubmit();
 
@@ -163,64 +165,67 @@ function getAllTradeAgreements() {
         $('#selAgreementDelete').empty();
 
         $('#selTradeAgreement').append('<option disabled selected value> -- Select a trade agreement -- </option>');
-        res.forEach(agreement => {
-            console.log(agreement);
-            let resourceProducedFirstState = () => {
-                let resourceStr1 = '';
-                if (agreement.traders[0].resources !== null) {
-                    agreement.traders[0].resources.forEach(resource => {
-                        resourceStr1 += resource.ResourceName + ', ';
-                    })
-                    resourceStr1 = resourceStr1.slice(0, -2);
-                } else {
-                    resourceStr1 = 'No traded resources.';
+
+        if(res != null){
+            res.forEach(agreement => {
+                console.log(agreement);
+                let resourceProducedFirstState = () => {
+                    let resourceStr1 = '';
+                    if (agreement.traders[0].resources !== null) {
+                        agreement.traders[0].resources.forEach(resource => {
+                            resourceStr1 += resource.ResourceName + ', ';
+                        })
+                        resourceStr1 = resourceStr1.slice(0, -2);
+                    } else {
+                        resourceStr1 = 'No traded resources.';
+                    }
+                    return resourceStr1;
                 }
-                return resourceStr1;
-            }
-
-            let resourceProducedSecondState = () => {
-                let resourceStr2 = '';
-                if (agreement.traders[1].resources !== null) {
-                    agreement.traders[1].resources.forEach(resource => {
-                        resourceStr2 += resource.ResourceName + ', ';
-                    })
-                    resourceStr2 = resourceStr2.slice(0, -2);
-                } else {
-                    resourceStr2 = 'No traded resources.';
+    
+                let resourceProducedSecondState = () => {
+                    let resourceStr2 = '';
+                    if (agreement.traders[1].resources !== null) {
+                        agreement.traders[1].resources.forEach(resource => {
+                            resourceStr2 += resource.ResourceName + ', ';
+                        })
+                        resourceStr2 = resourceStr2.slice(0, -2);
+                    } else {
+                        resourceStr2 = 'No traded resources.';
+                    }
+                    return resourceStr2;
                 }
-                return resourceStr2;
-            }
-
-
-            $('#tradeAgreements')
-            .append(
-                '<tr>'+
-                    '<td>'+agreement.traders[0].state.stateName+'</td>'+
-                    '<td>'+resourceProducedFirstState()+'</td>'+
-                    '<td>'+agreement.traders[0].tradePower * 100 + '%</td>'+
-                    '<td>'+parseFloat(agreement.traders[0].tradeValue).toFixed(2)+'</td>'+
-                    '<td>'+agreement.traders[1].state.stateName+'</td>'+
-                    '<td>'+resourceProducedSecondState()+'</td>'+
-                    '<td>'+agreement.traders[1].tradePower * 100 + '%</td>'+
-                    '<td>'+parseFloat(agreement.traders[1].tradeValue).toFixed(2)+'</td>'+
-                    '<td>'+agreement.desc+'</td>'+
-                +'</tr>'
-            );
-            
-            $('#selTradeAgreement')
-            .append($('<option />')
-                .val(agreement.tradeAgreementId)
-                .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
-                .attr('data-first-state-id', agreement.traders[0].state.stateID).attr('data-second-state-id', agreement.traders[1].state.stateID)
-            );
-
-            // appends all existing trade agreements to the trade agreements to delete select
-            $('#selAgreementDelete')
-            .append($('<option />')
-                .val(agreement.tradeAgreementId)
-                .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
-            );
-        })
+    
+    
+                $('#tradeAgreements')
+                .append(
+                    '<tr>'+
+                        '<td>'+agreement.traders[0].state.stateName+'</td>'+
+                        '<td>'+resourceProducedFirstState()+'</td>'+
+                        '<td>'+agreement.traders[0].tradePower * 100 + '%</td>'+
+                        '<td>'+parseFloat(agreement.traders[0].tradeValue).toFixed(2)+'</td>'+
+                        '<td>'+agreement.traders[1].state.stateName+'</td>'+
+                        '<td>'+resourceProducedSecondState()+'</td>'+
+                        '<td>'+agreement.traders[1].tradePower * 100 + '%</td>'+
+                        '<td>'+parseFloat(agreement.traders[1].tradeValue).toFixed(2)+'</td>'+
+                        '<td>'+agreement.desc+'</td>'+
+                    +'</tr>'
+                );
+                
+                $('#selTradeAgreement')
+                .append($('<option />')
+                    .val(agreement.tradeAgreementId)
+                    .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
+                    .attr('data-first-state-id', agreement.traders[0].state.stateID).attr('data-second-state-id', agreement.traders[1].state.stateID)
+                );
+    
+                // appends all existing trade agreements to the trade agreements to delete select
+                $('#selAgreementDelete')
+                .append($('<option />')
+                    .val(agreement.tradeAgreementId)
+                    .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
+                );
+            })
+        }
 
         
     });
@@ -234,6 +239,22 @@ function getAllTradeAgreements() {
 /**
  * Start of Button and Submit event related functions
  */
+
+function advanceToNextSeason() {
+    $('#btnSeason').on('click',() =>{
+        ipcRenderer.send('General:advanceToNextSeason');
+        ipcRenderer.once('General:advanceToNextSeasonOK',(e,res) =>{
+            if (res) {
+                $('#nextSeasonMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully advanced to next season</div>')
+            }
+            else {
+                $('#nextSeasonMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when advancing to next season</div>')
+            }
+
+            $('#mdlAdvanceSeason').modal('toggle');
+        })
+    })
+}
 
 function frmAddState_onSubmit() {
     $('#frmAddState').on('submit', function (e) {
@@ -606,7 +627,6 @@ function frmDeleteResource_onSubmit() {
  * End of Button and Submit event related functions
  */
 //Called in home.html
-ipcRenderer.once
 
 //Called in getStateList()
 function openStatePage(ID) {
@@ -616,15 +636,3 @@ function openStatePage(ID) {
 }
 
 //called on region click
-
-$('#btnSeason').on('click',() =>{
-    ipcRenderer.send('General:AdvancingSeason');
-    ipcRenderer.once('General:AdvancingSeason',(e,res) =>{
-        if(res){
-            $('#nextSeasonMessage').append('<div>This is working</div>')
-        }
-        else{
-            $('#nextSeasonMessage').append('<div>Error not working</div>')
-        }
-    })
-})
