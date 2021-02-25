@@ -10,13 +10,17 @@
 <body>
     <template>
         <div class="container-fluid template" data-tab="nav-facilities">
-            <div class="accordion" id="facilityList">
-
+            <div class="row mb-2 pt-2">
+                <div class="col-12">
+                    <div class="accordion" id="facilityList"></div>
+                </div>
             </div>
-
-            <br>
-            <button class="btn btn-success" id="btnAddFacility" data-toggle="modal" data-target="#mdlAddFacility">Add
-                Facility</button>
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-success" id="btnAddFacility" data-toggle="modal"
+                        data-target="#mdlAddFacility">Add Facility</button>
+                </div>
+            </div>
 
             <div class="modal fade" id="mdlAddFacility" tabindex="-1" role="dialog"
                 aria-labelledby="mdlAddFacilityLabel" aria-hidden="true">

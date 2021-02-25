@@ -2,13 +2,13 @@ const { ipcMain } = require('electron');
 const general = require('../../services/generalServices');
 
 const handle = () => {
-    ipcMain.on('General:advanceToNextSeason',advanceSeason);
+    ipcMain.on('General:AdvancingSeason', advanceSeason);
 }
-module.exports = handle
+module.exports = handle;
 
-const advanceSeason = (e) =>{
+const advanceSeason = (e) => {
     let response = general.advanceSeason();
-    response.then(result =>{
-        e.sender.send("General:advanceToNextSeasonOK",result)
+    response.then(result => {
+        e.sender.send("General:AdvancingSeasonOK", result)
     })
 }

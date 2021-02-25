@@ -10,21 +10,47 @@
 <body>
     <template>
         <div class="container-fluid template" data-tab="nav-general">
-            Biome : <span id="lblBiome"></span><br>
-            Belongs To : <span id="lblOwner"></span><br>
-            Population : <span id="lblPopulation"></span><br>
-            Tax Rate : <span id="lblTaxRate"></span> <br>
-            Total Region Income : <span id="lblTotalRegionIncome"></span> <br>
-            Total Region Food Produced : <span id="lblRegionFoodProduced"></span> <br>
-            Total Region Food Consumed : <span id="lblRegionFoodConsumed"></span> <br>
-            Total Region Food Available : <span id="lblRegionFoodAvailable"></span> <br>
-            Expected Population Growth : <span id="lblPopulationGrowth"></span> <br>
-            Resources Produced : <span id="lblResourcesProduced"></span> <br><br>
+            <div class="row mb-2">
+                <div class="col-12">
+                    Biome : <span id="lblBiome"></span>
+                </div>
+                <div class="col-12">
+                    Belongs To : <span id="lblOwner"></span>
+                </div>
+                <div class="col-12">
+                    Population : <span id="lblPopulation"></span>
+                </div>
+                <div class="col-12">
+                    Tax Rate : <span id="lblTaxRate"></span>
+                </div>
+                <div class="col-12">
+                    Total Region Income : <span id="lblTotalRegionIncome"></span>
+                </div>
+                <div class="col-12">
+                    Total Region Food Produced : <span id="lblRegionFoodProduced"></span>
+                </div>
+                <div class="col-12">
+                    Total Region Food Consumed : <span id="lblRegionFoodConsumed"></span>
+                </div>
+                <div class="col-12">
+                    Total Region Food Available : <span id="lblRegionFoodAvailable"></span>
+                </div>
+                <div class="col-12">
+                    Expected Population Growth : <span id="lblPopulationGrowth"></span>
+                </div>
+                <div class="col-12">
+                    Resources Produced : <span id="lblResourcesProduced"></span>
+                </div>
+            </div>
 
-            <button class="btn btn-primary" id="btnUpdateRegion" data-toggle="modal"
-                data-target="#mdlUpdateRegion">Update Region</button>
-            <button class="btn btn-danger" id="btnOpenDeleteRegion" data-toggle="modal"
-                data-target="#mdlDeleteRegion">Delete Region</button>
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-primary" id="btnUpdateRegion" data-toggle="modal"
+                        data-target="#mdlUpdateRegion">Update Region</button>
+                    <button class="btn btn-danger" id="btnOpenDeleteRegion" data-toggle="modal"
+                        data-target="#mdlDeleteRegion">Delete Region</button>
+                </div>
+            </div>
 
             <div class="modal fade" id="mdlUpdateRegion" tabindex="-1" role="dialog"
                 aria-labelledby="mdlUpdateRegionLabel" aria-hidden="true">
@@ -85,7 +111,8 @@
                                 <div class="form-group row">
                                     <label class="col-sm-5 col-form-label" for="nmbTaxRate">Tax Rate</label>
                                     <div class="col-sm-7">
-                                        <input class="form-control" type="number" id="nmbTaxRate" min="0" max="1" step="0.001">
+                                        <input class="form-control" type="number" id="nmbTaxRate" min="0" max="1"
+                                            step="0.001">
                                     </div>
                                 </div>
 

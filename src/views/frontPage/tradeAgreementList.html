@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
     <template>
         <div class="container template" id="tradeAgreementList-template" data-tab="tradeAgreementList">
@@ -15,7 +17,7 @@
             <table class="table table-bordered table-striped">
                 <thead class="thead-dark" style="text-align: center;">
                     <tr>
-                        <th rowspan="1" colspan="4" >
+                        <th rowspan="1" colspan="4">
                             First State
                         </th>
                         <th rowspan="1" colspan="4">
@@ -38,15 +40,20 @@
                 </tbody>
             </table>
 
-            
-            <button class="btn btn-success" id="btnAddAgreement" data-toggle="modal" data-target="#mdlAddUpdateAgreement">Add New Trade Agreement</button>
 
-            <button class="btn btn-primary" id="btnUpdateAgreement" data-toggle="modal" data-target="#mdlAddUpdateAgreement">Update Existing Trade Agreement</button>
+            <button class="btn btn-success" id="btnAddAgreement" data-toggle="modal"
+                data-target="#mdlAddUpdateAgreement">Add New Trade Agreement</button>
 
-            <button class="btn btn-danger" id="btnDeleteAgreement" data-toggle="modal" data-target="#mdlDeleteAgreement">Delete Trade Agreement(s)</button>
+            <button class="btn btn-primary" id="btnUpdateAgreement" data-toggle="modal"
+                data-target="#mdlAddUpdateAgreement">Update Existing Trade Agreement</button>
+
+            <button class="btn btn-danger" id="btnDeleteAgreement" data-toggle="modal"
+                data-target="#mdlDeleteAgreement">Delete Trade Agreement(s)</button>
+            <script src="renderers/PartialViewRenderers/frontPage/tradeAgreementListRenderer.js" defer></script>
         </div>
 
-        <div class="modal fade" id="mdlAddUpdateAgreement" tabindex="-1" role="dialog" aria-labelledby="mdlAddUpdateAgreementLabel" aria-hidden="true">
+        <div class="modal fade" id="mdlAddUpdateAgreement" tabindex="-1" role="dialog"
+            aria-labelledby="mdlAddUpdateAgreementLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -59,29 +66,29 @@
                         <div class="modal-body">
                             <div id="selTradeAgreementField">
                                 <label for="selTradeAgreement">Select Trade Agreement</label>
-                                <select name="selTradeAgreement" id="selTradeAgreement"></select><br/>
+                                <select name="selTradeAgreement" id="selTradeAgreement"></select><br />
                             </div>
 
                             <div class="row container-fluid" id="agreementFields">
                                 <div class="column">
                                     <label for="selFirstState">Select First State</label>
-                                    <select name="selState" id="selFirstState" required></select><br/>
+                                    <select name="selState" id="selFirstState" required></select><br />
 
                                     <label for="selFirstResource">Select Resource(s)</label>
-                                    <select name="selFirstResource" id="selFirstResource" multiple class="form-select"></select> <br>
-    
-    
+                                    <select name="selFirstResource" id="selFirstResource" multiple
+                                        class="form-select"></select> <br>
                                 </div>
                                 <div class="column">
                                     <label for="selSecondState">Select Second State</label>
-                                    <select name="selState" id="selSecondState" required></select><br/>
-    
+                                    <select name="selState" id="selSecondState" required></select><br />
+
                                     <label for="selSecondResource">Select Resource(s)</label>
-                                    <select name="selSecondResource" id="selSecondResource" multiple class="form-select"></select> <br>
+                                    <select name="selSecondResource" id="selSecondResource" multiple
+                                        class="form-select"></select> <br>
                                 </div>
 
-                                    &nbsp;&nbsp;<label for="txtAgreementDesc">Description</label>&nbsp;
-                                    <input type="text" id="txtAgreementDesc" ><br/>
+                                &nbsp;&nbsp;<label for="txtAgreementDesc">Description</label>&nbsp;
+                                <input type="text" id="txtAgreementDesc"><br />
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -92,7 +99,8 @@
             </div>
         </div>
 
-        <div class="modal fade" id="mdlDeleteAgreement" tabindex="-1" role="dialog" aria-labelledby="mdlDeleteAgreementLabel" aria-hidden="true">
+        <div class="modal fade" id="mdlDeleteAgreement" tabindex="-1" role="dialog"
+            aria-labelledby="mdlDeleteAgreementLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -104,7 +112,8 @@
                     <form id="frmDeleteAgreement">
                         <div class="modal-body">
                             <label for="selAgreementDelete">Choose Agreements to Delete </label>
-                            <select name="selAgreementDelete" id="selAgreementDelete" multiple class="form-select form-select-sm"></select> <br>
+                            <select name="selAgreementDelete" id="selAgreementDelete" multiple
+                                class="form-select form-select-sm"></select> <br>
 
                         </div>
                         <div class="modal-footer">
@@ -116,4 +125,5 @@
         </div>
     </template>
 </body>
+
 </html>

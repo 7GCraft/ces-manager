@@ -63,10 +63,12 @@ function getFacilitiesList() {
         dataAvailable = true;
         $('#selFacility').append('<option selected value="">NONE</option>');
         if (res != null) {
-            $('#selFacility').append($('<option>', {
-                value: facility.facilityId,
-                text: facility.facilityName
-            }));
+            res.forEach(facility => {
+                $('#selFacility').append($('<option>', {
+                    value: facility.facilityId,
+                    text: facility.facilityName
+                }));
+            })
         }
     });
 }

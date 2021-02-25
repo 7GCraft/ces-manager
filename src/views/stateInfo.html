@@ -1,30 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel = "stylesheet" 
-    href = "../../node_modules/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel = "stylesheet" 
-    href = "../css/state.css" />
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../css/state.css" />
 </head>
+
 <body>
     <div id="stateMessage">
 
     </div>
     <nav>
-        <div class="jumbotron" style="text-align: center;"><h1><label id="lblStateName"></label></h1><h5><span id="lblDescription"></span></h5></div>
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-          <a class="nav-item nav-link active" id="nav-general-tab" data-toggle="tab" href="#nav-general" role="tab" aria-controls="nav-general" aria-selected="true">General Info</a>
-          <a class="nav-item nav-link" id="nav-regions-tab" data-toggle="tab" href="#nav-regions" role="tab" aria-controls="nav-regions" aria-selected="false">Regions</a>
-          <a class="nav-item nav-link" id="nav-resources-tab" data-toggle="tab" href="#nav-resources" role="tab" aria-controls="nav-resources" aria-selected="false">Resources</a>
-          <a class="nav-item nav-link" id="nav-tradeAgreements-tab" data-toggle="tab" href="#nav-tradeAgreements" role="tab" aria-controls="nav-tradeAgreements" aria-selected="false">Trade Agreements</a>
+        <div class="jumbotron" style="text-align: center;">
+            <h1><label id="lblStateName"></label></h1>
+            <h5><span id="lblDescription"></span></h5>
         </div>
-      </nav>
-      <div class="tab-content stateContent" id="nav-tabContent">
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-general-tab" data-toggle="tab" href="#nav-general" role="tab"
+                aria-controls="nav-general" aria-selected="true">General Info</a>
+            <a class="nav-item nav-link" id="nav-regions-tab" data-toggle="tab" href="#nav-regions" role="tab"
+                aria-controls="nav-regions" aria-selected="false">Regions</a>
+            <a class="nav-item nav-link" id="nav-resources-tab" data-toggle="tab" href="#nav-resources" role="tab"
+                aria-controls="nav-resources" aria-selected="false">Resources</a>
+            <a class="nav-item nav-link" id="nav-tradeAgreements-tab" data-toggle="tab" href="#nav-tradeAgreements"
+                role="tab" aria-controls="nav-tradeAgreements" aria-selected="false">Trade Agreements</a>
+        </div>
+    </nav>
+    <div class="tab-content stateContent" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
             <div class="container-fluid">
-                
+
 
                 Treasury : <span id="lblStateTreasury"></span> <br>
                 Total Income : <span id="lblTotalIncome"></span> <br>
@@ -36,14 +43,16 @@
                 Average Development Level : <span id="lblAvgDevelopment"></span>
                 <br><br>
 
-                <button class="btn btn-primary" id="btnUpdateState" data-toggle="modal" data-target="#mdlUpdateState">Update State</button>
-                <button class="btn btn-danger" id="btnOpenDeleteState" data-toggle="modal" data-target="#mdlDeleteState">Delete State</button>
+                <button class="btn btn-primary" id="btnUpdateState" data-toggle="modal"
+                    data-target="#mdlUpdateState">Update State</button>
+                <button class="btn btn-danger" id="btnOpenDeleteState" data-toggle="modal"
+                    data-target="#mdlDeleteState">Delete State</button>
             </div>
         </div>
-        
+
         <div class="tab-pane fade" id="nav-regions" role="tabpanel" aria-labelledby="nav-regions-tab">
             <div id="listOfRegions" class="regionList container-fluid">
-                
+
             </div>
         </div>
         <div class="tab-pane fade" id="nav-resources" role="tabpanel" aria-labelledby="nav-resources-tab">
@@ -63,33 +72,34 @@
         <div class="tab-pane fade" id="nav-tradeAgreements" role="tabpanel" aria-labelledby="nav-tradeAgreements-tab">
             <table class="table table-bordered table-striped">
                 <thead class="thead-dark" style="text-align: center;">
-                        <tr>
-                            <th rowspan="1" colspan="4" >
-                                First State
-                            </th>
-                            <th rowspan="1" colspan="4">
-                                Second State
-                            </th>
-                            <th rowspan="2">Description</th>
-                        </tr>
-                        <tr>
-                            <th>State Name</th>
-                            <th>Resources Traded</th>
-                            <th>Trade Power</th>
-                            <th>Trade Value</th>
-                            <th>State Name</th>
-                            <th>Resources Traded</th>
-                            <th>Trade Power</th>
-                            <th>Trade Value</th>
+                    <tr>
+                        <th rowspan="1" colspan="4">
+                            First State
+                        </th>
+                        <th rowspan="1" colspan="4">
+                            Second State
+                        </th>
+                        <th rowspan="2">Description</th>
+                    </tr>
+                    <tr>
+                        <th>State Name</th>
+                        <th>Resources Traded</th>
+                        <th>Trade Power</th>
+                        <th>Trade Value</th>
+                        <th>State Name</th>
+                        <th>Resources Traded</th>
+                        <th>Trade Power</th>
+                        <th>Trade Value</th>
                     </tr>
                 </thead>
                 <tbody id="tradeAgreements">
                 </tbody>
             </table>
         </div>
-      </div>
+    </div>
 
-      <div class="modal fade" id="mdlUpdateState" tabindex="-1" role="dialog" aria-labelledby="mdlUpdateStateLabel" aria-hidden="true">
+    <div class="modal fade" id="mdlUpdateState" tabindex="-1" role="dialog" aria-labelledby="mdlUpdateStateLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -134,28 +144,30 @@
                 </form>
             </div>
         </div>
-      </div>
+    </div>
 
-        <div class="modal fade" id="mdlDeleteState" tabindex="-1" role="dialog" aria-labelledby="mdlDeleteStateLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="mdlDeleteStateLabel">Delete State</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure?
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-danger" id="btnDeleteState">Yes</button>
-                        <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
-                    </div>
+    <div class="modal fade" id="mdlDeleteState" tabindex="-1" role="dialog" aria-labelledby="mdlDeleteStateLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mdlDeleteStateLabel">Delete State</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" id="btnDeleteState">Yes</button>
+                    <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
                 </div>
             </div>
         </div>
-    
+    </div>
+
 </body>
 <script src="../renderers/stateRenderer.js"></script>
+
 </html>
