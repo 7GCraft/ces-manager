@@ -1,4 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron');
+const generalHandler = require('./ipcHandlers/generalHandler');
 const stateHandler = require('./ipcHandlers/stateHandler');
 const regionHandler = require('./ipcHandlers/regionHandler');
 const facilityHandler = require('./ipcHandlers/facilityHandler');
@@ -8,6 +9,7 @@ const resourceHandler = require('./ipcHandlers/resourceHandler');
 const generalHandler = require('./ipcHandlers/generalHandler');
 
 const initializeIpcMains = () => {
+    generalHandler();
     stateHandler();
     regionHandler();
     facilityHandler();

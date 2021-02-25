@@ -2,7 +2,7 @@ const { ipcMain } = require('electron');
 const general = require('../../services/generalServices');
 
 const handle = () => {
-    ipcMain.on('General:Advancing Season', advanceSeason);
+    ipcMain.on('General:AdvancingSeason', advanceSeason);
 }
 module.exports = handle;
 
