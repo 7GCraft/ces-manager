@@ -19,11 +19,11 @@ const getComponentByRegionId = async (id) => {
         .catch(e => {
             console.error(e);
         });
-    
+
     const componentTypes = await getComponentTypeAll();
 
     const resources = await resourceServices.getResourceAll();
-    
+
     if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
     let components = [];
@@ -77,11 +77,11 @@ const getComponentByFacilityId = async (id) => {
         .catch(e => {
             console.error(e);
         });
-    
+
     const componentTypes = await getComponentTypeAll();
-    
+
     const resources = await resourceServices.getResourceAll();
-    
+
     if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
     let components = [];
@@ -143,9 +143,9 @@ const getComponentFunctionalByRegionId = async (id) => {
         });
 
     const componentTypes = await getComponentTypeAll();
-    
+
     const resources = await resourceServices.getResourceAll();
-    
+
     if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
     let components = [];
@@ -213,9 +213,9 @@ const getComponentResourceFunctionalByStateId = async (id) => {
         });
 
     const componentTypes = await getComponentTypeAll();
-    
+
     const resources = await resourceServices.getResourceAll();
-    
+
     if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
     let components = [];
@@ -277,9 +277,9 @@ const getComponentFunctionalByIds = async (ids) => {
         });
 
     const componentTypes = await getComponentTypeAll();
-    
+
     const resources = await resourceServices.getResourceAll();
-    
+
     if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
     let components = [];
@@ -336,9 +336,9 @@ const getComponentUnusedByRegionId = async (id) => {
         });
 
     const componentTypes = await getComponentTypeAll();
-    
+
     const resources = await resourceServices.getResourceAll();
-    
+
     if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
     let components = [];
@@ -386,15 +386,15 @@ const getComponentUnusedByRegionId = async (id) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const addComponent = async (component) => {
-    console.log(`From addComponent: ${component}`);
-
     let resStatus = true;
 
     let newValue = null;
 
-    if (typeof(component.value) === 'number') newValue = `i;${component.value}`;
-    else if (typeof(component.value) === 'string') newValue = `s;${component.value}`;
-    else if (typeof(component.value) === 'object') newValue = `i;${component.value.resourceId}`;
+    if (component.value !== null) {
+        if (typeof (component.value) === 'number') newValue = `i;${component.value}`;
+        else if (typeof (component.value) === 'string') newValue = `s;${component.value}`;
+        else if (typeof (component.value) === 'object') newValue = `i;${component.value.resourceId}`;
+    }
 
     let newIsChild = 0;
     let newParentId = null;
@@ -434,9 +434,11 @@ const updateComponent = async (component) => {
 
     let newValue = null;
 
-    if (typeof(component.value) === 'number') newValue = `i;${component.value}`;
-    else if (typeof(component.value) === 'string') newValue = `s;${component.value}`;
-    else if (typeof(component.value) === 'object') newValue = `i;${component.value.resourceId}`;
+    if (component.value !== null) {
+        if (typeof (component.value) === 'number') newValue = `i;${component.value}`;
+        else if (typeof (component.value) === 'string') newValue = `s;${component.value}`;
+        else if (typeof (component.value) === 'object') newValue = `i;${component.value.resourceId}`;
+    }
 
     let newIsChild = 0;
     let newParentId = null;
@@ -447,7 +449,7 @@ const updateComponent = async (component) => {
     }
 
     await knex(constants.TABLE_COMPONENT)
-        .where({componentId: component.componentId})
+        .where({ componentId: component.componentId })
         .update({
             name: component.componentName,
             componentTypeId: component.componentType.componentTypeId,
@@ -485,17 +487,17 @@ const deleteComponentById = async (id) => {
         });
 
     let facilityId;
-    
+
     if (facility.length !== 0) facilityId = facility[0].facilityId;
 
     await knex(constants.TABLE_COMPONENT)
-        .where({componentId: id})
+        .where({ componentId: id })
         .del()
         .catch(e => {
             console.error(e);
             resStatus = false;
         });
-    
+
     if (resStatus) {
         await knex(constants.TABLE_FACILITY)
             .where(constants.COLUMN_FACILITY_ID, facilityId)
@@ -507,7 +509,7 @@ const deleteComponentById = async (id) => {
                 resStatus = false;
             });
     }
-    
+
     return resStatus;
 }
 
@@ -522,7 +524,7 @@ const getComponentTypeAll = async () => {
         .catch(e => {
             console.error(e);
         });
-    
+
     if (rawComponentTypes.length === 0) return null;
 
     let componentTypes = [];
@@ -546,7 +548,7 @@ const sortChildComponents = async (components) => {
     let parentComponents = [];
     let childComponents = [];
 
-    if(components == null){
+    if (components == null) {
         return null;
     }
 
@@ -596,7 +598,7 @@ exports.sortChildComponents = sortChildComponents;
 //getComponentByRegionId(1)
 //.then(data => {
 //    sortChildComponents(data)
- //   .then(test => console.dir(test));
+//   .then(test => console.dir(test));
 //})
 getComponentByFacilityId(1).then(data => console.dir(data));
 //getComponentTypeAll().then(data => console.log(data));

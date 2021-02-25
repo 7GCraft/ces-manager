@@ -29,7 +29,6 @@ function getComponentsInfo() {
 
     ipcRenderer.send('Component:getAllComponentTypes');
     ipcRenderer.once('Component:getAllComponentTypesOK', (e, res) => {
-        //console.log(res);
         if (res != null) {
             res.forEach(componentType => {
                 $('#selComponentType').append($('<option>', {
@@ -120,6 +119,7 @@ function addUpdateComponent_handler() {
     $('#selComponentType').on('change', () => {
         $('#txtValue').val('');
         $('#selResource').val(null);
+        $('#txtValue').prop('disabled', false);
         if ($('#selComponentType').val() == 3) {
             $('#txtValue').hide();
             $('#selResource').show();
@@ -131,6 +131,11 @@ function addUpdateComponent_handler() {
             $('#selResource').hide();
             $('#selResource').attr('required', false);
             $('#txtValue').attr('required', true);
+        }
+
+        if ($('#selComponentType').val() == 2) {
+            $('#txtValue').prop('disabled', 'disabled');
+            $('#txtValue').attr('required', false);
         }
     })
 
@@ -145,13 +150,27 @@ function addUpdateComponent_handler() {
         }
     })
 
+    $('#nmbActivation').on('change', () => {
+        const activationTime = parseInt($('#nmbActivation').val());
+        if (!isNaN(activationTime)) {
+            if (activationTime > 0) {
+                $('#selFacility').prop('disabled', 'disabled');
+                $('#selFacility').val('');
+            }
+            else {
+                $('#selFacility').prop('disabled', false);
+            }
+        }
+    })
+
     $('#frmAddUpdateComponent').on('submit', e => {
         e.preventDefault();
 
         let componentObj = {};
+        let componentTypeId = parseInt($('#selComponentType').val());
 
         componentObj['componentName'] = $('#txtComponentName').val();
-        componentObj['componentType'] = { 'componentTypeId': $('#selComponentType').val() };
+        componentObj['componentType'] = { 'componentTypeId': componentTypeId };
         componentObj['regionId'] = parseInt(window.process.argv.slice(-1));
         componentObj['facilityId'] = ($('#selFacility').val() == '') ? null : $('#selFacility').val();
 
@@ -163,16 +182,20 @@ function addUpdateComponent_handler() {
             componentObj['isChild'] = false;
         }
 
-        if ($('#selComponentType').val() == 3) {
+        if (componentTypeId == 3) {
             componentObj['value'] = { 'resourceId': $('#selResource').val() };
         }
+        else if (componentTypeId == 2) {
+            componentObj['value'] = null;
+        }
         else {
-            let componentTypeId = $('#selComponentType').val();
-
-            componentObj['value'] = (componentTypeId == 1 || componentTypeId == 4 || componentTypeId == 5) ? parseInt($('#txtValue').val()) : $('#txtValue').val();
+            componentObj['value'] = (componentTypeId == 1 || componentTypeId == 4 || componentTypeId == 5) ? parseInt($('#txtValue').val() || 0) : $('#txtValue').val();
         }
 
         componentObj['activationTime'] = $('#nmbActivation').val();
+
+        if (!validate_addUpdateComponent(componentObj, componentTypeId))
+            return;
 
         if ($('#hdnComponentId').val() == '') {
             ipcRenderer.send('Component:addComponent', componentObj);
@@ -202,6 +225,27 @@ function addUpdateComponent_handler() {
             });
         }
     })
+}
+
+/**
+ * Validate Add/Update Component Form
+ * @param {object} componentObj Submitted component
+ * @param {number} componentType Type of submitted component
+ * @returns {boolean} Whether submitted component is valid or not
+ */
+function validate_addUpdateComponent(componentObj, componentType) {
+    let isValid = true;
+    if (componentType == 1
+        && componentObj['value'] > parseInt($('#hdnUnusedPopulation').val())) {
+        isValid = false;
+        $('#txtValue').addClass('is-invalid');
+        $('#lblValueErrMessage').text('Value must not be bigger than unused population');
+    }
+    else {
+        $('#txtValue').removeClass('is-invalid');
+    }
+
+    return isValid;
 }
 
 function deleteComponent_handler() {
@@ -382,6 +426,12 @@ function populateUpdateComponentForm(componentId) {
         $('#selResource').hide();
 
         $('#txtValue').val(value);
+        if (componentTypeId == 2) {
+            $('#txtValue').prop('disabled', 'disabled');
+        }
+        else {
+            $('#txtValue').prop('disabled', false);
+        }
     }
 
     if (facilityId != null) {
@@ -399,7 +449,9 @@ function populateUpdateComponentForm(componentId) {
         $('#selFacility').attr('disabled', false);
     }
     $('#nmbActivation').val(activationTime);
-    //console.log($('#hdnComponentId').val());
+    if (activationTime > 0) {
+        $('#selFacility').prop('disabled', 'disabled');
+    }
 }
 
 function setComponentIdForDelete(componentId) {

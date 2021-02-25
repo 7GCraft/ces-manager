@@ -61,7 +61,6 @@ const getResourceTierAll = async function () {
             console.error(e);
         });
 
-    console.log(rawResourceTiers, rawResources);
     if (rawResourceTiers.length === 0) return null;
 
     let resourceTiers = [];

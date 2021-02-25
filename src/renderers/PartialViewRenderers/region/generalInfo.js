@@ -95,6 +95,7 @@ function getRegionInfo(initial) {
         $('#nmbPopulation').val(res.population);
         $('#nmbTaxRate').val(res.taxRate);
         $('#txtDescRegion').val(res.desc);
+        $('#hdnUnusedPopulation').val(res.population - res.usedPopulation);
     });
 }
 
