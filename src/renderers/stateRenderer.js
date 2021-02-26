@@ -20,7 +20,7 @@ function getStateInfo() {
         $('#lblStateName').text(res.stateName);
         $('#lblDescription').text(res.desc);
         $('#lblStateTreasury').text(res.treasuryAmt);
-        $('#lblTotalIncome').text(res.TotalIncome);
+        $('#lblTotalIncome').text(parseFloat(res.TotalIncome).toFixed(2));
         $('#lblExpenses').text(res.expenses);
         $('#lblFoodProduced').text(res.TotalFoodProduced);
         $('#lblFoodConsumed').text(res.TotalFoodConsumed);

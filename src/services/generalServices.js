@@ -40,7 +40,7 @@ const advanceSeason = async () => {
         let stateRegions = state.regions;
 
         for (let stateRegion of stateRegions) {
-            stateRegion.calculateGrowth(state.BaseGrowth);
+            stateRegion.calculateGrowth(state.BaseGrowth, stateRegions.length);
             await regionServices.updateRegionPopulation(stateRegion);
         }
     }
