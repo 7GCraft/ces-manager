@@ -80,12 +80,12 @@
     <script>
         const fs = require('fs');
 
-        fs.readdir('./src/views/region', function (err, files) {
+        fs.readdir(__dirname + '/region', function (err, files) {
             if (err)
                 console.log(err);
             else {
                 files.forEach(file => {
-                    fetch('region/' + file)
+                    fetch(__dirname + '/region/' + file)
                         .then(function (response) {
                             return response.text();
                         })

@@ -2,7 +2,8 @@ const config = require('./config.json');
 const constants = config.constants;
 const regionServices = require(config.paths.regionServices);
 const tradeAgreementServices = require(config.paths.tradeAgreementServices);
-const knex = require('knex')(config.knexConfig);
+const dbContext = require('../repository/DbContext');
+const knex = dbContext.getKnexObject();
 
 const StateListItem = require(config.paths.stateListItemModel);
 const State = require(config.paths.stateModel);
@@ -18,17 +19,17 @@ const getStateList = async () => {
         .catch(e => {
             console.error(e);
         });
-    
+
     if (rawStateList.length === 0) return null;
 
     let stateList = [];
-    
+
     for (let rawState of rawStateList) {
         let state = new StateListItem(rawState.stateId, rawState.name);
 
         stateList.push(state);
     }
-    
+
     return stateList;
 }
 
@@ -161,11 +162,11 @@ const getStateById = async (id) => {
         });
 
     if (rawState.length === 0) return null;
-    
+
     rawState = rawState[0];
-    
+
     let state = new State(rawState.stateId, rawState.name, rawState.treasuryAmt, rawState.desc, rawState.expenses);
-    
+
     let regions = await regionServices.getRegionByStateId(state.stateID);
 
     let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
@@ -208,7 +209,7 @@ const updateState = async (state) => {
     let resStatus = true;
 
     await knex(constants.TABLE_STATE)
-        .where({stateId: state.stateID})
+        .where({ stateId: state.stateID })
         .update({
             name: state.stateName,
             treasuryAmt: state.treasuryAmt,
@@ -232,13 +233,13 @@ const updateStateTreasuryByStateId = async (id, treasuryAmt) => {
     let resStatus = true;
 
     await knex(constants.TABLE_STATE)
-        .where({stateId: id})
-        .update({treasuryAmt: treasuryAmt})
+        .where({ stateId: id })
+        .update({ treasuryAmt: treasuryAmt })
         .catch(e => {
             console.error(e);
             resStatus = false;
         });
-    
+
     return resStatus;
 }
 
@@ -258,19 +259,19 @@ const deleteStateById = async (id) => {
             console.log(e);
             resStatus = false;
         });
-    
+
     if (hasRegions.length !== 0) {
         resStatus = false;
     } else {
         await knex(constants.TABLE_STATE)
-            .where({stateId: id})
+            .where({ stateId: id })
             .del()
             .catch(e => {
                 console.error(e);
                 resStatus = false;
             });
     }
-    
+
     return resStatus;
 }
 

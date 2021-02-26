@@ -1,7 +1,8 @@
 const config = require('./config.json');
 const constants = config.constants;
 const facilityServices = require(config.paths.facilityServices);
-const knex = require('knex')(config.knexConfig);
+const dbContext = require('../repository/DbContext');
+const knex = dbContext.getKnexObject();
 
 const RegionListItem = require(config.paths.regionListItemModel);
 const Region = require(config.paths.regionModel);
@@ -38,7 +39,7 @@ const getRegionListAll = async () => {
         .catch(e => {
             console.error(e);
         });
-    
+
     if (rawRegions.length === 0) return null;
 
     let regionList = [];
@@ -59,7 +60,7 @@ const getRegionListAll = async () => {
         moneyOutput += rawRegion.population * 100 * rawRegion.taxRate;
         moneyOutput -= moneyOutput * rawRegion.corruptionRate;
 
-        let regionListItem = new RegionListItem (
+        let regionListItem = new RegionListItem(
             rawRegion.regionId,
             rawRegion.name,
             moneyOutput,
@@ -103,9 +104,9 @@ const getRegionListByStateId = async (stateId) => {
         .catch(e => {
             console.error(e);
         });
-    
+
     if (rawRegions.length === 0) return null;
-    
+
     let regionList = [];
 
     for (let rawRegion of rawRegions) {
@@ -124,7 +125,7 @@ const getRegionListByStateId = async (stateId) => {
         moneyOutput += rawRegion.population * 100 * rawRegion.taxRate;
         moneyOutput -= moneyOutput * rawRegion.corruptionRate;
 
-        let regionListItem = new RegionListItem (
+        let regionListItem = new RegionListItem(
             rawRegion.regionId,
             rawRegion.name,
             moneyOutput,
@@ -182,18 +183,18 @@ const getRegionByStateId = async (id) => {
         )
         .leftJoin(
             constants.TABLE_BIOME,
-            constants.TABLE_REGION +  '.' + constants.COLUMN_BIOME_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_BIOME_ID,
             constants.TABLE_BIOME + '.' + constants.COLUMN_BIOME_ID
         )
         .leftJoin(
             constants.TABLE_DEVELOPMENT,
-            constants.TABLE_REGION +  '.' + constants.COLUMN_DEVELOPMENT_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_DEVELOPMENT_ID,
             constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_DEVELOPMENT_ID
         )
         .catch(e => {
             console.error(e);
         });
-    
+
     if (rawRegions.length === null) return null;
 
     let regions = [];
@@ -229,14 +230,14 @@ const getRegionByStateId = async (id) => {
                 taxRate: rawRegion.taxRate
             }
         );
-    
+
         let facilities = await facilityServices.getFacilityByRegionId(region.regionId);
 
         region.summarise(facilities);
 
         regions.push(region);
     }
-    
+
     return regions;
 }
 
@@ -284,22 +285,22 @@ const getRegionById = async (id) => {
         )
         .leftJoin(
             constants.TABLE_BIOME,
-            constants.TABLE_REGION +  '.' + constants.COLUMN_BIOME_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_BIOME_ID,
             constants.TABLE_BIOME + '.' + constants.COLUMN_BIOME_ID
         )
         .leftJoin(
             constants.TABLE_DEVELOPMENT,
-            constants.TABLE_REGION +  '.' + constants.COLUMN_DEVELOPMENT_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_DEVELOPMENT_ID,
             constants.TABLE_DEVELOPMENT + '.' + constants.COLUMN_DEVELOPMENT_ID
         )
         .catch(e => {
             console.error(e);
         });
-    
+
     if (rawRegion.length === 0) return null;
 
     rawRegion = rawRegion[0];
-    
+
     let region = new Region(
         id,
         rawRegion.regionName,
@@ -390,7 +391,7 @@ const updateRegion = async (region) => {
     let resStatus = true;
 
     await knex(constants.TABLE_REGION)
-        .where({regionId: region.regionId})
+        .where({ regionId: region.regionId })
         .update({
             name: region.name,
             stateId: region.state.stateId,
@@ -424,7 +425,7 @@ const updateRegionPopulation = async (region) => {
     }
 
     await knex(constants.TABLE_REGION)
-        .where({regionId: region.regionId})
+        .where({ regionId: region.regionId })
         .update({
             population: newPopulation
         })
@@ -432,7 +433,7 @@ const updateRegionPopulation = async (region) => {
             console.error(e);
             resStatus = false;
         })
-    
+
     return resStatus;
 }
 
@@ -445,13 +446,13 @@ const deleteRegionById = async (id) => {
     let resStatus = true;
 
     await knex(constants.TABLE_REGION)
-        .where({regionId: id})
+        .where({ regionId: id })
         .del()
         .catch(e => {
             console.error(e);
             resStatus = false;
         });
-    
+
     return resStatus;
 }
 
@@ -491,7 +492,7 @@ const getCorruptionAll = async () => {
         .catch(e => {
             console.error(e);
         })
-    
+
     if (rawCorruptions.length === 0) return null;
 
     let corruptions = [];
@@ -516,7 +517,7 @@ const getDevelopmentAll = async () => {
         .catch(e => {
             console.error(e);
         })
-    
+
     if (rawDevelopments.length === 0) return null;
 
     let developments = [];

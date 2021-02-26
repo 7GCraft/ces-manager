@@ -1,6 +1,7 @@
 const config = require('./config.json');
 const constants = config.constants;
-const knex = require('knex')(config.knexConfig);
+const dbContext = require('../repository/DbContext');
+const knex = dbContext.getKnexObject();
 
 const stateServices = require(config.paths.stateServices);
 const regionServices = require(config.paths.regionServices);

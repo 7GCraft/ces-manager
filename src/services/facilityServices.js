@@ -1,7 +1,8 @@
 const config = require('./config.json');
 const constants = config.constants;
 const componentServices = require(config.paths.componentServices);
-const knex = require('knex')(config.knexConfig);
+const dbContext = require('../repository/DbContext');
+const knex = dbContext.getKnexObject();
 
 const Facility = require(config.paths.facilityModel);
 
@@ -18,12 +19,12 @@ const getFacilityByRegionId = async (id) => {
         .catch(e => {
             console.error(e);
         });
-    
+
     let components = await componentServices.getComponentByRegionId(id);
-    let sortedComponents =  await componentServices.sortChildComponents(components);
+    let sortedComponents = await componentServices.sortChildComponents(components);
 
     if (rawFacilities.length === 0 || sortedComponents === null) return null;
-    
+
     let facilities = [];
 
     for (let rawFacility of rawFacilities) {
@@ -73,7 +74,7 @@ const addFacility = async (facility) => {
             console.error(e);
             resValue = false;
         })
-    
+
     return resValue;
 }
 
@@ -90,7 +91,7 @@ const updateFacility = async (facility) => {
     if (facility.isFunctional) newIsFunctional = 1;
 
     await knex(constants.TABLE_FACILITY)
-        .where({facilityId: facility.facilityId})
+        .where({ facilityId: facility.facilityId })
         .update({
             regionId: facility.regionId,
             name: facility.facilityName,
@@ -100,7 +101,7 @@ const updateFacility = async (facility) => {
             console.error(e);
             resStatus = false;
         });
-    
+
     return resValue;
 }
 
@@ -113,21 +114,21 @@ const deleteFacilityById = async (id) => {
     let resStatus = true;
 
     await knex(constants.TABLE_FACILITY)
-    .where({facilityId: id})
-    .del()
-    .catch(e => {
-        console.error(e);
-        resStatus = false;
-    });
-    
-    await knex(constants.TABLE_COMPONENT)
-        .where({facilityId: id})
-        .update({facilityId: null})
+        .where({ facilityId: id })
+        .del()
         .catch(e => {
             console.error(e);
             resStatus = false;
         });
-    
+
+    await knex(constants.TABLE_COMPONENT)
+        .where({ facilityId: id })
+        .update({ facilityId: null })
+        .catch(e => {
+            console.error(e);
+            resStatus = false;
+        });
+
     return resStatus;
 }
 
@@ -140,7 +141,7 @@ const destroyFacilityById = async (id) => {
     let resStatus = true;
 
     await knex(constants.TABLE_FACILITY)
-        .where({facilityId: id})
+        .where({ facilityId: id })
         .del()
         .catch(e => {
             console.error(e);
@@ -149,14 +150,14 @@ const destroyFacilityById = async (id) => {
 
     if (resStatus) {
         await knex(constants.TABLE_COMPONENT)
-        .where({facilityId: id})
-        .del()
-        .catch(e => {
-            console.error(e);
-            resStatus = false;
-        }) 
+            .where({ facilityId: id })
+            .del()
+            .catch(e => {
+                console.error(e);
+                resStatus = false;
+            })
     }
-    
+
     return resStatus;
 }
 
@@ -173,7 +174,7 @@ const assignFacilityComponents = async (facilityId, componentIds) => {
 
     for (let componentId of componentIds) {
         let promise = knex(constants.TABLE_COMPONENT)
-            .where({componentId: componentId})
+            .where({ componentId: componentId })
             .update({
                 facilityId: facilityId
             })
@@ -181,7 +182,7 @@ const assignFacilityComponents = async (facilityId, componentIds) => {
                 console.error(e);
                 resStatus = false;
             });
-        
+
         promises.push(promise);
     }
 

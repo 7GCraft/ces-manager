@@ -1,7 +1,8 @@
 const config = require('./config.json');
 const constants = config.constants;
 const resourceServices = require(config.paths.resourceServices);
-const knex = require('knex')(config.knexConfig);
+const dbContext = require('../repository/DbContext');
+const knex = dbContext.getKnexObject();
 
 const Component = require(config.paths.componentModel);
 const ComponentType = require(config.paths.componentTypeModel);

@@ -48,13 +48,13 @@
 <script>
   const fs = require('fs');
 
-  fs.readdir('./src/views/frontPage', function (err, files) {
+  fs.readdir(__dirname + '/views/frontPage', function (err, files) {
     if (err)
       console.log(err);
     else {
       files.forEach(file => {
         //console.log(file); 
-        fetch('views/frontPage/' + file)
+        fetch(__dirname + '/views/frontPage/' + file)
           .then(function (response) {
             return response.text();
           })
