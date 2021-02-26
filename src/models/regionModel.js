@@ -123,7 +123,7 @@ module.exports = class Region {
      * @param {Number} regionCount must be an integer.
      */
     calculateGrowth(baseGrowth, regionCount) {
-        if (baseGrowth > 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.growthModifier);
-        else if (baseGrowth < 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.shrinkageModifier);
+        if (baseGrowth > 0) this.expectedPopulationGrowth = Math.round(baseGrowth / regionCount * this.development.growthModifier);
+        else if (baseGrowth < 0) this.expectedPopulationGrowth = Math.round(baseGrowth / regionCount * this.development.shrinkageModifier);
     }
 }
