@@ -337,15 +337,12 @@ const getRegionById = async (id) => {
     let stateRegions = await getRegionListByStateId(region.state.stateID);
 
     if (facilities !== null || stateRegions !== null) {
-        let totalFoodProduced = 0;
-        let totalFoodConsumed = 0;
+        let totalFoodOutput;
 
         for (let stateRegion of stateRegions) {
-            totalFoodProduced += stateRegion.totalFoodProduced;
-            totalFoodConsumed += stateRegion.totalFoodConsumed;
+            totalFoodOutput = stateRegion.RegionTotalFood;
         }
 
-        let totalFoodOutput = totalFoodProduced - totalFoodConsumed;
         let baseGrowth = totalFoodOutput / 5;
 
         region.summarise(facilities, baseGrowth);

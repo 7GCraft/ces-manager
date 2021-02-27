@@ -48,5 +48,11 @@ module.exports = class State {
 
         this.TotalFoodAvailable = this.TotalFoodProduced - this.TotalFoodConsumed;
         this.BaseGrowth = this.TotalFoodAvailable / 5;
+
+        if (regions !== null) {
+            for (let region of regions) {
+                region.calculateGrowth(this.BaseGrowth);
+            }
+        }
     }
 }
