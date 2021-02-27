@@ -15,6 +15,7 @@
         "TABLE_REGION": "MsRegion",
         "TABLE_RESOURCE": "MsResource",
         "TABLE_RESOURCE_TIER": "MsResourceTier",
+        "TABLE_SEASON": "MsSeason",
         "TABLE_STATE": "MsState",
         "TABLE_TRADE_AGREEMENT_DETAIL": "DetailTradeAgreement",
         "TABLE_TRADE_AGREEMENT_HEADER": "HeaderTradeAgreement",
@@ -40,6 +41,7 @@
         "COLUMN_FACILITY_ID": "facilityId",
         "COLUMN_REGION_ID": "regionId",
         "COLUMN_RESOURCE_TIER_ID": "resourceTierId",
+        "COLUMN_SEASON_ID": "seasonId",
         "COLUMN_STATE_ID": "stateId",
         "COLUMN_TRADE_AGREEMENT_ID": "tradeAgreementId"
     },
@@ -54,6 +56,7 @@
         "regionModel": "../models/regionModel",
         "resourceModel": "../models/resourceModel",
         "resourceTierModel": "../models/resourceTierModel",
+        "seasonModel": "../models/seasonModel",
         "stateListItemModel": "../models/stateListItemModel",
         "stateModel": "../models/stateModel",
         "tradeAgreementModel": "../models/tradeAgreementModel",
