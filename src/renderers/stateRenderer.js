@@ -105,7 +105,11 @@ function getStateInfo() {
         })
     })
 
-    fs.readdir('src/images', (err, files) => {
+    let imagePath = 'src/images';
+    if (!fs.existsSync(imagePath)) {
+        imagePath = '../' + imagePath;
+    }
+    fs.readdir(imagePath, (err, files) => {
         if (err) {
             console.log(err)
         }
@@ -116,7 +120,7 @@ function getStateInfo() {
 
                 if (parseInt(window.process.argv.slice(-1)) == id[0]) {
                     console.log(file);
-                    $('.jumbotron').css('background-image', 'url(../images/' + file + ')');
+                    $('.jumbotron').css('background-image', `url(../images/${file})`);
                     $('.jumbotron').css('background-size', 'contain');
                     break;
                 }
