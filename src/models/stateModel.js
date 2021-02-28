@@ -51,7 +51,7 @@ module.exports = class State {
 
         if (regions !== null) {
             for (let region of regions) {
-                region.calculateGrowth(this.BaseGrowth);
+                region.calculateGrowth(this.BaseGrowth, regions.length);
             }
         }
     }

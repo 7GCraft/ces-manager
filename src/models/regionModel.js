@@ -81,7 +81,7 @@ module.exports = class Region {
      * @param {Array} facilities must be an array of facility objects.
      * @param {Number} baseGrowth must be a double.
      */
-    summarise (facilities, baseGrowth = null) {
+    summarise (facilities, baseGrowth = null, regionCount = 1) {
         this.totalIncome = 0;
         this.totalFoodProduced = 0;
         this.totalFoodConsumed = this.population;
@@ -112,8 +112,7 @@ module.exports = class Region {
 
         this.totalFoodAvailable = this.totalFoodProduced - this.totalFoodConsumed;
         if (baseGrowth !== null) {
-            if (baseGrowth > 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.growthModifier);
-            else if (baseGrowth < 0) this.expectedPopulationGrowth = Math.round(baseGrowth * this.development.shrinkageModifier);
+            this.calculateGrowth(baseGrowth, regionCount);
         }
     }
 

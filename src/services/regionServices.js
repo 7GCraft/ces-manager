@@ -122,6 +122,7 @@ const getRegionListByStateId = async (stateId) => {
             }
         }
 
+        foodOutput -= rawRegion.population;
         moneyOutput += rawRegion.population * 100 * rawRegion.taxRate;
         moneyOutput -= moneyOutput * rawRegion.corruptionRate;
 
@@ -337,15 +338,15 @@ const getRegionById = async (id) => {
     let stateRegions = await getRegionListByStateId(region.state.stateID);
 
     if (facilities !== null || stateRegions !== null) {
-        let totalFoodOutput;
+        let totalFoodOutput = 0;
 
         for (let stateRegion of stateRegions) {
-            totalFoodOutput = stateRegion.RegionTotalFood;
+            totalFoodOutput += stateRegion.RegionTotalFood;
         }
 
         let baseGrowth = totalFoodOutput / 5;
 
-        region.summarise(facilities, baseGrowth);
+        region.summarise(facilities, baseGrowth, stateRegions.length);
     }
 
     return region;
