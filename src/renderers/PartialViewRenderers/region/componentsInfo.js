@@ -271,12 +271,12 @@ function deleteComponent_handler() {
 function setComponentList(res) {
     if (Array.isArray(res) && res.length) {
         let childComponents = []
-        res.forEach(component => {
+        res.forEach((component, i) => {
             if (!component.isChild) {
                 let valueId = (component.componentType.componentTypeId == 3) ? component.value.ResourceID : component.value;
-                let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : component.value;
-                let activation = (component.activationTime > 0) ? ' Activation Time: ' + component.activationTime : '';
-                $('#componentsList').append('<li id="Component' +
+                let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : (component.componentType.componentTypeId == 2) ? component.componentName : component.value;
+                let activation = (component.activationTime > 0) ? component.activationTime + ' seasons' : 'Activated';
+                $('#componentsList').append('<tr id="Component' +
                     component.componentId
                     + '" data-facility-id="' +
                     component.facilityId
@@ -290,17 +290,24 @@ function setComponentList(res) {
                     valueId
                     + '" data-activation="' +
                     component.activationTime
-                    + '"><b>' +
+                    + '">'+
+                    '<td>'+parseInt(i + 1)+'</td>'+
+                    '<td><b>' +
                     component.componentName
-                    + '</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component' + component.componentId + '")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component' + component.componentId + '")> <span class="parentComponent"><span class="value' +
+                    + '</b></td>'+
+                    '<td><span class="value' +
                     component.componentId
                     + '">' +
                     valueText
-                    + ' (' +
-                    component.componentType.componentTypeName
-                    + ')</span>' +
-                    activation
-                    + '</span></li>');
+                    + 
+                    '</span></td>'+
+                    '<td><span class="value' +
+                    component.componentId
+                    + '">' +component.componentType.componentTypeName+
+                    '</span></td>'+
+                    '<td>'+activation+'</td>'+
+                    ' <td><input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component' + component.componentId + '")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component' + component.componentId + '")> </td>' +
+                    '</tr>');
 
                 switch (component.componentType.componentTypeId) {
                     case 1:

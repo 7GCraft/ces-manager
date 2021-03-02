@@ -19,9 +19,22 @@
                 <label for="rbUnused">Unused</label>
             </div><br>
             <div>
-                <ul id="componentsList">
+                <table class="table">
+                    <thead class="thead-dark">
+                        <th scope="col">No.</th>
+                        <th scope="col">Component Name</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Component Type</th>
+                        <th scope="col">Activation Time</th>
+                        <th scope="col">Actions</th>
+                    </thead>
+                    <tbody id="componentsList">
 
-                </ul>
+                    </tbody>
+                </table>
+                <!-- <ul id="componentsList">
+
+                </ul> -->
                 <button class="btn btn-success" id="btnAddComponent" data-toggle="modal"
                     data-target="#mdlAddUpdateComponent">Add Component</button>
             </div>
