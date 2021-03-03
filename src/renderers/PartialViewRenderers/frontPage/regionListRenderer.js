@@ -5,7 +5,11 @@ $(function () {
     region_getStateListForDropdown();
     //Add Region
     frmAddRegion_onSubmit();
-})
+    //Handle events from region page
+    region_pageRegion_eventHandler();
+    //Handle events from state page
+    region_pageState_eventHandler();
+});
 
 function getAllRegionsByStateId() {
     $('#selState').empty();
@@ -15,16 +19,19 @@ function getAllRegionsByStateId() {
     $('#selDevelopment').empty();
     $('#selCorruption').empty();
     ipcRenderer.send('Region:getAllRegionsByStateId');
-    ipcRenderer.once('Region:getAllRegionsByStateIdOK', (e, res) => {
-        res.forEach(state => {
-            if (Array.isArray(state.Regions) && state.Regions.length) {
-                $('#listOfRegionsByState').append('<div class="regionContainer"><h5>' + state.stateName + '</h5><ul class="regionsList" id="StateRegion' + state.stateID + '"></ul></div>')
+    ipcRenderer.on('Region:getAllRegionsByStateIdOK', (e, res) => {
+        if (Array.isArray(res) && res.length) {
+            $('#listOfRegionsByState').empty();
+            res.forEach(state => {
+                if (Array.isArray(state.Regions) && state.Regions.length) {
+                    $('#listOfRegionsByState').append('<div class="regionContainer"><h5>' + state.stateName + '</h5><ul class="regionsList" id="StateRegion' + state.stateID + '"></ul></div>')
 
-                state.Regions.forEach(region => {
-                    $('#StateRegion' + state.stateID).append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id"))>' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span></li>')
-                });
-            }
-        });
+                    state.Regions.forEach(region => {
+                        $('#StateRegion' + state.stateID).append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id"))>' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span></li>')
+                    });
+                }
+            });
+        }
     });
 
     ipcRenderer.send('Region:getBiomesForAdd');
@@ -135,4 +142,40 @@ function frmAddRegion_onSubmit() {
 function openRegionPage(ID) {
     let regionID = ID.replace('Region', '');
     ipcRenderer.send('Region:openRegionPage', regionID);
+}
+
+function region_pageRegion_eventHandler() {
+    ipcRenderer.on('Region:updateRegionOK', region_pageRegion_onUpdate);
+    ipcRenderer.on('Region:deleteRegionOK', (e, res) => {
+        if (res) {
+            alert('A Region has been deleted!');
+            getAllRegionsByStateId();
+        }
+    });
+    ipcRenderer.on('Facility:updateFacilityOK', region_pageRegion_onUpdate);
+    ipcRenderer.on('Facility:deleteFacilityOK', region_pageRegion_onUpdate);
+    ipcRenderer.on('Component:addComponentOK', region_pageRegion_onUpdate);
+    ipcRenderer.on('Component:updateComponentOK', region_pageRegion_onUpdate);
+    ipcRenderer.on('Component:deleteComponentOK', region_pageRegion_onUpdate);
+}
+
+function region_pageRegion_onUpdate(e, res) {
+    if (res) {
+        getAllRegionsByStateId();
+    }
+}
+
+function region_pageState_eventHandler() {
+    ipcRenderer.on('State:updateStateOK', (e, res) => {
+        if (res) {
+            region_getStateListForDropdown();
+            getAllRegionsByStateId();
+        }
+    });
+    ipcRenderer.on('State:deleteStateOK', (e, res) => {
+        if (res) {
+            region_getStateListForDropdown();
+            getAllRegionsByStateId();
+        }
+    });
 }

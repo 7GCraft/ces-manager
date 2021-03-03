@@ -1,4 +1,4 @@
-const { ipcMain, BrowserWindow } = require('electron');
+const { ipcMain, BrowserWindow, webContents } = require('electron');
 const state = require('../../services/stateServices');
 const region = require('../../services/regionServices');
 
@@ -14,7 +14,9 @@ const handle = () => {
     ipcMain.on('Region:updateRegion', updateRegion);
     ipcMain.on('Region:deleteRegion', deleteRegion);
 }
-module.exports = handle;
+module.exports = {
+    handle
+};
 
 /**
  * Get Regions by State Id
@@ -33,9 +35,9 @@ const getAllRegionsByStateId = (e) => {
             })
         }))
     })
-        .then((regionsByState) => {
-            e.sender.send('Region:getAllRegionsByStateIdOK', regionsByState);
-        });
+    .then((regionsByState) => {
+        e.sender.send('Region:getAllRegionsByStateIdOK', regionsByState);
+    });
 }
 
 /**
@@ -115,7 +117,11 @@ const getCorruptionForAdd = (e) => {
 const addRegion = (e, args) => {
     let response = region.addRegion(args);
     response.then(result => {
-        e.sender.send("Region:addRegionOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Region:addRegionOK", result);
+        });
     })
 }
 
@@ -125,7 +131,11 @@ const addRegion = (e, args) => {
 const updateRegion = (e, args) => {
     let response = region.updateRegion(args);
     response.then(result => {
-        e.sender.send("Region:updateRegionOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Region:updateRegionOK", result);
+        });
     });
 }
 
@@ -135,6 +145,10 @@ const updateRegion = (e, args) => {
 const deleteRegion = (e, arg) => {
     let response = region.deleteRegionById(arg);
     response.then(result => {
-        e.sender.send("Region:deleteRegionOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Region:deleteRegionOK", result);
+        });
     })
 }
