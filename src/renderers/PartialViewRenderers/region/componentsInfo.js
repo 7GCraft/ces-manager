@@ -398,7 +398,7 @@ function setComponentList(res) {
     }
 }
 
-function sortTable(index){
+function sortComponents(index){
     let table = document.getElementById("tblComponents");
     let switching = true;
     let dir = "asc";
