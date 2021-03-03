@@ -467,6 +467,13 @@ function sortComponents(index){
     }
 }
 
+function searchComponents() {
+    let value = $('#txtComponentSearch').val().toLowerCase();
+    $('#componentsList tr').filter( function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+}
+
 function populateUpdateComponentForm(componentId) {
     let splicedComponentId = componentId.replace('Component', '');
     let facilityId = $('#' + componentId).data("facilityId");
