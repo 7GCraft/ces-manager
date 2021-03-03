@@ -10,21 +10,21 @@
 <body>
     <template>
         <div class="container-fluid template" data-tab="nav-components">
-            <div id="rbsComponentsDisplay">
-                <input type="radio" id="rbAll" name="componentDisplay" value="all" checked>
-                <label for="rbAll">All</label>
-                <input type="radio" id="rbUsed" name="componentDisplay" value="used">
-                <label for="rbUsed">Used</label>
-                <input type="radio" id="rbUnused" name="componentDisplay" value="unused">
-                <label for="rbUnused">Unused</label>
-            </div><br>
-            <div>
-                <table class="table">
+            <div class="container-lg">
+                <div id="rbsComponentsDisplay">
+                    <input type="radio" id="rbAll" name="componentDisplay" value="all" checked>
+                    <label for="rbAll">All</label>
+                    <input type="radio" id="rbUsed" name="componentDisplay" value="used">
+                    <label for="rbUsed">Used</label>
+                    <input type="radio" id="rbUnused" name="componentDisplay" value="unused">
+                    <label for="rbUnused">Unused</label>
+                </div><br>
+                <table class="table"  id="tblComponents">
                     <thead class="thead-dark">
-                        <th scope="col">No.</th>
-                        <th scope="col">Component Name</th>
-                        <th scope="col">Value</th>
-                        <th scope="col">Component Type</th>
+                        <th scope="col" onclick ="sortComponents(0)" style="cursor: pointer;">No.</th>
+                        <th scope="col" onclick ="sortComponents(1)" style="cursor: pointer;">Component Name</th>
+                        <th scope="col" >Value</th>
+                        <th scope="col" onclick ="sortComponents(3)" style="cursor: pointer;">Component Type</th>
                         <th scope="col">Activation Time</th>
                         <th scope="col">Actions</th>
                     </thead>
