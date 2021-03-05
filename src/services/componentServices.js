@@ -595,14 +595,15 @@ exports.getComponentTypeAll = getComponentTypeAll;
 exports.sortChildComponents = sortChildComponents;
 
 // FOR DEBUGGING
-//getComponentByRegionId(1)
-//.then(data => {
-//    sortChildComponents(data)
-//   .then(test => console.dir(test));
-//})
-getComponentByFacilityId(1).then(data => console.dir(data));
+getComponentByRegionId(1)
+.then(data => {
+   sortChildComponents(data)
+  .then(test => console.dir(test));
+})
+//getComponentByFacilityId(1).then(data => console.dir(data));
 //getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)
 //     .then(data => console.log(data));
-// getComponentFunctionalByRegionId(1).then(data => console.log(data));
+//getComponentFunctionalByRegionId(1).then(data => console.log(data));
+ //getComponentUnusedByRegionId(1).then(data => console.log(data));
 // getComponentResourceFunctionalByStateId(8).then(data => console.log(data));
