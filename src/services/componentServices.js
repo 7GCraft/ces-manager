@@ -596,11 +596,11 @@ exports.getComponentTypeAll = getComponentTypeAll;
 exports.sortChildComponents = sortChildComponents;
 
 // FOR DEBUGGING
-// getComponentByRegionId(1)
-// .then(data => {
-//    sortChildComponents(data)
-//   .then(test => console.dir(test));
-// })
+getComponentByRegionId(1)
+.then(data => {
+   sortChildComponents(data)
+  .then(test => console.dir(test));
+})
 //getComponentByFacilityId(1).then(data => console.dir(data));
 //getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)

@@ -306,6 +306,7 @@ function setComponentList(res) {
                     + '">' +component.componentType.componentTypeName+
                     '</span></td>'+
                     '<td>'+activation+'</td>'+
+                    '<td><button class="btn btn-outline-info" id="btnChildComponents'+component.componentId+'" onmouseover="readyChildComponents('+component.componentId+')" onclick="showChildComponents('+component.componentId+')" title="">Show</button></td>'+
                     ' <td><input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component' + component.componentId + '")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component' + component.componentId + '")> </td>' +
                     '</tr>');
 
@@ -335,67 +336,109 @@ function setComponentList(res) {
             }
         })
 
-        childComponents.forEach(component => {
-            if ($('#Component' + component.parentId).length) {
-                let valueId = (component.componentType.componentTypeId == 3) ? component.value.ResourceID : component.value;
-                let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : component.value;
-                let activation = (component.activationTime > 0) ? ' Activation Time: ' + component.activationTime : '';
-
-                $('#Component' + component.parentId).append('<ul><li id="Component' +
-                    component.componentId
-                    + '" data-facility-id="' +
-                    component.facilityId
-                    + '" data-component-type-id="' +
-                    component.componentType.componentTypeId
-                    + '" data-is-child="' +
-                    component.isChild
-                    + '" data-component-name="' +
-                    component.componentName
-                    + '" data-value="' +
-                    valueId
-                    + '" data-activation="' +
-                    component.activationTime
-                    + '" data-parent="' +
-                    component.parentId
-                    + '"><b>' +
-                    component.componentName
-                    + '</b> <input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component' + component.componentId + '")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component' + component.componentId + '")> <span class="childComponent"><span id="value' +
-                    component.componentId
-                    + '">' +
-                    valueText
-                    + ' (' +
-                    component.componentType.componentTypeName
-                    + ')</span> ' +
-                    activation
-                    + '</span></li></ul>');
-                switch (component.componentType.componentTypeId) {
-                    case 1:
-                        $('#value' + component.componentId).attr('class', 'valuePopulation');
-                        break;
-                    case 2:
-                        $('#value' + component.componentId).attr('class', 'valueBuilding');
-                        break;
-                    case 3:
-                        $('#value' + component.componentId).attr('class', 'valueResource');
-                        break;
-                    case 4:
-                        $('#value' + component.componentId).attr('class', 'valueFood');
-                        break;
-                    case 5:
-                        $('#value' + component.componentId).attr('class', 'valueMoney');
-                        break;
-                    case 6:
-                        $('#value' + component.componentId).attr('class', 'valueSpecial');
-                        break;
-                }
-            }
-        })
-
-        //console.log(childComponents);
+        localStorage.setItem('childComponents', JSON.stringify(childComponents))
+       
     }
     else {
         $('#componentsList').append('<li>NO COMPONENTS AVAILABLE</li>')
     }
+}
+
+function readyChildComponents(parentId) {
+    let childComponents = JSON.parse(localStorage.getItem('childComponents'));
+    let hasChild = false;
+    
+    for(const component in childComponents){
+        if(childComponents[component].parentId == parentId){
+            hasChild = true;
+            break;
+        }
+    }
+
+    if(!hasChild){
+        $('#btnChildComponents'+parentId).attr('title', 'No children exists')
+        $('#btnChildComponents'+parentId).tooltip();
+        
+        console.log(hasChild);
+    }
+    else{
+        $('#btnChildComponents'+parentId).attr('data-toggle', 'modal');
+        $('#btnChildComponents'+parentId).attr('data-target', '#mdlChildComponents');
+    }
+}
+
+function showChildComponents(parentId) {
+    let childComponents = JSON.parse(localStorage.getItem('childComponents'));
+    childComponents.forEach(component => {
+        if(component.parentId == parentId){
+            
+            let valueId = (component.componentType.componentTypeId == 3) ? component.value.ResourceID : component.value;
+            let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : component.value;
+            let activation = (component.activationTime > 0) ? component.activationTime + ' seasons' : 'Activated';
+
+            $('#childComponentsList').append('<tr id="Component' +
+            component.componentId
+            + '" data-facility-id="' +
+            component.facilityId
+            + '" data-component-type-id="' +
+            component.componentType.componentTypeId
+            + '" data-is-child="' +
+            component.isChild
+            + '" data-component-name="' +
+            component.componentName
+            + '" data-value="' +
+            valueId
+            + '" data-activation="' +
+            component.activationTime
+            + '" data-parent="'+
+            component.parentId
+            +'">'+
+            '<td><b>' +
+            component.componentName
+            + '</b></td>'+
+            '<td><span class="value' +
+            component.componentId
+            + '">' +
+            valueText
+            + 
+            '</span></td>'+
+            '<td><span id="value' +
+            component.componentId
+            + '">' +component.componentType.componentTypeName+
+            '</span></td>'+
+            '<td>'+activation+'</td>'+
+            ' <td><input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component' + component.componentId + '")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component' + component.componentId + '")> </td>' +
+            '</tr>');
+            switch (component.componentType.componentTypeId) {
+                case 1:
+                    $('.value' + component.componentId).attr('class', ' valuePopulation');
+                    break;
+                case 2:
+                    $('.value' + component.componentId).attr('class', ' valueBuilding');
+                    break;
+                case 3:
+                    $('.value' + component.componentId).attr('class', ' valueResource');
+                    break;
+                case 4:
+                    $('.value' + component.componentId).attr('class', ' valueFood');
+                    break;
+                case 5:
+                    $('.value' + component.componentId).attr('class', ' valueMoney');
+                    break;
+                case 6:
+                    $('.value' + component.componentId).attr('class', ' valueSpecial');
+                    break;
+            }
+            
+        }
+    })
+
+
+}
+
+function emptyChildComponents() {
+    console.log("out");
+    $('#childComponentsList').empty();
 }
 
 function sortComponents(index){
