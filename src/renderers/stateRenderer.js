@@ -11,6 +11,10 @@ $(function () {
     btnDeleteState_onClick();
     //Update State
     frmUpdateState_onSubmit();
+    //Handle events from main page
+    pageMain_eventHandler();
+    //Handle events from region page
+    pageRegion_eventHandler();
 })
 
 function getStateInfo() {
@@ -33,6 +37,7 @@ function getStateInfo() {
         $('#txtDescription').val(res.desc);
         $('#nmbExpenses').val(res.expenses);
 
+        $('#tblResources').empty();
         res.ProductiveResources.forEach(resource => {
             let tierStr = () => {
                 switch (resource.ResourceTierID) {
@@ -49,61 +54,8 @@ function getStateInfo() {
         })
     });
 
-    ipcRenderer.send("State:getRegionsForState", parseInt(window.process.argv.slice(-1)));
-    ipcRenderer.once("State:getRegionsForStateOK", (e, res) => {
-        res.forEach(region => {
-            $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span></li>')
-        });
-
-    });
-
-    ipcRenderer.send('Trade:getTradeAgreementsByStateId', parseInt(window.process.argv.slice(-1)));
-    ipcRenderer.once('Trade:getTradeAgreementsByStateIdOK', (e, res) => {
-
-        res.forEach(agreement => {
-            let resourceProducedFirstState = () => {
-                let resourceStr1 = '';
-                if (agreement.traders[0].resources !== null) {
-                    agreement.traders[0].resources.forEach(resource => {
-                        resourceStr1 += resource.ResourceName + ', ';
-                    })
-                    resourceStr1 = resourceStr1.slice(0, -2);
-                } else {
-                    resourceStr1 = 'No traded resources.';
-                }
-                return resourceStr1;
-            }
-
-            let resourceProducedSecondState = () => {
-                let resourceStr2 = '';
-                if (agreement.traders[1].resources !== null) {
-                    agreement.traders[1].resources.forEach(resource => {
-                        resourceStr2 += resource.ResourceName + ', ';
-                    })
-                    resourceStr2 = resourceStr2.slice(0, -2);
-                } else {
-                    resourceStr2 = 'No traded resources.';
-                }
-                return resourceStr2;
-            }
-
-
-            $('#tradeAgreements')
-                .append(
-                    '<tr>' +
-                    '<td>' + agreement.traders[0].state.stateName + '</td>' +
-                    '<td>' + resourceProducedFirstState() + '</td>' +
-                    '<td>' + agreement.traders[0].tradePower * 100 + '%</td>' +
-                    '<td>' + parseFloat(agreement.traders[0].tradeValue).toFixed(2) + '</td>' +
-                    '<td>' + agreement.traders[1].state.stateName + '</td>' +
-                    '<td>' + resourceProducedSecondState() + '</td>' +
-                    '<td>' + agreement.traders[1].tradePower * 100 + '%</td>' +
-                    '<td>' + parseFloat(agreement.traders[1].tradeValue).toFixed(2) + '</td>' +
-                    '<td>' + agreement.desc + '</td>' +
-                    +'</tr>'
-                );
-        })
-    })
+    getRegions();
+    getTradeAgreements();
 
     let imagePath = 'src/images';
     if (!fs.existsSync(imagePath)) {
@@ -128,6 +80,69 @@ function getStateInfo() {
 
         }
     })
+}
+
+function getRegions() {
+    ipcRenderer.send("State:getRegionsForState", parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.once("State:getRegionsForStateOK", (e, res) => {
+        $('#listOfRegions').empty();
+        if (Array.isArray(res) && res.length) {
+            res.forEach(region => {
+                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span></li>')
+            });
+        }
+    });
+}
+
+function getTradeAgreements() {
+    ipcRenderer.send('Trade:getTradeAgreementsByStateId', parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.once('Trade:getTradeAgreementsByStateIdOK', (e, res) => {
+        $('#tradeAgreements').empty();
+        if (Array.isArray(res) && res.length) {
+            res.forEach(agreement => {
+                let resourceProducedFirstState = () => {
+                    let resourceStr1 = '';
+                    if (agreement.traders[0].resources !== null) {
+                        agreement.traders[0].resources.forEach(resource => {
+                            resourceStr1 += resource.ResourceName + ', ';
+                        })
+                        resourceStr1 = resourceStr1.slice(0, -2);
+                    } else {
+                        resourceStr1 = 'No traded resources.';
+                    }
+                    return resourceStr1;
+                }
+
+                let resourceProducedSecondState = () => {
+                    let resourceStr2 = '';
+                    if (agreement.traders[1].resources !== null) {
+                        agreement.traders[1].resources.forEach(resource => {
+                            resourceStr2 += resource.ResourceName + ', ';
+                        })
+                        resourceStr2 = resourceStr2.slice(0, -2);
+                    } else {
+                        resourceStr2 = 'No traded resources.';
+                    }
+                    return resourceStr2;
+                }
+
+                $('#tradeAgreements')
+                    .append(
+                        '<tr>' +
+                        '<td>' + agreement.traders[0].state.stateName + '</td>' +
+                        '<td>' + resourceProducedFirstState() + '</td>' +
+                        '<td>' + agreement.traders[0].tradePower * 100 + '%</td>' +
+                        '<td>' + parseFloat(agreement.traders[0].tradeValue).toFixed(2) + '</td>' +
+                        '<td>' + agreement.traders[1].state.stateName + '</td>' +
+                        '<td>' + resourceProducedSecondState() + '</td>' +
+                        '<td>' + agreement.traders[1].tradePower * 100 + '%</td>' +
+                        '<td>' + parseFloat(agreement.traders[1].tradeValue).toFixed(2) + '</td>' +
+                        '<td>' + agreement.desc + '</td>' +
+                        +'</tr>'
+                    );
+            })
+        }
+    });
 }
 
 function btnDeleteState_onClick() {
@@ -165,9 +180,6 @@ function frmUpdateState_onSubmit() {
         ipcRenderer.send("State:updateState", stateObj);
         ipcRenderer.once("State:updateStateOK", (e, res) => {
             if (res) {
-                // $('#stateMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully updated state</div>');
-                // $('.regionList').empty();
-                // getStateInfo();
                 alert("Successfully updated state");
                 ipcRenderer.send("ReloadPageOnUpdate");
             }
@@ -184,4 +196,37 @@ function frmUpdateState_onSubmit() {
 function openRegionPage(ID) {
     let regionID = ID.replace('Region', '');
     ipcRenderer.send('Region:openRegionPage', regionID);
+}
+
+function pageMain_eventHandler() {
+    ipcRenderer.on('Region:addRegionOK', regionData_onChange);
+    ipcRenderer.on('Trade:addTradeAgreementOK', tradeAgreementData_onChange);
+    ipcRenderer.on('Trade:updateTradeAgreementOK', tradeAgreementData_onChange);
+    ipcRenderer.on('Trade:deleteTradeAgreementOK', tradeAgreementData_onChange);
+    ipcRenderer.on('Resource:updateResourceAllOK', (e, res) => {
+        if (res) {
+            getStateInfo();
+        }
+    });
+}
+
+function pageRegion_eventHandler() {
+    ipcRenderer.on('Region:updateRegionOK', regionData_onChange);
+    ipcRenderer.on('Facility:updateFacilityOK', regionData_onChange);
+    ipcRenderer.on('Facility:deleteFacilityOK', regionData_onChange);
+    ipcRenderer.on('Component:addComponentOK', regionData_onChange);
+    ipcRenderer.on('Component:updateComponentOK', regionData_onChange);
+    ipcRenderer.on('Component:deleteComponentOK', regionData_onChange);
+}
+
+function regionData_onChange(e, res) {
+    if (res) {
+        getStateInfo();
+    }
+}
+
+function tradeAgreementData_onChange(e, res) {
+    if (res) {
+        getStateInfo();
+    }
 }

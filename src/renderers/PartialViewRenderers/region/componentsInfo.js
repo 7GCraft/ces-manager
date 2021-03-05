@@ -9,14 +9,17 @@ $(function () {
     addUpdateComponent_handler();
     //handle delete component events
     deleteComponent_handler();
+    //handle events from main page
+    pageMain_eventHandler();
 });
 
 function getComponentsInfo() {
     ipcRenderer.send('Component:getComponentList', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Component:getComponentListOK', (e, res) => {
         setComponentList(res);
-        $('#selParent').append('<option selected value="">NONE</option>');
 
+        $('#selParent').empty();
+        $('#selParent').append('<option selected value="">NONE</option>');
         if (res != null) {
             res.forEach(component => {
                 $('#selParent').append($('<option>', {
@@ -29,6 +32,7 @@ function getComponentsInfo() {
 
     ipcRenderer.send('Component:getAllComponentTypes');
     ipcRenderer.once('Component:getAllComponentTypesOK', (e, res) => {
+        $('#selComponentType').empty();
         if (res != null) {
             res.forEach(componentType => {
                 $('#selComponentType').append($('<option>', {
@@ -39,8 +43,13 @@ function getComponentsInfo() {
         }
     });
 
+    getResourceTiers();
+}
+
+function getResourceTiers() {
     ipcRenderer.send('Resource:getAllResourceTiers');
     ipcRenderer.once('Resource:getAllResourceTiersOk', function (e, res) {
+        $('#selResource').empty();
         $('#selResource').append('<option selected value="">NONE</option>');
         if (res != null) {
             res.forEach(resourceTier => {
@@ -269,6 +278,7 @@ function deleteComponent_handler() {
 }
 
 function setComponentList(res) {
+    $('#componentsList').empty();
     if (Array.isArray(res) && res.length) {
         let childComponents = []
         res.forEach((component, i) => {
@@ -582,4 +592,17 @@ function populateUpdateComponentForm(componentId) {
 
 function setComponentIdForDelete(componentId) {
     $('#btnDeleteComponent').attr('data-component-id', componentId);
+}
+
+function pageMain_eventHandler() {
+    ipcRenderer.on("Resource:addResourceOK", (e, res) => {
+        if (res) {
+            getResourceTiers();
+        }
+    });
+    ipcRenderer.on("Resource:deleteResourceByIdOk", (e, res) => {
+        if (res) {
+            getResourceTiers();
+        }
+    });
 }

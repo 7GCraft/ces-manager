@@ -348,8 +348,7 @@ const getComponentUnusedByRegionId = async (id) => {
         let componentValue = rawComponent.value;
 
         if (rawComponent.componentTypeId === 3) {
-            let resourceName = resources[parseInt(rawComponent.value.split(';')[1]) - 1].ResourceName;
-            componentValue = `s;${resourceName}`;
+            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1]
         }
 
         let component = new Component(

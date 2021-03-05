@@ -1,4 +1,4 @@
-const { ipcMain } = require('electron');
+const { ipcMain, webContents } = require('electron');
 const trade = require('../../services/tradeAgreementServices');
 
 const handle = () => {
@@ -8,7 +8,9 @@ const handle = () => {
     ipcMain.on('Trade:updateTradeAgreement', updateTradeAgreement);
     ipcMain.on('Trade:deleteTradeAgreement', deleteTradeAgreement);
 };
-module.exports = handle;
+module.exports = {
+    handle
+};
 
 /**
  * Get All trade agreements
@@ -40,7 +42,11 @@ const getTradeAgreementsByStateId = (e, arg) => {
 const addTradeAgreement = (e, args) => {
     let response = trade.addTradeAgreement(args);
     response.then((result) => {
-        e.sender.send('Trade:addTradeAgreementOK', result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Trade:addTradeAgreementOK", result);
+        });
     }).catch((err) => {
         console.log(err);
     });
@@ -52,7 +58,11 @@ const addTradeAgreement = (e, args) => {
 const updateTradeAgreement = (e, args) => {
     let response = trade.updateTradeAgreement(args);
     response.then((result) => {
-        e.sender.send('Trade:updateTradeAgreementOK', result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Trade:updateTradeAgreementOK", result);
+        });
     }).catch((err) => {
         console.log(err);
     });
@@ -65,6 +75,12 @@ const updateTradeAgreement = (e, args) => {
  */
 const deleteTradeAgreement = (e, arg) => {
     let response = trade.deleteTradeAgreementById(arg);
-    response.then(result => e.sender.send('Trade:deleteTradeAgreementOK', result))
-        .catch(err => console.error(err));
+    response.then(result => {
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Trade:deleteTradeAgreementOK", result);
+        });
+    })
+    .catch(err => console.error(err));
 }

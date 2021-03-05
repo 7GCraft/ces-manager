@@ -391,7 +391,7 @@ const updateRegion = async (region) => {
     await knex(constants.TABLE_REGION)
         .where({ regionId: region.regionId })
         .update({
-            name: region.name,
+            name: region.regionName,
             stateId: region.state.stateId,
             corruptionId: region.corruption.corruptionId,
             biomeId: region.biome.biomeId,

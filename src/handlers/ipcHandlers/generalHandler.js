@@ -5,7 +5,9 @@ const handle = () => {
     ipcMain.on('General:advancingSeason', advanceSeason);
     ipcMain.on('General:getCurrentSeason', getCurrentSeason);
 }
-module.exports = handle;
+module.exports = {
+    handle
+};
 
 const advanceSeason = (e) => {
     let response = general.advanceSeason();

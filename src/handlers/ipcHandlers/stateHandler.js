@@ -1,4 +1,4 @@
-const { ipcMain, BrowserWindow } = require('electron');
+const { ipcMain, BrowserWindow, webContents } = require('electron');
 const state = require('../../services/stateServices');
 const region = require('../../services/regionServices');
 
@@ -11,7 +11,9 @@ const handle = () => {
     ipcMain.on('State:updateState', updateState);
     ipcMain.on('State:deleteState', deleteState);
 };
-module.exports = handle;
+module.exports = {
+    handle
+};
 
 /**
  * Get List of states
@@ -60,7 +62,6 @@ const openStatePage = (e, arg) => {
 const getStateInfo = (e, arg) => {
     let response = state.getStateById(arg);
     response.then((result) => {
-        //console.log(result);
         e.sender.send("State:getStateInfoOK", result)
     })
 }
@@ -81,7 +82,12 @@ const getRegionsForState = (e, arg) => {
 const updateState = (e, args) => {
     let response = state.updateState(args);
     response.then((result) => {
-        e.sender.send("State:updateStateOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("State:updateStateOK", result);
+        });
+        // e.sender.send("State:updateStateOK", result);
     });
 }
 
@@ -91,6 +97,11 @@ const updateState = (e, args) => {
 const deleteState = (e, arg) => {
     let response = state.deleteStateById(arg);
     response.then((result) => {
-        e.sender.send("State:deleteStateOK", result);
+        // e.sender.send("State:deleteStateOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("State:deleteStateOK", result);
+        });
     });
 }
