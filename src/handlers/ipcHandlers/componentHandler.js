@@ -1,4 +1,4 @@
-const { ipcMain, BrowserWindow } = require('electron');
+const { ipcMain, webContents } = require('electron');
 const facility = require('../../services/facilityServices');
 const component = require('../../services/componentServices');
 
@@ -14,7 +14,9 @@ const handle = () => {
     ipcMain.on('Component:updateComponent', updateComponent);
     ipcMain.on('Component:deleteComponent', deleteComponent);
 }
-module.exports = handle;
+module.exports = {
+    handle
+};
 
 /**
  * Get components by Region Id
@@ -62,9 +64,9 @@ const getUsedComponentListByRegion = (e, arg) => {
     response.then(result => {
         return component.sortChildComponents(result);
     })
-        .then(result2 => {
-            e.sender.send("Component:getUsedComponentListOK", result2);
-        })
+    .then(result2 => {
+        e.sender.send("Component:getUsedComponentListOK", result2);
+    })
 }
 
 /**
@@ -99,9 +101,9 @@ const getUnusedComponentList = (e, arg) => {
     response.then(result => {
         return component.sortChildComponents(result);
     })
-        .then(result2 => {
-            e.sender.send("Component:getUnusedComponentListOK", result2);
-        })
+    .then(result2 => {
+        e.sender.send("Component:getUnusedComponentListOK", result2);
+    });
 }
 
 /**
@@ -120,7 +122,11 @@ const getAllComponentTypes = (e) => {
 const addComponent = (e, args) => {
     let response = component.addComponent(args);
     response.then(result => {
-        e.sender.send("Component:addComponentOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Component:addComponentOK", result);
+        });
     })
 }
 
@@ -130,7 +136,11 @@ const addComponent = (e, args) => {
 const updateComponent = (e, args) => {
     let response = component.updateComponent(args);
     response.then(result => {
-        e.sender.send("Component:updateComponentOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Component:updateComponentOK", result);
+        });
     })
 }
 
@@ -140,6 +150,10 @@ const updateComponent = (e, args) => {
 const deleteComponent = (e, arg) => {
     let response = component.deleteComponentById(arg);
     response.then(result => {
-        e.sender.send("Component:deleteComponentOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Component:deleteComponentOK", result);
+        });
     })
 }

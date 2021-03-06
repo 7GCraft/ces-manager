@@ -348,8 +348,7 @@ const getComponentUnusedByRegionId = async (id) => {
         let componentValue = rawComponent.value;
 
         if (rawComponent.componentTypeId === 3) {
-            let resourceName = resources[parseInt(rawComponent.value.split(';')[1]) - 1].ResourceName;
-            componentValue = `s;${resourceName}`;
+            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1]
         }
 
         let component = new Component(
@@ -596,14 +595,15 @@ exports.getComponentTypeAll = getComponentTypeAll;
 exports.sortChildComponents = sortChildComponents;
 
 // FOR DEBUGGING
-//getComponentByRegionId(1)
-//.then(data => {
-//    sortChildComponents(data)
-//   .then(test => console.dir(test));
-//})
-getComponentByFacilityId(1).then(data => console.dir(data));
+getComponentByRegionId(1)
+.then(data => {
+   sortChildComponents(data)
+  .then(test => console.dir(test));
+})
+//getComponentByFacilityId(1).then(data => console.dir(data));
 //getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)
 //     .then(data => console.log(data));
-// getComponentFunctionalByRegionId(1).then(data => console.log(data));
+//getComponentFunctionalByRegionId(1).then(data => console.log(data));
+ //getComponentUnusedByRegionId(1).then(data => console.log(data));
 // getComponentResourceFunctionalByStateId(8).then(data => console.log(data));

@@ -7,6 +7,8 @@ $(function () {
     tradeAgreement_getStateListForDropdown();
     // delete trade agreement
     frmDeleteAgreement_onSubmit()
+    //Handle events from main page
+    tradeAgreement_pageMain_eventHandler();
 });
 
 function getAllTradeAgreements() {
@@ -19,8 +21,9 @@ function getAllTradeAgreements() {
 
         $('#selTradeAgreement').append('<option disabled selected value> -- Select a trade agreement -- </option>');
 
-        if(res != null){
+        if (res != null) {
             res.forEach(agreement => {
+                // console.log(agreement);
                 let resourceProducedFirstState = () => {
                     let resourceStr1 = '';
                     if (agreement.traders[0].resources !== null) {
@@ -33,7 +36,7 @@ function getAllTradeAgreements() {
                     }
                     return resourceStr1;
                 }
-    
+
                 let resourceProducedSecondState = () => {
                     let resourceStr2 = '';
                     if (agreement.traders[1].resources !== null) {
@@ -46,10 +49,10 @@ function getAllTradeAgreements() {
                     }
                     return resourceStr2;
                 }
-    
+
                 $('#tradeAgreements')
                     .append(
-                        '<tr>' +
+                        `<tr id="trade-${agreement.tradeAgreementId}">` +
                         '<td>' + agreement.traders[0].state.stateName + '</td>' +
                         '<td>' + resourceProducedFirstState() + '</td>' +
                         '<td>' + agreement.traders[0].tradePower * 100 + '%</td>' +
@@ -58,17 +61,19 @@ function getAllTradeAgreements() {
                         '<td>' + resourceProducedSecondState() + '</td>' +
                         '<td>' + agreement.traders[1].tradePower * 100 + '%</td>' +
                         '<td>' + parseFloat(agreement.traders[1].tradeValue).toFixed(2) + '</td>' +
-                        '<td>' + agreement.desc + '</td>' +
+                        '<td class="trade-description">' + agreement.desc + '</td>' +
                         +'</tr>'
                     );
-    
+
                 $('#selTradeAgreement')
                     .append($('<option />')
                         .val(agreement.tradeAgreementId)
                         .text(agreement.traders[0].state.stateName + ' - ' + agreement.traders[1].state.stateName)
-                        .attr('data-first-state-id', agreement.traders[0].state.stateID).attr('data-second-state-id', agreement.traders[1].state.stateID)
+                        .attr('data-first-state-id', agreement.traders[0].state.stateID)
+                        .attr('data-second-state-id', agreement.traders[1].state.stateID)
+                        .attr('data-trade-agreement-id', agreement.tradeAgreementId)
                     );
-    
+
                 // appends all existing trade agreements to the trade agreements to delete select
                 $('#selAgreementDelete')
                     .append($('<option />')
@@ -107,7 +112,9 @@ function addUpdateAgreement_handler() {
     $('#btnAddAgreement').on('click', () => {
         $("#selTradeAgreement").val($("#selTradeAgreement option:first").val());
         $("#selFirstState").val($("#selFirstState option:first").val());
+        $("#selFirstResource").empty();
         $("#selSecondState").val($("#selSecondState option:first").val());
+        $("#selSecondResource").empty();
         $('#txtAgreementDesc').val('');
 
         $('#selTradeAgreementField').hide();
@@ -127,6 +134,7 @@ function addUpdateAgreement_handler() {
     $('#selTradeAgreement').on('change', () => {
         $('#agreementFields').show();
 
+        let tradeAgreementId = $('#selTradeAgreement').find(':selected').data('tradeAgreementId');
         let firstStateId = $('#selTradeAgreement').find(':selected').data('firstStateId');
         let secondStateId = $('#selTradeAgreement').find(':selected').data('secondStateId');
 
@@ -157,6 +165,9 @@ function addUpdateAgreement_handler() {
                 })
             }
         })
+
+        let description = $(`#trade-${tradeAgreementId}`).find('.trade-description').text();
+        $('#txtAgreementDesc').val(description);
     })
 
     $('#selFirstState').on('change', () => {
@@ -233,7 +244,6 @@ function addUpdateAgreement_handler() {
         tradeAgreementObj['traders'] = [{ 'state': { 'stateId': firstStateId }, 'resourceComponents': firstResourceComponents() }, { 'state': { 'stateId': secondStateId }, 'resourceComponents': secondResourceComponents() }]
 
         if (tradeAgreementId == null) {
-            //console.log(tradeAgreementObj);
             ipcRenderer.send('Trade:addTradeAgreement', tradeAgreementObj);
             ipcRenderer.once('Trade:addTradeAgreementOK', (e, res) => {
                 if (res) {
@@ -252,7 +262,6 @@ function addUpdateAgreement_handler() {
         }
         else {
             tradeAgreementObj['tradeAgreementId'] = tradeAgreementId;
-            //console.log(tradeAgreementObj);
             ipcRenderer.send('Trade:updateTradeAgreement', tradeAgreementObj);
             ipcRenderer.once('Trade:updateTradeAgreementOK', (e, res) => {
                 if (res) {
@@ -291,5 +300,13 @@ function frmDeleteAgreement_onSubmit() {
 
             $('#mdlDeleteAgreement').modal('toggle');
         });
+    });
+}
+
+function tradeAgreement_pageMain_eventHandler() {
+    ipcRenderer.on('Resource:updateResourceAllOK', (e, res) => {
+        if (res) {
+            getAllTradeAgreements();
+        }
     });
 }

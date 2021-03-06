@@ -58,7 +58,7 @@ function getRegionInfo(initial) {
         $('#lblOwner').text(res.state.stateName);
         $('#lblPopulation').text(res.population);
         $('#lblUsedPopulation').text(res.usedPopulation);
-        $('#lblTaxRate').text(res.taxRate * 100 + '%');
+        $('#lblTaxRate').text(parseFloat(res.taxRate * 100).toFixed(2) + '%');
         $('#lblTotalRegionIncome').text(res.totalIncome);
         $('#lblRegionFoodProduced').text(res.totalFoodProduced);
         $('#lblRegionFoodConsumed').text(res.totalFoodConsumed);

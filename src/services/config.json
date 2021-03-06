@@ -46,6 +46,7 @@
         "COLUMN_TRADE_AGREEMENT_ID": "tradeAgreementId"
     },
     "paths": {
+        "executeResult": "../models/base/executeResult",
         "biomeModel": "../models/biomeModel",
         "componentModel": "../models/componentModel",
         "componentTypeModel": "../models/componentTypeModel",

@@ -9,19 +9,31 @@
 
 <body>
     <template>
-        <div class="container-fluid template" data-tab="nav-components">
-            <div id="rbsComponentsDisplay">
-                <input type="radio" id="rbAll" name="componentDisplay" value="all" checked>
-                <label for="rbAll">All</label>
-                <input type="radio" id="rbUsed" name="componentDisplay" value="used">
-                <label for="rbUsed">Used</label>
-                <input type="radio" id="rbUnused" name="componentDisplay" value="unused">
-                <label for="rbUnused">Unused</label>
-            </div><br>
-            <div>
-                <ul id="componentsList">
+        <div class="container-lg template" data-tab="nav-components">
+                <div id="rbsComponentsDisplay">
+                    <input type="radio" id="rbAll" name="componentDisplay" value="all" checked>
+                    <label for="rbAll">All</label>
+                    <input type="radio" id="rbUsed" name="componentDisplay" value="used">
+                    <label for="rbUsed">Used</label>
+                    <input type="radio" id="rbUnused" name="componentDisplay" value="unused">
+                    <label for="rbUnused">Unused</label>
+                </div><br><br>
+                <input type="text" class="form-control" id="txtComponentSearch" onkeyup="searchComponents()" placeholder="Search components.."><br>
+                <table class="table"  id="tblComponents">
+                    <thead class="thead-dark">
+                        <th scope="col" onclick ="sortComponents(0)" style="cursor: pointer;">No.</th>
+                        <th scope="col" onclick ="sortComponents(1)" style="cursor: pointer;">Component Name</th>
+                        <th scope="col" >Value</th>
+                        <th scope="col" onclick ="sortComponents(3)" style="cursor: pointer;">Component Type</th>
+                        <th scope="col">Activation Time</th>
+                        <th scope="col">Child Components</th>
+                        <th scope="col">Actions</th>
+                    </thead>
+                    <tbody id="componentsList">
+                        
+                    </tbody>
+                </table>
 
-                </ul>
                 <button class="btn btn-success" id="btnAddComponent" data-toggle="modal"
                     data-target="#mdlAddUpdateComponent">Add Component</button>
             </div>
@@ -122,6 +134,33 @@
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="mdlChildComponents" tabindex="-1" role="dialog"
+            aria-labelledby="mdlChildComponentsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mdlChildComponentsLabel">Child Components</h5>
+                    </div>
+                    <div class="modal-body">
+                        
+                        <table class="table" id="tblChildComponents" >
+                            <thead class="thead">
+                                <th scope="col">Component Name</th>
+                                <th scope="col">Value</th>
+                                <th scope="col">Component Type</th>
+                                <th scope="col">Activation Time</th>
+                                <th scope="col">Actions</th>
+                            </thead>
+                            <tbody id="childComponentsList"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" data-dismiss="modal" aria-label="Close" onclick="emptyChildComponents()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
             <script src="../renderers/PartialViewRenderers/region/componentsInfo.js" defer></script>
         </div>
     </template>

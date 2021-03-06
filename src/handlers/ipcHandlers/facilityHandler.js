@@ -1,4 +1,4 @@
-const { ipcMain, BrowserWindow } = require('electron');
+const { ipcMain, webContents } = require('electron');
 const facility = require('../../services/facilityServices');
 
 const handle = () => {
@@ -7,7 +7,9 @@ const handle = () => {
     ipcMain.on('Facility:updateFacility', updateFacility);
     ipcMain.on('Facility:deleteFacility', deleteFacility);
 }
-module.exports = handle;
+module.exports = {
+    handle
+};
 
 /**
  * Get facilities by Region Id
@@ -25,7 +27,11 @@ const getFacilitiesByRegion = (e, arg) => {
 const addFacility = (e, args) => {
     let response = facility.addFacility(args);
     response.then(result => {
-        e.sender.send("Facility:addFacilityOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Facility:addFacilityOK", result);
+        });
     });
 }
 
@@ -35,7 +41,11 @@ const addFacility = (e, args) => {
 const updateFacility = (e, args) => {
     let response = facility.updateFacility(args);
     response.then(result => {
-        e.sender.send("Facility:updateFacilityOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Facility:updateFacilityOK", result);
+        });
     });
 }
 
@@ -46,13 +56,21 @@ const deleteFacility = (e, args) => {
     if (args['deleteOnly']) {
         let response = facility.deleteFacilityById(args['facilityId']);
         response.then(result => {
-            e.sender.send("Facility:deleteFacilityOK", result);
+            let allWindows = webContents.getAllWebContents();
+            allWindows.sort((a, b) => b - a);
+            allWindows.forEach(win => {
+                win.send("Facility:deleteFacilityOK", result);
+            });
         });
     }
     else {
         let response = facility.destroyFacilityById(args['facilityId']);
         response.then(result => {
-            e.sender.send("Facility:deleteFacilityOK", result);
+            let allWindows = webContents.getAllWebContents();
+            allWindows.sort((a, b) => b - a);
+            allWindows.forEach(win => {
+                win.send("Facility:deleteFacilityOK", result);
+            });
         });
     }
 }

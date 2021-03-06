@@ -1,4 +1,4 @@
-const { ipcMain } = require('electron');
+const { ipcMain, webContents } = require('electron');
 const resource = require('../../services/resourceServices');
 
 const handle = () => {
@@ -7,7 +7,9 @@ const handle = () => {
     ipcMain.on('Resource:addResource', addResource);
     ipcMain.on('Resource:deleteResourceById', deleteResourceById);
 }
-module.exports = handle;
+module.exports = {
+    handle
+};
 
 /**
  * Get Resource Tiers
@@ -25,7 +27,11 @@ const getAllResourceTiers = (e) => {
 const updateResourceAll = (e, args) => {
     let response = resource.updateResourceAll(args);
     response.then((result) => {
-        e.sender.send("Resource:updateResourceAllOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Resource:updateResourceAllOK", result);
+        });
     })
 }
 
@@ -35,8 +41,11 @@ const updateResourceAll = (e, args) => {
 const addResource = (e, args) => {
     let response = resource.addResource(args.ResourceName, args.ResourceTierID);
     response.then((result) => {
-        console.log(result);
-        e.sender.send("Resource:addResourceOK", result);
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Resource:addResourceOK", result);
+        });
     })
 }
 
@@ -54,5 +63,9 @@ const deleteResourceById = (e, args) => {
         })
     });
 
-    e.sender.send("Resource:deleteResourceByIdOk", okDeleteResource);
+    let allWindows = webContents.getAllWebContents();
+    allWindows.sort((a, b) => b - a);
+    allWindows.forEach(win => {
+        win.send("Resource:deleteResourceByIdOk", okDeleteResource);
+    });
 }

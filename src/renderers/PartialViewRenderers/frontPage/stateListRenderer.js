@@ -3,11 +3,14 @@ $(function () {
     getStateList();
     //Add state
     frmAddState_onSubmit();
+    //Handle events from state page
+    state_pageState_eventHandler();
 });
 
 function getStateList() {
     ipcRenderer.send('State:getStateList');
     ipcRenderer.once('State:getStateListOK', function (e, res) {
+        $('#stateContainer').empty();
         $('#stateContainer').append('<ul id="ulStateList"></ul>');
 
         res.forEach(state => {
@@ -46,4 +49,17 @@ function frmAddState_onSubmit() {
 function openStatePage(ID) {
     let stateID = ID.replace('State', '');
     ipcRenderer.send('State:openStatePage', stateID);
+}
+
+function state_pageState_eventHandler() {
+    ipcRenderer.on('State:updateStateOK', (e, res) => {
+        if (res) {
+            getStateList();
+        }
+    });
+    ipcRenderer.on('State:deleteStateOK', (e, res) => {
+        if (res) {
+            getStateList();
+        }
+    });
 }
