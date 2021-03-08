@@ -36,7 +36,10 @@ const advanceSeason = async () => {
             }
         }
 
-        seasonalIncome -= state.expenses;
+        let adminCost = await stateServices.getAdminCostByStateId(state.stateID);
+        if (adminCost === -1) adminCost = 0;
+
+        seasonalIncome -= state.expenses - adminCost;
 
         await stateServices.updateStateTreasuryByStateId(state.stateID, state.treasuryAmt + seasonalIncome);
 
