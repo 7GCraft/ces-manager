@@ -23,7 +23,8 @@ const getRegionListAll = async () => {
             constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state',
             constants.COLUMN_POPULATION,
             constants.COLUMN_TAX_RATE,
-            constants.COLUMN_RATE + ' AS corruptionRate'
+            constants.COLUMN_RATE + ' AS corruptionRate',
+            constants.COLUMN_POPULATION
         ])
         .from(constants.TABLE_REGION)
         .leftJoin(
@@ -65,7 +66,8 @@ const getRegionListAll = async () => {
             rawRegion.name,
             moneyOutput,
             foodOutput,
-            rawRegion.state
+            rawRegion.state,
+            rawRegion.population
         );
 
         regionList.push(regionListItem);
@@ -87,7 +89,8 @@ const getRegionListByStateId = async (stateId) => {
             constants.TABLE_STATE + '.' + constants.COLUMN_NAME + ' AS state',
             constants.COLUMN_POPULATION,
             constants.COLUMN_TAX_RATE,
-            constants.COLUMN_RATE + ' AS corruptionRate'
+            constants.COLUMN_RATE + ' AS corruptionRate',
+            constants.COLUMN_POPULATION
         ])
         .from(constants.TABLE_REGION)
         .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, stateId)
@@ -131,7 +134,8 @@ const getRegionListByStateId = async (stateId) => {
             rawRegion.name,
             moneyOutput,
             foodOutput,
-            rawRegion.state
+            rawRegion.state,
+            rawRegion.population
         );
 
         regionList.push(regionListItem);

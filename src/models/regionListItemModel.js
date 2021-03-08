@@ -8,12 +8,14 @@ module.exports = class RegionListItem {
      * @param {Number} RegionTotalIncome must be an integer.
      * @param {Number} RegionTotalFood must be an integer.
      * @param {String} StateName must be a string.
+     * @param {Number} Population must be an integer.
      */
-    constructor(RegionID, RegionName, RegionTotalIncome, RegionTotalFood, StateName) {
+    constructor(RegionID, RegionName, RegionTotalIncome, RegionTotalFood, StateName, Population) {
         this.RegionID = RegionID;
         this.RegionName = RegionName;
         this.RegionTotalIncome = RegionTotalIncome;
         this.RegionTotalFood = RegionTotalFood;
         this.StateName = StateName;
+        this.Population = Population;
     }
 }
