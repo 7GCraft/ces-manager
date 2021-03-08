@@ -1,5 +1,6 @@
 const config = require('./config.json');
 const constants = config.constants;
+const facilityServices = require(config.paths.facilityServices);
 const regionServices = require(config.paths.regionServices);
 const tradeAgreementServices = require(config.paths.tradeAgreementServices);
 const dbContext = require('../repository/DbContext');
@@ -177,6 +178,28 @@ const getStateById = async (id) => {
 }
 
 /**
+ * Gets the admin cost of the given state ID.
+ * @param {Number} id must be an integer.
+ * @returns a positive number if successful, -1 otherwise.
+ */
+const getAdminCostByStateId = async (id) => {
+    let resValue = 0;
+
+    let facilityCount = await facilityServices.getFacilityCountByStateId(id);
+
+    if (facilityCount === -1) {
+        resValue = -1;
+        return resValue;
+    }
+
+    let adminCost = 20 * facilityCount * 0.016 * facilityCount;
+
+    resValue = adminCost;
+
+    return resValue;
+}
+
+/**
  * Creates a new state.
  * @param {State} state must be a state object.
  * @returns {Boolean} true if successful, false otherwise.
@@ -279,6 +302,7 @@ exports.getStateList = getStateList;
 exports.getStateById = getStateById;
 exports.getStateAllByIds = getStateAllByIds;
 exports.getStateAllByIdsWithoutTrade = getStateAllByIdsWithoutTrade;
+exports.getAdminCostByStateId = getAdminCostByStateId;
 exports.addState = addState;
 exports.updateState = updateState;
 exports.updateStateTreasuryByStateId = updateStateTreasuryByStateId;
@@ -290,6 +314,7 @@ exports.deleteStateById = deleteStateById;
 //     .then(data => console.log(data));
 // getStateById(1)
 //     .then(data => console.log(data));
+//getAdminCostByStateId(7).then(data => console.log(data));
 // addState('Cla Lar', 0, 'Kingdom of Cla Lar');
 // addState('Cypra', 0);
 // addState('Tranos');

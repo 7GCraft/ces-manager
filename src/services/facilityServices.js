@@ -52,6 +52,32 @@ const getFacilityByRegionId = async (id) => {
 }
 
 /**
+ * Gets the number of facilities that the state of the given ID has.
+ * @param {Number} id must be an integer. 
+ * @returns a positive integer if successful, -1 otherwise.
+ */
+const getFacilityCountByStateId = async (id) => {
+    let resValue = 0;
+
+    let facilityCount = await knex(constants.TABLE_FACILITY)
+        .count(constants.COLUMN_FACILITY_ID + ' AS count')
+        .leftJoin(
+            constants.TABLE_REGION,
+            constants.TABLE_FACILITY + '.' + constants.COLUMN_REGION_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID
+        )
+        .where(constants.COLUMN_STATE_ID, id)
+        .catch(e => {
+            console.error(e);
+            resValue = -1;
+        });
+    
+    resValue = facilityCount[0].count;
+
+    return resValue;
+}
+
+/**
  * Creates a new facility.
  * @param {Facility} facility must be a facility object.
  * @returns {Boolean} true if successful, false otherwise.
@@ -192,6 +218,7 @@ const assignFacilityComponents = async (facilityId, componentIds) => {
 }
 
 exports.getFacilityByRegionId = getFacilityByRegionId;
+exports.getFacilityCountByStateId = getFacilityCountByStateId;
 exports.addFacility = addFacility;
 exports.updateFacility = updateFacility;
 exports.deleteFacilityById = deleteFacilityById;
@@ -203,3 +230,4 @@ exports.assignFacilityComponents = assignFacilityComponents;
 // deleteFacilityById(3).then(data => console.dir(data));
 // destroyFacilityById(4).then(data => console.dir(data));
 // assignFacilityComponents(1, [3]);
+ //getFacilityCountByStateId(7).then(data => console.log(data));

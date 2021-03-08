@@ -31,6 +31,10 @@ function getStateInfo() {
         $('#lblFoodAvailable').text(res.TotalFoodAvailable);
         $('#lblPopulation').text(res.TotalPopulation);
         $('#lblAvgDevelopment').text(res.AvgDevLevel);
+        $('#lblAdminCost').text(parseFloat(res.adminCost).toFixed(2));
+        $('#lblFacilityCount').text(res.facilityCount);
+        $('#lblTotalExpenses').text(parseFloat(res.expenses + res.adminCost).toFixed(2));
+        $('#lblNextIncome').text(parseFloat(res.TotalIncome - res.expenses - res.adminCost).toFixed(2));
 
         $('#txtStateName').val(res.stateName);
         $('#nmbTreasury').val(res.treasuryAmt);

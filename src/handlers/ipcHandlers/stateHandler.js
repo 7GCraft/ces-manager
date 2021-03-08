@@ -1,6 +1,7 @@
 const { ipcMain, BrowserWindow, webContents } = require('electron');
 const state = require('../../services/stateServices');
 const region = require('../../services/regionServices');
+const facility = require('../../services/facilityServices'); 
 
 const handle = () => {
     ipcMain.on('State:getStateList', getStateList);
@@ -62,7 +63,20 @@ const openStatePage = (e, arg) => {
 const getStateInfo = (e, arg) => {
     let response = state.getStateById(arg);
     response.then((result) => {
-        e.sender.send("State:getStateInfoOK", result)
+        return facility.getFacilityCountByStateId(arg).then(res => {
+            result['facilityCount'] =  res;
+            return result;
+        })
+    })
+    .then(result2 => {
+        return state.getAdminCostByStateId(arg).then(res => {
+            result2['adminCost'] =  res
+            return result2;
+        });
+    })
+    .then(result3 => {
+        console.log(result3);
+        e.sender.send("State:getStateInfoOK", result3);
     })
 }
 
