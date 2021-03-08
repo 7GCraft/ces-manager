@@ -27,7 +27,7 @@ function getAllRegionsByStateId() {
                     $('#listOfRegionsByState').append('<div class="regionContainer"><h5>' + state.stateName + '</h5><ul class="regionsList" id="StateRegion' + state.stateID + '"></ul></div>')
 
                     state.Regions.forEach(region => {
-                        $('#StateRegion' + state.stateID).append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id"))>' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span></li>')
+                        $('#StateRegion' + state.stateID).append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id"))>' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + '</span></li>')
                     });
                 }
             });
