@@ -10,6 +10,11 @@
     color: green;
 }
 
+.population{
+  position: absolute;
+  left : 45%;
+  color: #e68a2e;
+}
 .resourceContainer{
     text-align: center;
     float: left;
