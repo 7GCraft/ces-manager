@@ -230,4 +230,4 @@ exports.assignFacilityComponents = assignFacilityComponents;
 // deleteFacilityById(3).then(data => console.dir(data));
 // destroyFacilityById(4).then(data => console.dir(data));
 // assignFacilityComponents(1, [3]);
-// getFacilityCountByStateId(7).then(data => console.log(data));
+ //getFacilityCountByStateId(7).then(data => console.log(data));

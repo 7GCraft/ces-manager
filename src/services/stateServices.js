@@ -314,6 +314,7 @@ exports.deleteStateById = deleteStateById;
 //     .then(data => console.log(data));
 // getStateById(1)
 //     .then(data => console.log(data));
+//getAdminCostByStateId(7).then(data => console.log(data));
 // addState('Cla Lar', 0, 'Kingdom of Cla Lar');
 // addState('Cypra', 0);
 // addState('Tranos');
