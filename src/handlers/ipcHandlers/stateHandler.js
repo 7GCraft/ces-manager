@@ -75,7 +75,6 @@ const getStateInfo = (e, arg) => {
         });
     })
     .then(result3 => {
-        console.log(result3);
         e.sender.send("State:getStateInfoOK", result3);
     })
 }
