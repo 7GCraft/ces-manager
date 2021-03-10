@@ -10,6 +10,12 @@
     color: green;
 }
 
+.population{
+    position: absolute;
+    left : 500px;
+    color: #e68a2e;
+}
+
 .regionList{
     list-style: none;
 }

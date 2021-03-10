@@ -92,7 +92,7 @@ function getRegions() {
         $('#listOfRegions').empty();
         if (Array.isArray(res) && res.length) {
             res.forEach(region => {
-                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span></li>')
+                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + '</span></li>')
             });
         }
     });
