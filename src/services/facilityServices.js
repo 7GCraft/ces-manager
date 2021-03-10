@@ -52,7 +52,7 @@ const getFacilityByRegionId = async (id) => {
 }
 
 /**
- * Gets the number of facilities that the state of the given ID has.
+ * Gets the number of functional facilities that the state of the given ID has.
  * @param {Number} id must be an integer. 
  * @returns a positive integer if successful, -1 otherwise.
  */
@@ -67,6 +67,7 @@ const getFacilityCountByStateId = async (id) => {
             constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID
         )
         .where(constants.COLUMN_STATE_ID, id)
+        .andWhere(constants.COLUMN_IS_FUNCTIONAL, 1)
         .catch(e => {
             console.error(e);
             resValue = -1;
