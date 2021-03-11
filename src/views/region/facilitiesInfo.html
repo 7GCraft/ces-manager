@@ -10,15 +10,18 @@
 <body>
     <template>
         <div class="container-lg template" data-tab="nav-facilities">
-            <div class="row mb-2 pt-2">
-                <div class="col-12">
-                    <div class="accordion" id="facilityList"></div>
-                </div>
-            </div>
+            <br>
             <div class="row">
                 <div class="col-12">
                     <button class="btn btn-success" id="btnAddFacility" data-toggle="modal"
                         data-target="#mdlAddFacility">Add Facility</button>
+                    <button class="btn btn-outline-primary" id="btnOpenAllFacilities" >Open All</button>
+                    <button class="btn btn-outline-danger" id="btnCloseAllFacilities">Close All</button>
+                </div>
+            </div>
+            <div class="row mb-2 pt-2">
+                <div class="col-12">
+                    <div class="accordion" id="facilityList"></div>
                 </div>
             </div>
 
