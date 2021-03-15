@@ -192,7 +192,7 @@ const getAdminCostByStateId = async (id) => {
         return resValue;
     }
 
-    let adminCost = 20 * facilityCount * 0.016 * facilityCount;
+    let adminCost = 0.28 * facilityCount * facilityCount;
 
     resValue = adminCost;
 
