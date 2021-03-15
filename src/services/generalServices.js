@@ -88,6 +88,44 @@ const advanceSeason = async () => {
     return resStatus;
 };
 
+const advanceSeasonByStateId = async (id) => {
+    let resStatus = true;
+
+    const state = await stateServices.getStateById(id);
+
+    if (state === null) resStatus = false;
+
+    let seasonalIncome = state.TotalIncome;
+
+    let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
+
+    if (tradeAgreements != null) {
+        for (let tradeAgreement of tradeAgreements) {
+            for (let trader of tradeAgreement.traders) {
+                if (trader.state.stateID === state.stateID) {
+                    seasonalIncome += trader.tradeValue;
+                }
+            }
+        }
+    }
+
+    let adminCost = await stateServices.getAdminCostByStateId(state.stateID);
+    if (adminCost === -1) adminCost = 0;
+
+    seasonalIncome -= state.expenses - adminCost;
+
+    await stateServices.updateStateTreasuryByStateId(state.stateID, state.treasuryAmt + seasonalIncome);
+
+    let stateRegions = state.regions;
+
+    for (let stateRegion of stateRegions) {
+        stateRegion.calculateGrowth(state.BaseGrowth, stateRegions.length);
+        await regionServices.updateRegionPopulation(stateRegion);
+    }
+
+    return resStatus;
+};
+
 /**
  * Reduces the activation time of all components by 1 if it's not 0.
  * @returns {Boolean} true if successful, false otherwise.
