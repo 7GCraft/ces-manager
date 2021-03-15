@@ -1,6 +1,8 @@
 $(function () {
     //get all facility related info
     getFacilitiesInfo();
+    //handler for showing or hiding all facilities
+    openCloseAllFacilities_handler();
     //handler for facility  add
     addFacility_handler();
     //handle delete facility
@@ -9,7 +11,6 @@ $(function () {
 
 function getFacilitiesInfo() {
     let facilityIds = [];
-    let dataAvailable = false;
     ipcRenderer.send('Facility:getFacilitiesByRegion', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
         dataAvailable = true;
@@ -25,7 +26,7 @@ function getFacilitiesInfo() {
                     '<div class="card">' +
                     '<div class="card-header" id="FacilityHeading' + facility.facilityId + '">' +
                     ' <h2 class="mb-0">' +
-                    '<button id="btnFacility' + facility.facilityId + '" class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#FacilityCollapse' + facility.facilityId + '"" aria-expanded="false" aria-controls="FacilityCollapse' + facility.facilityId + '">' +
+                    '<button id="btnFacility' + facility.facilityId + '" class="btn btn-link btnFacilityInfo collapsed" type="button" data-toggle="collapse" data-target="#FacilityCollapse' + facility.facilityId + '"" aria-expanded="false" aria-controls="FacilityCollapse' + facility.facilityId + '">' +
                     facility.facilityName
                     + '</button>&nbsp;' +
                     '<input type="textbox" id="txtUpdateFacility' + facility.facilityId + '" data-facility-id="' + facility.facilityId
@@ -83,8 +84,27 @@ function getFacilitiesInfo() {
             })
         }
     })
+
+    $("#btnCloseAllFacilities").hide();
 }
 
+function openCloseAllFacilities_handler() {
+    $('#btnOpenAllFacilities').on('click', function() {
+        $('#facilityList .collapse').removeAttr("data-parent");
+        $('#facilityList .collapse').collapse('show');
+        $('#btnCloseAllFacilities').show();
+        $('#btnOpenAllFacilities').hide();
+        $('.btnFacilityInfo').prop('disabled', true);
+    })
+
+    $('#btnCloseAllFacilities').on('click', function(e) {
+        $('#facilityList .collapse').attr("data-parent","#facilityList");
+        $('#facilityList .collapse').collapse('hide');
+        $('#btnCloseAllFacilities').hide();
+        $('#btnOpenAllFacilities').show();
+        $('.btnFacilityInfo').prop('disabled', false);
+    })
+}
 
 function addFacility_handler() {
     $('#frmAddFacility').on('submit', e => {
