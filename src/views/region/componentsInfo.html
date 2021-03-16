@@ -18,6 +18,10 @@
                     <input type="radio" id="rbUnused" name="componentDisplay" value="unused">
                     <label for="rbUnused">Unused</label>
                 </div><br><br>
+
+                <button class="btn btn-success" id="btnAddComponent" data-toggle="modal"
+                    data-target="#mdlAddUpdateComponent">Add Component</button><br><br>
+                    
                 <input type="text" class="form-control" id="txtComponentSearch" onkeyup="searchComponents()" placeholder="Search components.."><br>
                 <table class="table"  id="tblComponents">
                     <thead class="thead-dark">
@@ -33,9 +37,6 @@
                         
                     </tbody>
                 </table>
-
-                <button class="btn btn-success" id="btnAddComponent" data-toggle="modal"
-                    data-target="#mdlAddUpdateComponent">Add Component</button>
             </div>
             <div class="modal fade" id="mdlAddUpdateComponent" tabindex="-1" role="dialog"
                 aria-labelledby="mdlAddUpdateComponentLabel" aria-hidden="true">

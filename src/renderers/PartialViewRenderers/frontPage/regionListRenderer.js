@@ -13,8 +13,6 @@ $(function () {
 
 function getAllRegionsByStateId() {
     $('#selState').empty();
-    $('#selFirstState').empty();
-    $('#selSecondState').empty();
     $('#selBiome').empty();
     $('#selDevelopment').empty();
     $('#selCorruption').empty();
@@ -127,9 +125,9 @@ function frmAddRegion_onSubmit() {
         ipcRenderer.send('Region:addRegion', regionObj);
         ipcRenderer.once('Region:addRegionOK', (e, res) => {
             if (res) {
-                $('#regionListMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully added region</div>')
-                $('#listOfRegionsByState').empty();
+                $('#regionListMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully added region</div>');
                 getAllRegionsByStateId();
+                region_getStateListForDropdown();
             }
             else {
                 $('#regionListMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding region</div>')
