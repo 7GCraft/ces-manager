@@ -39,7 +39,7 @@ const advanceSeason = async () => {
         let adminCost = await stateServices.getAdminCostByStateId(state.stateID);
         if (adminCost === -1) adminCost = 0;
 
-        seasonalIncome -= state.expenses - adminCost;
+        seasonalIncome -= state.expenses + adminCost;
 
         await stateServices.updateStateTreasuryByStateId(state.stateID, state.treasuryAmt + seasonalIncome);
 
@@ -112,7 +112,7 @@ const advanceSeasonByStateId = async (id) => {
     let adminCost = await stateServices.getAdminCostByStateId(state.stateID);
     if (adminCost === -1) adminCost = 0;
 
-    seasonalIncome -= state.expenses - adminCost;
+    seasonalIncome -= state.expenses + adminCost;
 
     await stateServices.updateStateTreasuryByStateId(state.stateID, state.treasuryAmt + seasonalIncome);
 

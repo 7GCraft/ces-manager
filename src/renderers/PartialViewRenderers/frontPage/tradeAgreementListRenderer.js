@@ -15,6 +15,7 @@ function getAllTradeAgreements() {
     ipcRenderer.send('Trade:getAllTradeAgreements');
     ipcRenderer.once('Trade:getAllTradeAgreementsOK', (e, res) => {
         // emptying previous contents
+        
         $('#tradeAgreements').empty();
         $('#selTradeAgreement').empty();
         $('#selAgreementDelete').empty();
@@ -250,8 +251,9 @@ function addUpdateAgreement_handler() {
                     $('#tradeAgreementMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully added trade agreement</div>')
                     $('#tradeAgreements').empty();
                     $('#selTradeAgreements').empty();
-
+                    
                     getAllTradeAgreements();
+                    tradeAgreement_getStateListForDropdown();
                 }
                 else {
                     $('#tradeAgreementMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding trade agreement</div>')
