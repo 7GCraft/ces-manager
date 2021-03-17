@@ -2,8 +2,14 @@
     "knexConfig": {
         "client": "sqlite3",
         "connection": {
-            "filename": "db/ces.db"
+            "filename": ""
         }
+    },
+    "sqlite_config": {
+        "filepath": [
+            "db/ces.db",
+            "resources/app/db/ces.db"
+        ]
     },
     "constants": {
         "TABLE_BIOME": "MsBiome",
