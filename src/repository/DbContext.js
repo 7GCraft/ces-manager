@@ -17,10 +17,11 @@ module.exports = {
  * Get knex object with sqlite client
  */
 function getSqliteKnexObject() {
-    const fileName = dbConfig.connection.filename;
-    if (fs.existsSync(fileName)) {
-        return knex(dbConfig);
+    const filepaths = config.sqlite_config.filepath;
+    for (let filepath of filepaths) {
+        if (fs.existsSync(filepath)) {
+            dbConfig.connection.filename = filepath;
+            return knex(dbConfig);
+        }
     }
-    dbConfig.connection.filename = '../' + fileName;
-    return knex(dbConfig);
 }
