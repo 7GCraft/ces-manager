@@ -23,7 +23,7 @@ function getStateInfo() {
         let count = 1;
         $('#lblStateName').text(res.stateName);
         $('#lblDescription').text(res.desc);
-        $('#lblStateTreasury').text(res.treasuryAmt);
+        $('#lblStateTreasury').text(parseFloat(res.treasuryAmt).toFixed(1));
         $('#lblTotalIncome').text(parseFloat(res.TotalIncome).toFixed(2));
         $('#lblExpenses').text(res.expenses);
         $('#lblFoodProduced').text(res.TotalFoodProduced);
@@ -135,11 +135,11 @@ function getTradeAgreements() {
                         '<tr>' +
                         '<td>' + agreement.traders[0].state.stateName + '</td>' +
                         '<td>' + resourceProducedFirstState() + '</td>' +
-                        '<td>' + agreement.traders[0].tradePower * 100 + '%</td>' +
+                        '<td>' + parseFloat(agreement.traders[0].tradePower * 100).toFixed(1) + '%</td>' +
                         '<td>' + parseFloat(agreement.traders[0].tradeValue).toFixed(2) + '</td>' +
                         '<td>' + agreement.traders[1].state.stateName + '</td>' +
                         '<td>' + resourceProducedSecondState() + '</td>' +
-                        '<td>' + agreement.traders[1].tradePower * 100 + '%</td>' +
+                        '<td>' + parseFloat(agreement.traders[1].tradePower * 100).toFixed(1) + '%</td>' +
                         '<td>' + parseFloat(agreement.traders[1].tradeValue).toFixed(2) + '</td>' +
                         '<td>' + agreement.desc + '</td>' +
                         +'</tr>'

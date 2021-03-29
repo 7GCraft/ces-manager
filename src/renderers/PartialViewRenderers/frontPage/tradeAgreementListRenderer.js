@@ -56,11 +56,11 @@ function getAllTradeAgreements() {
                         `<tr id="trade-${agreement.tradeAgreementId}">` +
                         '<td>' + agreement.traders[0].state.stateName + '</td>' +
                         '<td>' + resourceProducedFirstState() + '</td>' +
-                        '<td>' + agreement.traders[0].tradePower * 100 + '%</td>' +
+                        '<td>' + parseFloat(agreement.traders[0].tradePower * 100).toFixed(1) + '%</td>' +
                         '<td>' + parseFloat(agreement.traders[0].tradeValue).toFixed(2) + '</td>' +
                         '<td>' + agreement.traders[1].state.stateName + '</td>' +
                         '<td>' + resourceProducedSecondState() + '</td>' +
-                        '<td>' + agreement.traders[1].tradePower * 100 + '%</td>' +
+                        '<td>' + parseFloat(agreement.traders[1].tradePower * 100).toFixed(1) + '%</td>' +
                         '<td>' + parseFloat(agreement.traders[1].tradeValue).toFixed(2) + '</td>' +
                         '<td class="trade-description">' + agreement.desc + '</td>' +
                         +'</tr>'
