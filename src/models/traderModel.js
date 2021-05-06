@@ -21,8 +21,11 @@ module.exports = class Trader {
     getTradePower() {
         let tradePower = 0;
 
-        for (let resource of this.resources) {
-            tradePower += resource.tradePower;
+        if (this.resources)
+        {
+            for (let resource of this.resources) {
+                if (resource) tradePower += resource.tradePower;
+            }
         }
 
         return tradePower;
