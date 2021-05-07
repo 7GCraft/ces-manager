@@ -53,8 +53,11 @@ const getRegionListAll = async () => {
 
         if (facilities !== null) {
             for (let facility of facilities) {
-                foodOutput += facility.foodOutput;
-                moneyOutput += facility.moneyOutput;
+                if (facility.isFunctional)
+                {
+                    foodOutput += facility.foodOutput;
+                    moneyOutput += facility.moneyOutput;
+                }
             }
         }
 
@@ -120,8 +123,11 @@ const getRegionListByStateId = async (stateId) => {
 
         if (facilities !== null) {
             for (let facility of facilities) {
-                foodOutput += facility.foodOutput;
-                moneyOutput += facility.moneyOutput;
+                if (facility.isFunctional)
+                {
+                    foodOutput += facility.foodOutput;
+                    moneyOutput += facility.moneyOutput;
+                }
             }
         }
 
