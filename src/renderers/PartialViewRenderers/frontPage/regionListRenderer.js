@@ -9,6 +9,8 @@ $(function () {
     region_pageRegion_eventHandler();
     //Handle events from state page
     region_pageState_eventHandler();
+    //Handle events from front page that is not in regionList view
+    region_pageFront_eventHandler()
 });
 
 function getAllRegionsByStateId() {
@@ -83,33 +85,7 @@ function frmAddRegion_onSubmit() {
 
         let regionObj = {};
 
-        let isValid = true;
-        const regionName = $('#txtRegionName').val();
-        const population = $('#nmbPopulation').val();
-
-        if (regionName == null || regionName == '') {
-            isValid = false;
-            $('#txtRegionName').addClass('is-invalid');
-        }
-        else {
-            $('#txtRegionName').removeClass('is-invalid');
-        }
-
-        if (population == null || population == '') {
-            isValid = false;
-            $('#nmbPopulation').addClass('is-invalid');
-            $('#nmbPopulationMessage').text('Population cannot be empty');
-        }
-        else if (parseInt(population) <= 0) {
-            isValid = false;
-            $('#nmbPopulation').addClass('is-invalid');
-            $('#nmbPopulationMessage').text('Population cannot be less or equal to zero');
-        }
-        else {
-            $('#nmbPopulation').removeClass('is-invalid');
-        }
-
-        if (!isValid) {
+        if (!validateRegionForm()) {
             return;
         }
 
@@ -133,8 +109,66 @@ function frmAddRegion_onSubmit() {
                 $('#regionListMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding region</div>')
             }
             $('#mdlAddRegion').modal('toggle');
+            resetRegionForm();
         });
     })
+}
+
+function validateRegionForm() {
+    let isValid = true;
+    const regionName = $('#txtRegionName').val();
+    const population = $('#nmbPopulation').val();
+    const taxRate = $('#nmbTaxRate').val();
+
+    if (regionName == null || regionName == '') {
+        isValid = false;
+        $('#txtRegionName').addClass('is-invalid');
+    }
+    else {
+        $('#txtRegionName').removeClass('is-invalid');
+    }
+
+    if (population == null || population == '') {
+        isValid = false;
+        $('#nmbPopulation').addClass('is-invalid');
+        $('#nmbPopulationMessage').text('Population cannot be empty');
+    }
+    else if (parseInt(population) <= 0) {
+        isValid = false;
+        $('#nmbPopulation').addClass('is-invalid');
+        $('#nmbPopulationMessage').text('Population cannot be less or equal to zero');
+    }
+    else {
+        $('#nmbPopulation').removeClass('is-invalid');
+    }
+
+    if (taxRate == null || taxRate == '') {
+        isValid = false;
+        $('#nmbTaxRate').addClass('is-invalid');
+        $('#nmbTaxRateMessage').text('Tax Rate cannot be empty');
+    }
+    else if (parseFloat(taxRate) < 0) {
+        isValid = false;
+        $('#nmbTaxRate').addClass('is-invalid');
+        $('#nmbTaxRateMessage').text('Tax Rate cannot be less than zero');
+    }
+    else {
+        $('#nmbTaxRate').removeClass('is-invalid');
+    }
+
+    return isValid;
+}
+
+function resetRegionForm() {
+    const regionForm = document.getElementById('frmAddRegion');
+    regionForm.reset();
+    resetRegionFormValidation();
+}
+
+function resetRegionFormValidation() {
+    $('#txtRegionName').removeClass('is-invalid');
+    $('#nmbPopulation').removeClass('is-invalid');
+    $('#nmbTaxRate').removeClass('is-invalid');
 }
 
 function openRegionPage(ID) {
@@ -171,6 +205,15 @@ function region_pageState_eventHandler() {
         }
     });
     ipcRenderer.on('State:deleteStateOK', (e, res) => {
+        if (res) {
+            region_getStateListForDropdown();
+            getAllRegionsByStateId();
+        }
+    });
+}
+
+function region_pageFront_eventHandler() {
+    ipcRenderer.on('State:addStateOK', (e, res) => {
         if (res) {
             region_getStateListForDropdown();
             getAllRegionsByStateId();
