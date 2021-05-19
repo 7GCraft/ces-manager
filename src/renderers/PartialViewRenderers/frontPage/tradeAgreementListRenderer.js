@@ -24,12 +24,16 @@ function getAllTradeAgreements() {
 
         if (res != null) {
             res.forEach(agreement => {
+                let firstHasDisabledResource = false;
+                let secondHasDisabledResource = false;
+
                 // console.log(agreement);
                 let resourceProducedFirstState = () => {
                     let resourceStr1 = '';
                     if (agreement.traders[0].resources !== null) {
                         agreement.traders[0].resources.forEach(resource => {
-                            resourceStr1 += resource.ResourceName + ', ';
+                            if (resource !== null) resourceStr1 += resource.ResourceName + ', ';
+                            else firstHasDisabledResource = true;
                         })
                         resourceStr1 = resourceStr1.slice(0, -2);
                     } else {
@@ -42,7 +46,8 @@ function getAllTradeAgreements() {
                     let resourceStr2 = '';
                     if (agreement.traders[1].resources !== null) {
                         agreement.traders[1].resources.forEach(resource => {
-                            resourceStr2 += resource.ResourceName + ', ';
+                            if (resource != null) resourceStr2 += resource.ResourceName + ', ';
+                            else secondHasDisabledResource = true; 
                         })
                         resourceStr2 = resourceStr2.slice(0, -2);
                     } else {
@@ -50,6 +55,12 @@ function getAllTradeAgreements() {
                     }
                     return resourceStr2;
                 }
+
+                let resources1 = '<td>' + resourceProducedFirstState() + '</td>';
+                let resources2 = '<td>' + resourceProducedSecondState() + '</td>';
+
+                if (firstHasDisabledResource) resources1 = '<td class="bg-danger text-white">' + resourceProducedFirstState() + '</td>';
+                if (secondHasDisabledResource) resources2 = '<td class="bg-danger text-white">' + resourceProducedSecondState() + '</td>';
 
                 $('#tradeAgreements')
                     .append(
