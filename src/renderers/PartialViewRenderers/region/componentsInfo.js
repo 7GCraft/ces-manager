@@ -605,9 +605,6 @@ function populateUpdateComponentForm(componentId) {
         $('#selFacility').attr('disabled', false);
     }
     $('#nmbActivation').val(activationTime);
-    if (activationTime > 0) {
-        $('#selFacility').prop('disabled', 'disabled');
-    }
 }
 
 function setComponentIdForDelete(componentId) {
