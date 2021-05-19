@@ -11,6 +11,8 @@ $(function () {
     deleteComponent_handler();
     //handle events from main page
     pageMain_eventHandler();
+    //handle events from child component modal
+    mdlChildComponents_eventHandler();
 });
 
 function getComponentsInfo() {
@@ -285,7 +287,7 @@ function setComponentList(res) {
             if (!component.isChild) {
                 let valueId = (component.componentType.componentTypeId == 3) ? component.value.ResourceID : component.value;
                 let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : (component.componentType.componentTypeId == 2) ? component.componentName : component.value;
-                let activation = (component.activationTime > 0) ? component.activationTime + ' seasons' : 'Activated';
+                let activation = getActivationLabel(component.activationTime);
                 $('#componentsList').append('<tr id="Component' +
                     component.componentId
                     + '" data-facility-id="' +
@@ -384,7 +386,7 @@ function showChildComponents(parentId) {
             
             let valueId = (component.componentType.componentTypeId == 3) ? component.value.ResourceID : component.value;
             let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : component.value;
-            let activation = (component.activationTime > 0) ? component.activationTime + ' seasons' : 'Activated';
+            let activation = getActivationLabel(component.activationTime);
 
             $('#childComponentsList').append('<tr id="Component' +
             component.componentId
@@ -442,13 +444,31 @@ function showChildComponents(parentId) {
             
         }
     })
+}
 
-
+function getActivationLabel(activationTime) {
+    let activationLabel = '';
+    switch (activationTime) {
+        case 0:
+            activationLabel = 'Activated';
+            break;
+        case 1:
+            activationLabel = activationTime + ' season';
+            break;
+        default:
+            activationLabel = activationTime + ' seasons';
+            break;
+    }
+    return activationLabel;
 }
 
 function emptyChildComponents() {
-    console.log("out");
     $('#childComponentsList').empty();
+}
+
+function getRootParentComponent(componentId) {
+    const componentElement = $(`#Component${componentId}`);
+
 }
 
 function sortComponents(index){
@@ -605,4 +625,18 @@ function pageMain_eventHandler() {
             getResourceTiers();
         }
     });
+}
+
+function mdlChildComponents_eventHandler() {
+    $('#mdlChildComponents').on('shown.bs.modal', mdlChildComponents_shownEventHandler);
+    $('#mdlChildComponents').on('hidden.bs.modal', mdlChildComponents_hiddenEventHandler);
+}
+
+function mdlChildComponents_shownEventHandler(e) {
+    $('.modal-backdrop').css('z-index', '500');
+    $('#mdlChildComponents').css('z-index', '600');
+}
+
+function mdlChildComponents_hiddenEventHandler(e) {
+    emptyChildComponents();
 }

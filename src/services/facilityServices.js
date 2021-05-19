@@ -5,6 +5,7 @@ const dbContext = require('../repository/DbContext');
 const knex = dbContext.getKnexObject();
 
 const Facility = require(config.paths.facilityModel);
+const RootComponentCollection = require(config.paths.rootComponentCollection);
 
 /**
  * Gets all facilities of a given region.
@@ -22,8 +23,10 @@ const getFacilityByRegionId = async (id) => {
 
     let components = await componentServices.getComponentByRegionId(id);
     let sortedComponents = await componentServices.sortChildComponents(components);
+    let rootComponentCollection = new RootComponentCollection(components);
 
-    if (rawFacilities.length === 0 || sortedComponents === null) return null;
+    // if (rawFacilities.length === 0 || sortedComponents === null) return null;
+    if (rawFacilities.length === 0 || rootComponentCollection === null) return null;
 
     let facilities = [];
 
@@ -37,9 +40,14 @@ const getFacilityByRegionId = async (id) => {
 
         let facilityComponents = [];
 
-        for (let component of sortedComponents) {
-            if (component.facilityId === facility.facilityId) {
-                facilityComponents.push(component);
+        // for (let component of sortedComponents) {
+        for (let componentId in rootComponentCollection.componentDict) {
+            // if (component.facilityId === facility.facilityId) {
+            //     facilityComponents.push(component);
+            // }
+            let rootComponent = rootComponentCollection.findRoot(componentId);
+            if (rootComponent.facilityId === facility.facilityId) {
+                facilityComponents.push(rootComponentCollection.componentDict[componentId]);
             }
         }
 
@@ -72,7 +80,7 @@ const getFacilityCountByStateId = async (id) => {
             console.error(e);
             resValue = -1;
         });
-    
+
     resValue = facilityCount[0].count;
 
     return resValue;

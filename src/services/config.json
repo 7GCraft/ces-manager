@@ -63,6 +63,7 @@
         "regionModel": "../models/regionModel",
         "resourceModel": "../models/resourceModel",
         "resourceTierModel": "../models/resourceTierModel",
+        "rootComponentCollection": "../models/rootComponentCollectionModel",
         "seasonModel": "../models/seasonModel",
         "stateListItemModel": "../models/stateListItemModel",
         "stateModel": "../models/stateModel",

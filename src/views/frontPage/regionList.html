@@ -86,8 +86,10 @@
                                 <div class="form-group row">
                                     <label class="col-sm-5 col-form-label" for="nmbTaxRate">Tax Rate</label>
                                     <div class="col-sm-7">
-                                        <input class="form-control" type="number" id="nmbTaxRate" min="0" max="1"
-                                            step=".001">
+                                        <input class="form-control" type="number" id="nmbTaxRate" min="0" max="1" step=".001">
+                                        <span class="invalid-feedback" id="nmbTaxRateMessage">
+                                            Tax Rate cannot be empty
+                                        </span>
                                     </div>
                                 </div>
 
@@ -97,7 +99,8 @@
                                         rows="3"></textarea>
                                 </div>
                             </div>
-                            <div class="modal-footer">
+                            <div class="modal-footer d-flex justify-content-between">
+                                <button type="button" class="btn btn-danger" onclick="resetRegionForm();">Reset</button>
                                 <input type="submit" class="btn btn-primary"></input>
                             </div>
                         </form>
