@@ -13,6 +13,10 @@ $(function () {
     pageMain_eventHandler();
     //handle events from child component modal
     mdlChildComponents_eventHandler();
+    //handle events from btnOpenBulkInsertComponents
+    btnOpenBulkInsertComponents_eventHandler();
+    //handle events from bulk insert page
+    bulktInsertPage_eventHandler();
 });
 
 function getComponentsInfo() {
@@ -370,8 +374,6 @@ function readyChildComponents(parentId) {
     if(!hasChild){
         $('#btnChildComponents'+parentId).attr('title', 'No children exists')
         $('#btnChildComponents'+parentId).tooltip();
-        
-        console.log(hasChild);
     }
     else{
         $('#btnChildComponents'+parentId).attr('data-toggle', 'modal');
@@ -636,4 +638,23 @@ function mdlChildComponents_shownEventHandler(e) {
 
 function mdlChildComponents_hiddenEventHandler(e) {
     emptyChildComponents();
+}
+
+function btnOpenBulkInsertComponents_eventHandler() {
+    $('#btnOpenBulkInsertComponents').on('click', function () {
+        let RegionID = window.process.argv.slice(-1)[0];
+        let unusedPopulation = $('#hdnUnusedPopulation').val();
+        ipcRenderer.send('Component:openBulkInsertPage', JSON.stringify({
+            'RegionID': RegionID,
+            'UnusedPopulation': unusedPopulation
+        }));
+    });
+}
+
+function bulktInsertPage_eventHandler() {
+    ipcRenderer.on("Component:addMultipleComponentsOK", (e, res) => {
+        if (res) {
+            ipcRenderer.send("ReloadPageOnUpdate");
+        }
+    });
 }

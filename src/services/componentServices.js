@@ -582,6 +582,81 @@ const sortChildComponents = async (components) => {
     return parentComponents;
 }
 
+/**
+ * Creates multiple components at once
+ * @param {Array} components must be an array of component objects.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const addMultipleComponents = async (components) => {
+    let resStatus = true;
+
+    // First, transform array of components into two insertable components arrays
+    // Parent component(s) array and Child component(s) array
+    let parentArray = [];
+    let childrenArray = [];
+    let mapUniqueIDwithComponentIDDict = {};
+    components.forEach((component) => {
+        let tempValue = null;
+        if (component.value !== null) {
+            if (typeof (component.value) === 'number') tempValue = `i;${component.value}`;
+            else if (typeof (component.value) === 'string') tempValue = `s;${component.value}`;
+            else if (typeof (component.value) === 'object') tempValue = `i;${component.value.resourceId}`;
+        }
+
+        let tempComponent = {
+            name: component.componentName,
+            componentTypeId: component.componentType.componentTypeId,
+            regionId: component.regionId,
+            facilityId: component.facilityId,
+            value: tempValue,
+            activationTime: component.activationTime,
+        };
+
+        if (component.isChild) {
+            tempComponent.isChild = 1;
+            tempComponent.parentUniqueID = component.parentId;
+            childrenArray.push(tempComponent);
+        } else {
+            tempComponent.isChild = 0;
+            tempComponent.parentId = null;
+            parentArray.push(tempComponent);
+            mapUniqueIDwithComponentIDDict[component.uniqueID] = null;
+        }
+    });
+
+    try {
+        await knex.transaction(async trx => {
+            await trx.insert(parentArray).into(constants.TABLE_COMPONENT);
+
+            // Get last n inserted components to get their ids
+            const insertedParentComponents = await trx(constants.TABLE_COMPONENT)
+                .orderBy(constants.COLUMN_COMPONENT_ID, 'desc')
+                .limit(parentArray.length)
+                .pluck(constants.COLUMN_COMPONENT_ID);
+
+            console.log(insertedParentComponents);
+            let i = parentArray.length - 1;
+            for (const uniqueID in mapUniqueIDwithComponentIDDict) {
+                mapUniqueIDwithComponentIDDict[uniqueID] = insertedParentComponents[i];
+                i--;
+            }
+
+            childrenArray = childrenArray.map(child => {
+                child.parentId = mapUniqueIDwithComponentIDDict[child.parentUniqueID];
+                delete child.parentUniqueID;
+                return child;
+            });
+
+            await trx.insert(childrenArray).into(constants.TABLE_COMPONENT);
+        })
+    } catch (error) {
+        console.error(error);
+        resStatus = false;
+    }
+
+    return resStatus;
+}
+
 exports.getComponentByRegionId = getComponentByRegionId;
 exports.getComponentByFacilityId = getComponentByFacilityId;
 exports.getComponentFunctionalByRegionId = getComponentFunctionalByRegionId;
@@ -593,6 +668,7 @@ exports.updateComponent = updateComponent;
 exports.deleteComponentById = deleteComponentById;
 exports.getComponentTypeAll = getComponentTypeAll;
 exports.sortChildComponents = sortChildComponents;
+exports.addMultipleComponents = addMultipleComponents;
 
 // FOR DEBUGGING
 // getComponentByRegionId(1)

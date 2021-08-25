@@ -19,11 +19,16 @@
                     <label for="rbUnused">Unused</label>
                 </div><br><br>
 
-                <button class="btn btn-success" id="btnAddComponent" data-toggle="modal"
-                    data-target="#mdlAddUpdateComponent">Add Component</button><br><br>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <button class="btn btn-success" id="btnAddComponent" data-toggle="modal" data-target="#mdlAddUpdateComponent">Add Component</button>
+                        <button class="btn btn-success" id="btnOpenBulkInsertComponents">Insert Multiple</button>
+                    </div>
+                </div>
+                <br>
                     
                 <input type="text" class="form-control" id="txtComponentSearch" onkeyup="searchComponents()" placeholder="Search components.."><br>
-                <table class="table"  id="tblComponents">
+                <table class="table" id="tblComponents">
                     <thead class="thead-dark">
                         <th scope="col" onclick ="sortComponents(0)" style="cursor: pointer;">No.</th>
                         <th scope="col" onclick ="sortComponents(1)" style="cursor: pointer;">Component Name</th>

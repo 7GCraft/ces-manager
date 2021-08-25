@@ -1,4 +1,4 @@
-const { ipcMain, webContents } = require('electron');
+const { ipcMain, webContents, BrowserWindow } = require('electron');
 const facility = require('../../services/facilityServices');
 const component = require('../../services/componentServices');
 
@@ -13,6 +13,8 @@ const handle = () => {
     ipcMain.on('Component:addComponent', addComponent);
     ipcMain.on('Component:updateComponent', updateComponent);
     ipcMain.on('Component:deleteComponent', deleteComponent);
+    ipcMain.on('Component:openBulkInsertPage', openBulkInsertPage);
+    ipcMain.on('Component:addMultipleComponents', addMultipleComponents);
 }
 module.exports = {
     handle
@@ -154,6 +156,41 @@ const deleteComponent = (e, arg) => {
         allWindows.sort((a, b) => b - a);
         allWindows.forEach(win => {
             win.send("Component:deleteComponentOK", result);
+        });
+    })
+}
+
+/**
+ * Open Bulk Insert Components Page with Region ID
+ */
+const openBulkInsertPage = (e, arg) => {
+    let bulkInsertComponentsWindow = new BrowserWindow({
+        width: 1080,
+        height: 720,
+        webPreferences: {
+            nodeIntegration: true,
+            additionalArguments: [arg]
+        },
+        title: 'Bulk Insert Components'
+    });
+
+    bulkInsertComponentsWindow.loadFile('src/views/region/component/bulkInsert.html');
+
+    bulkInsertComponentsWindow.on('close', function () {
+        bulkInsertComponentsWindow = null;
+    });
+}
+
+/**
+ * Add multiple components, primarily from bulk insert page
+ */
+const addMultipleComponents = (e, args) => {
+    let response = component.addMultipleComponents(args);
+    response.then(result => {
+        let allWindows = webContents.getAllWebContents();
+        allWindows.sort((a, b) => b - a);
+        allWindows.forEach(win => {
+            win.send("Component:addMultipleComponentsOK", result);
         });
     })
 }
