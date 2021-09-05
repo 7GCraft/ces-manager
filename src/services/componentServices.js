@@ -633,7 +633,6 @@ const addMultipleComponents = async (components) => {
                 .limit(parentArray.length)
                 .pluck(constants.COLUMN_COMPONENT_ID);
 
-            console.log(insertedParentComponents);
             let i = parentArray.length - 1;
             for (const uniqueID in mapUniqueIDwithComponentIDDict) {
                 mapUniqueIDwithComponentIDDict[uniqueID] = insertedParentComponents[i];
