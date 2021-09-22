@@ -8,7 +8,7 @@ The creation of an economic system for ClanCraft was one of the most important s
 
 The ClanCraft Division of the 7GCraft Server Operations designed a new economic system to replace the old State Economic System (SES) line, the Component Economic System (CES). and an app was conceived that could automate the process of seasonal calculations, by far the heaviest of the economic calculations. And thus was born the CES Manager app.
 
-# Building the Latest Version
+<!-- # Building the Latest Version
 1. Pull the latest changes from the `production` branch
 2. Open a command-line interpreter of your choice (e.g. Windows' cmd) and run the following command:
 
@@ -24,3 +24,4 @@ The ClanCraft Division of the 7GCraft Server Operations designed a new economic 
 2. Clone this repository.
 3. Using the command-line interpreter of your choice, navigate to the downloaded directory.
 4. Run `npm ci` to download its dependencies.
+ -->
