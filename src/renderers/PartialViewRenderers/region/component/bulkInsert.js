@@ -652,7 +652,7 @@ function initBackToTop() {
 
 function initAdditionalOptions() {
     $('#fastDeleteWrapper').tooltip({
-        title: "Deleting a row won't show confirmation modal"
+        title: "Deleting a row won't show confirmation popup"
     });
 }
 

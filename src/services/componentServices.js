@@ -623,7 +623,6 @@ const addMultipleComponents = async (components) => {
             mapUniqueIDwithComponentIDDict[component.uniqueID] = null;
         }
     });
-
     try {
         await knex.transaction(async trx => {
             await trx.insert(parentArray).into(constants.TABLE_COMPONENT);
@@ -634,7 +633,6 @@ const addMultipleComponents = async (components) => {
                 .limit(parentArray.length)
                 .pluck(constants.COLUMN_COMPONENT_ID);
 
-            console.log(insertedParentComponents);
             let i = parentArray.length - 1;
             for (const uniqueID in mapUniqueIDwithComponentIDDict) {
                 mapUniqueIDwithComponentIDDict[uniqueID] = insertedParentComponents[i];
@@ -647,7 +645,9 @@ const addMultipleComponents = async (components) => {
                 return child;
             });
 
-            await trx.insert(childrenArray).into(constants.TABLE_COMPONENT);
+            if(childrenArray.length){
+                await trx.insert(childrenArray).into(constants.TABLE_COMPONENT);
+            }
         })
     } catch (error) {
         console.error(error);
