@@ -430,6 +430,10 @@ function createComponentRow(component) {
     let classType = getComponentTypeColorClass(component.componentType.componentTypeId);
     let templateRowId = (component.isChild) ? '#childComponentTemplateRow' : '#componentTemplateRow';
     let clonedTemplate = $(templateRowId).clone().attr('id', rowId).data('componentData', component);
+
+    if (component.facilityId === null) {
+        clonedTemplate.css('background-color', '#f2c9c9');
+    }
     clonedTemplate.find('#nameCell').text(component.componentName);
 
     let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : (component.componentType.componentTypeId == 2) ? component.componentName : component.value;
