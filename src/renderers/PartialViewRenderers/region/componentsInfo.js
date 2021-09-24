@@ -171,8 +171,6 @@ function rbsComponentsDisplay_onChange() {
     $('input[type=radio][name=componentDisplay]').on('change', e => {
         e.preventDefault
 
-        $('#componentsList').empty();
-
         switch ($('input[name=componentDisplay]:checked').val()) {
             case 'all':
                 ipcRenderer.send('Component:getComponentList', parseInt(getProcessArgObj()));
