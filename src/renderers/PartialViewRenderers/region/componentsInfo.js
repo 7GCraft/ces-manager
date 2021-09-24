@@ -1,3 +1,55 @@
+// START UTILITY FUNCTIONS
+function getProcessArgObj() {
+    return JSON.parse(window.process.argv.slice(-1));
+}
+
+function getActivationLabel(activationTime) {
+    let activationLabel = '';
+    switch (activationTime) {
+        case 0:
+            activationLabel = 'Activated';
+            break;
+        case 1:
+            activationLabel = activationTime + ' season';
+            break;
+        default:
+            activationLabel = activationTime + ' seasons';
+            break;
+    }
+    return activationLabel;
+}
+
+function getComponentTypeColorClass(componentTypeId) {
+    let className = '';
+    switch (componentTypeId) {
+        case 1:
+            className = 'valuePopulation';
+            break;
+        case 2:
+            className = 'valueBuilding';
+            break;
+        case 3:
+            className = 'valueResource';
+            break;
+        case 4:
+            className = 'valueFood';
+            break;
+        case 5:
+            className = 'valueMoney';
+            break;
+        case 6:
+            className = 'valueSpecial';
+            break;
+    }
+    return className;
+}
+
+function replaceElementAttributeContent(element, attribute, stringToReplace, newString) {
+    let attributeContent = $(element).attr(attribute);
+    $(element).attr(attribute, attributeContent.replace(stringToReplace, newString));
+}
+// END UTILITY FUNCTIONS
+
 $(function () {
     //Get all component related info
     getComponentsInfo();
@@ -16,12 +68,21 @@ $(function () {
     //handle events from btnOpenBulkInsertComponents
     btnOpenBulkInsertComponents_eventHandler();
     //handle events from bulk insert page
-    bulktInsertPage_eventHandler();
+    bulkInsertPage_eventHandler();
 });
 
 function getComponentsInfo() {
-    ipcRenderer.send('Component:getComponentList', parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.send('Component:getComponentList', parseInt(getProcessArgObj()));
     ipcRenderer.once('Component:getComponentListOK', (e, res) => {
+        let childComponents = []
+        res.forEach((component, i) => {
+            if (component.isChild) {
+                childComponents.push(component);
+            }
+        });
+
+        const parentChildComponentsDict = mapParentWithChildComponent(childComponents);
+        localStorage.setItem('childComponents', JSON.stringify(parentChildComponentsDict));
         setComponentList(res);
 
         $('#selParent').empty();
@@ -52,6 +113,25 @@ function getComponentsInfo() {
     getResourceTiers();
 }
 
+/**
+ * Create a dictionary object where the key is a parent component id, and the value is a list of child components in that parent component
+ * @param {Object[]} childComponents List of child components from setComponentList()
+ */
+function mapParentWithChildComponent(childComponents) {
+    let returnDict = {};
+    if (childComponents.length === 0) {
+        return returnDict;
+    }
+    childComponents.forEach(component => {
+        let parentId = component.parentId;
+        if (!(parentId in returnDict)) {
+            returnDict[parentId] = [];
+        }
+        returnDict[parentId].push(component);
+    });
+    return returnDict;
+}
+
 function getResourceTiers() {
     ipcRenderer.send('Resource:getAllResourceTiers');
     ipcRenderer.once('Resource:getAllResourceTiersOk', function (e, res) {
@@ -72,7 +152,7 @@ function getResourceTiers() {
 
 function getFacilitiesList() {
     let dataAvailable = false;
-    ipcRenderer.send('Facility:getFacilitiesByRegion', parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.send('Facility:getFacilitiesByRegion', parseInt(getProcessArgObj()));
     ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
         dataAvailable = true;
         $('#selFacility').append('<option selected value="">NONE</option>');
@@ -95,19 +175,19 @@ function rbsComponentsDisplay_onChange() {
 
         switch ($('input[name=componentDisplay]:checked').val()) {
             case 'all':
-                ipcRenderer.send('Component:getComponentList', parseInt(window.process.argv.slice(-1)));
+                ipcRenderer.send('Component:getComponentList', parseInt(getProcessArgObj()));
                 ipcRenderer.once('Component:getComponentListOK', (e, res) => {
                     setComponentList(res);
                 })
                 break;
             case 'used':
-                ipcRenderer.send('Component:getUsedComponentList', parseInt(window.process.argv.slice(-1)));
+                ipcRenderer.send('Component:getUsedComponentList', parseInt(getProcessArgObj()));
                 ipcRenderer.once('Component:getUsedComponentListOK', (e, res) => {
                     setComponentList(res);
                 })
                 break;
             case 'unused':
-                ipcRenderer.send('Component:getUnusedComponentList', parseInt(window.process.argv.slice(-1)));
+                ipcRenderer.send('Component:getUnusedComponentList', parseInt(getProcessArgObj()));
                 ipcRenderer.once('Component:getUnusedComponentListOK', (e, res) => {
                     setComponentList(res);
                 })
@@ -186,7 +266,7 @@ function addUpdateComponent_handler() {
 
         componentObj['componentName'] = $('#txtComponentName').val();
         componentObj['componentType'] = { 'componentTypeId': componentTypeId };
-        componentObj['regionId'] = parseInt(window.process.argv.slice(-1));
+        componentObj['regionId'] = parseInt(getProcessArgObj());
         componentObj['facilityId'] = ($('#selFacility').val() == '') ? null : $('#selFacility').val();
 
         if ($('#chkChild').is(':checked')) {
@@ -264,9 +344,9 @@ function validate_addUpdateComponent(componentObj, componentType) {
 }
 
 function deleteComponent_handler() {
-    $('#btnDeleteComponent').on('click', (e) => {
+    $('#btnConfirmDeleteComponent').on('click', (e) => {
         e.preventDefault();
-        let componentId = $('#btnDeleteComponent').data('componentId').replace('Component', '');
+        let componentId = $('#btnConfirmDeleteComponent').data('componentId').replace('Component', '');
 
         ipcRenderer.send('Component:deleteComponent', componentId);
         ipcRenderer.once('Component:deleteComponentOK', (e, res) => {
@@ -283,242 +363,144 @@ function deleteComponent_handler() {
     })
 }
 
+/**
+ * Fill component's table
+ * @param {Object[]} res List of components from Database
+ */
 function setComponentList(res) {
-    $('#componentsList').empty();
+    $('#componentsList').children('tr').not('#componentTemplateRow').remove();
     if (Array.isArray(res) && res.length) {
-        let childComponents = []
         res.forEach((component, i) => {
             if (!component.isChild) {
-                let valueId = (component.componentType.componentTypeId == 3) ? component.value.ResourceID : component.value;
-                let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : (component.componentType.componentTypeId == 2) ? component.componentName : component.value;
-                let activation = getActivationLabel(component.activationTime);
-                $('#componentsList').append('<tr id="Component' +
-                    component.componentId
-                    + '" data-facility-id="' +
-                    component.facilityId
-                    + '" data-component-type-id="' +
-                    component.componentType.componentTypeId
-                    + '" data-is-child="' +
-                    component.isChild
-                    + '" data-component-name="' +
-                    component.componentName
-                    + '" data-value="' +
-                    valueId
-                    + '" data-activation="' +
-                    component.activationTime
-                    + '">'+
-                    '<td>'+parseInt(i + 1)+'</td>'+
-                    '<td><b>' +
-                    component.componentName
-                    + '</b></td>'+
-                    '<td><span class="value' +
-                    component.componentId
-                    + '">' +
-                    valueText
-                    + 
-                    '</span></td>'+
-                    '<td><span class="value' +
-                    component.componentId
-                    + '">' +component.componentType.componentTypeName+
-                    '</span></td>'+
-                    '<td>'+activation+'</td>'+
-                    '<td><button class="btn btn-outline-info" id="btnChildComponents'+component.componentId+'" onmouseover="readyChildComponents('+component.componentId+')" onclick="showChildComponents('+component.componentId+')" title="">Show</button></td>'+
-                    ' <td><input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component' + component.componentId + '")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component' + component.componentId + '")> </td>' +
-                    '</tr>');
-
-                switch (component.componentType.componentTypeId) {
-                    case 1:
-                        $('.value' + component.componentId).attr('class', ' valuePopulation');
-                        break;
-                    case 2:
-                        $('.value' + component.componentId).attr('class', ' valueBuilding');
-                        break;
-                    case 3:
-                        $('.value' + component.componentId).attr('class', ' valueResource');
-                        break;
-                    case 4:
-                        $('.value' + component.componentId).attr('class', ' valueFood');
-                        break;
-                    case 5:
-                        $('.value' + component.componentId).attr('class', ' valueMoney');
-                        break;
-                    case 6:
-                        $('.value' + component.componentId).attr('class', ' valueSpecial');
-                        break;
-                }
+                let componentRow = createComponentRow(component);
+                $('#componentsList').append(componentRow);
             }
-            else {
-                childComponents.push(component);
-            }
-        })
+        });
 
-        localStorage.setItem('childComponents', JSON.stringify(childComponents))
-       
+        indexComponentTable('componentsList', 'numberCell', ['#componentTemplateRow']);
+        $('.btn-show-children').tooltip();
     }
     else {
         $('#componentsList').append('<li>NO COMPONENTS AVAILABLE</li>')
     }
 }
 
-function readyChildComponents(parentId) {
-    let childComponents = JSON.parse(localStorage.getItem('childComponents'));
-    let hasChild = false;
-    
-    for(const component in childComponents){
-        if(childComponents[component].parentId == parentId){
-            hasChild = true;
-            break;
-        }
+/**
+ * Create an HTML element object from a row template using a component's data
+ * @param {object} component Component object as data
+ * @returns HTML element with component's information
+ */
+function createComponentRow(component) {
+    let rowId = `Component${component.componentId}`;
+    let classType = getComponentTypeColorClass(component.componentType.componentTypeId);
+    let templateRowId = (component.isChild) ? '#childComponentTemplateRow' : '#componentTemplateRow';
+    let clonedTemplate = $(templateRowId).clone().attr('id', rowId).data('componentData', component);
+    clonedTemplate.find('#nameCell').text(component.componentName);
+
+    let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : (component.componentType.componentTypeId == 2) ? component.componentName : component.value;
+    clonedTemplate.find('#valueCell').text(valueText).addClass(classType);
+
+    clonedTemplate.find('#typeCell').text(component.componentType.componentTypeName).addClass(classType);
+    let activation = getActivationLabel(component.activationTime);
+    clonedTemplate.find('#activationTimeCell').text(activation);
+
+    if (!component.isChild) {
+        let showChildBtn = clonedTemplate.find('#childrenCell').find('button');
+        assignShowChildBtnUtil(showChildBtn, component.componentId);
+        replaceElementAttributeContent(showChildBtn, 'onclick', '{componentId}', component.componentId);
     }
 
-    if(!hasChild){
-        $('#btnChildComponents'+parentId).attr('title', 'No children exists')
-        $('#btnChildComponents'+parentId).tooltip();
+    let updateComponentBtn = clonedTemplate.find('#actionCell').find('#btnUpdateComponent');
+    replaceElementAttributeContent(updateComponentBtn, 'onclick', '{rowId}', rowId);
+
+    let deleteComponentBtn = clonedTemplate.find('#actionCell').find('#btnDeleteComponent');
+    replaceElementAttributeContent(deleteComponentBtn, 'onclick', '{rowId}', rowId);
+    return clonedTemplate;
+}
+
+function assignShowChildBtnUtil(showChildBtn, componentId) {
+    let childComponents = JSON.parse(localStorage.getItem('childComponents'));
+    let childrenCount = 0;
+    if (componentId in childComponents) {
+        childrenCount = childComponents[componentId].length;
     }
-    else{
-        $('#btnChildComponents'+parentId).attr('data-toggle', 'modal');
-        $('#btnChildComponents'+parentId).attr('data-target', '#mdlChildComponents');
+    let tooltipTitle = '';
+
+    if (childrenCount > 0) {
+        tooltipTitle = `Show Children (${childrenCount})`;
+        showChildBtn.attr('data-toggle', 'modal');
+        showChildBtn.attr('data-target', '#mdlChildComponents');
     }
+    else {
+        tooltipTitle = 'No children exists';
+    }
+
+    showChildBtn.attr('title', tooltipTitle);
 }
 
 function showChildComponents(parentId) {
     let childComponents = JSON.parse(localStorage.getItem('childComponents'));
-    childComponents.forEach(component => {
-        if(component.parentId == parentId){
-            
-            let valueId = (component.componentType.componentTypeId == 3) ? component.value.ResourceID : component.value;
-            let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : component.value;
-            let activation = getActivationLabel(component.activationTime);
-
-            $('#childComponentsList').append('<tr id="Component' +
-            component.componentId
-            + '" data-facility-id="' +
-            component.facilityId
-            + '" data-component-type-id="' +
-            component.componentType.componentTypeId
-            + '" data-is-child="' +
-            component.isChild
-            + '" data-component-name="' +
-            component.componentName
-            + '" data-value="' +
-            valueId
-            + '" data-activation="' +
-            component.activationTime
-            + '" data-parent="'+
-            component.parentId
-            +'">'+
-            '<td><b>' +
-            component.componentName
-            + '</b></td>'+
-            '<td><span class="value' +
-            component.componentId
-            + '">' +
-            valueText
-            + 
-            '</span></td>'+
-            '<td><span id="value' +
-            component.componentId
-            + '">' +component.componentType.componentTypeName+
-            '</span></td>'+
-            '<td>'+activation+'</td>'+
-            ' <td><input type="image" src="../images/icons/edit.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlAddUpdateComponent" onclick=populateUpdateComponentForm("Component' + component.componentId + '")>&nbsp;<input type="image" src="../images/icons/delete.png" style="height: 15px; width:15px;" data-toggle="modal" data-target="#mdlDeleteComponent" onclick=setComponentIdForDelete("Component' + component.componentId + '")> </td>' +
-            '</tr>');
-            switch (component.componentType.componentTypeId) {
-                case 1:
-                    $('.value' + component.componentId).attr('class', ' valuePopulation');
-                    break;
-                case 2:
-                    $('.value' + component.componentId).attr('class', ' valueBuilding');
-                    break;
-                case 3:
-                    $('.value' + component.componentId).attr('class', ' valueResource');
-                    break;
-                case 4:
-                    $('.value' + component.componentId).attr('class', ' valueFood');
-                    break;
-                case 5:
-                    $('.value' + component.componentId).attr('class', ' valueMoney');
-                    break;
-                case 6:
-                    $('.value' + component.componentId).attr('class', ' valueSpecial');
-                    break;
-            }
-            
-        }
-    })
-}
-
-function getActivationLabel(activationTime) {
-    let activationLabel = '';
-    switch (activationTime) {
-        case 0:
-            activationLabel = 'Activated';
-            break;
-        case 1:
-            activationLabel = activationTime + ' season';
-            break;
-        default:
-            activationLabel = activationTime + ' seasons';
-            break;
+    if (!(parentId in childComponents)) {
+        return;
     }
-    return activationLabel;
+    childComponents[parentId].forEach(component => {
+        let componentRow = createComponentRow(component);
+        $('#childComponentsList').append(componentRow);
+    });
+
+    indexComponentTable('childComponentsList', 'numberCell', ['#childComponentTemplateRow']);
 }
 
 function emptyChildComponents() {
-    $('#childComponentsList').empty();
+    $('#childComponentsList').children('tr').not('#childComponentTemplateRow').remove();
 }
 
-function getRootParentComponent(componentId) {
-    const componentElement = $(`#Component${componentId}`);
-
-}
-
-function sortComponents(index){
+function sortComponents(index) {
     let table = document.getElementById("tblComponents");
     let switching = true;
     let dir = "asc";
     let switchCount = 0;
 
-    while(switching){
+    while (switching) {
         let shouldSwitch = false;
         switching = false;
         rows = table.rows;
 
-        for(i = 1; i < (rows.length - 1); i++){
+        for (i = 1; i < (rows.length - 1); i++) {
             shouldSwitch = false;
 
             x = rows[i].getElementsByTagName("TD")[index];
             y = rows[i + 1].getElementsByTagName("TD")[index];
 
-            if(index != 0){
+            if (index != 0) {
                 if (dir == "asc") {
                     if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                      // If so, mark as a switch and break the loop:
-                      shouldSwitch = true;
-                      break;
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
                     }
-                } 
+                }
                 else if (dir == "desc") {
                     if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                      // If so, mark as a switch and break the loop:
-                      shouldSwitch = true;
-                      break;
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
                     }
                 }
             }
-            else{
+            else {
                 if (dir == "asc") {
                     if (Number(x.innerHTML) > Number(y.innerHTML)) {
-                      // If so, mark as a switch and break the loop:
-                      shouldSwitch = true;
-                      break;
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
                     }
-                } 
+                }
                 else if (dir == "desc") {
                     if (Number(x.innerHTML) < Number(y.innerHTML)) {
-                      // If so, mark as a switch and break the loop:
-                      shouldSwitch = true;
-                      break;
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
                     }
                 }
             }
@@ -530,13 +512,13 @@ function sortComponents(index){
             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
             switching = true;
             // Each time a switch is done, increase this count by 1:
-            switchCount ++;
-          } else {
+            switchCount++;
+        } else {
             /* If no switching has been done AND the direction is "asc",
             set the direction to "desc" and run the while loop again. */
             if (switchCount == 0 && dir == "asc") {
-              dir = "desc";
-              switching = true;
+                dir = "desc";
+                switching = true;
             }
         }
     }
@@ -544,20 +526,42 @@ function sortComponents(index){
 
 function searchComponents() {
     let value = $('#txtComponentSearch').val().toLowerCase();
-    $('#componentsList tr').filter( function() {
+    $('#componentsList tr').filter(function () {
         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+}
+
+/**
+ * Index a component's table by giving number to each rows
+ * @param {String} tableId Component's table ID that needs to be indexed
+ * @param {String} numberCellId ID attribute of HTML element from row that needs to be given number
+ * @param {String[]} excludedRows List of excluded class/id rows to be excluded from indexing
+ */
+function indexComponentTable(tableId, numberCellId, excludedRows = null) {
+    let rows = $(`#${tableId}`).children('tr');
+    if (excludedRows !== null) {
+        rows = rows.not(excludedRows.join());
+    }
+    rows.each(function (i, row) {
+        $(row).find(`#${numberCellId}`).text(i + 1);
     });
 }
 
 function populateUpdateComponentForm(componentId) {
     let splicedComponentId = componentId.replace('Component', '');
-    let facilityId = $('#' + componentId).data("facilityId");
-    let componentTypeId = $('#' + componentId).data("componentTypeId");
-    let isChild = $('#' + componentId).data("isChild");
-    let componentName = $('#' + componentId).data("componentName");
-    let value = $('#' + componentId).data("value");
-    let activationTime = $('#' + componentId).data("activation");
-    let parent = $('#' + componentId).data("parent");
+
+    let componentData = $(`#${componentId}`).data('componentData');
+    const {
+        facilityId,
+        componentType,
+        isChild,
+        componentName,
+        value,
+        activationTime,
+        parentId,
+        parent
+    } = componentData;
+    const componentTypeId = componentType.componentTypeId;
 
     $('#hdnComponentId').val(splicedComponentId);
     $('#txtComponentName').val(componentName);
@@ -567,7 +571,7 @@ function populateUpdateComponentForm(componentId) {
 
     if (isChild) {
         $('#componentParentField').show();
-        $('#selParent').val(parent);
+        $('#selParent').val(parentId);
     }
     else {
         $('#componentParentField').hide();
@@ -577,7 +581,7 @@ function populateUpdateComponentForm(componentId) {
         $('#txtValue').hide();
         $('#selResource').show();
 
-        $('#selResource').val(value);
+        $('#selResource').val(value.ResourceID);
     }
     else {
         $('#txtValue').show();
@@ -610,7 +614,7 @@ function populateUpdateComponentForm(componentId) {
 }
 
 function setComponentIdForDelete(componentId) {
-    $('#btnDeleteComponent').attr('data-component-id', componentId);
+    $('#btnConfirmDeleteComponent').attr('data-component-id', componentId);
 }
 
 function pageMain_eventHandler() {
@@ -642,7 +646,7 @@ function mdlChildComponents_hiddenEventHandler(e) {
 
 function btnOpenBulkInsertComponents_eventHandler() {
     $('#btnOpenBulkInsertComponents').on('click', function () {
-        let RegionID = window.process.argv.slice(-1)[0];
+        let RegionID = getProcessArgObj();
         let unusedPopulation = $('#hdnUnusedPopulation').val();
         ipcRenderer.send('Component:openBulkInsertPage', JSON.stringify({
             'RegionID': RegionID,
@@ -651,7 +655,7 @@ function btnOpenBulkInsertComponents_eventHandler() {
     });
 }
 
-function bulktInsertPage_eventHandler() {
+function bulkInsertPage_eventHandler() {
     ipcRenderer.on("Component:addMultipleComponentsOK", (e, res) => {
         if (res) {
             ipcRenderer.send("ReloadPageOnUpdate");
