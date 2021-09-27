@@ -24,7 +24,7 @@ function getResourceTierLabel(resourceTierID) {
 $(function () {
     //Assign tooltip to question mark icon beside productive header in resources tab
     $('.questionIcon').tooltip({
-        title: 'Have been assigned to a functional facility'
+        title: 'Resources worked by functional facilities'
     });
     //Load all state info on page open
     getStateInfo();
