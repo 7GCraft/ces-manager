@@ -19,3 +19,12 @@
 .regionList{
     list-style: none;
 }
+
+.questionIcon {
+    margin-left: 5px;
+    margin-bottom: 4px;
+}
+
+#resourceTemplateRow {
+    display: none;
+}
