@@ -285,6 +285,7 @@ function addUpdateComponent_handler() {
             componentObj['value'] = (componentTypeId == 1 || componentTypeId == 4 || componentTypeId == 5) ? parseInt($('#txtValue').val() || 0) : $('#txtValue').val();
         }
 
+        componentObj['cost'] = $('#nmbCost').val();
         componentObj['activationTime'] = $('#nmbActivation').val();
 
         if (!validate_addUpdateComponent(componentObj, componentTypeId))
@@ -293,12 +294,12 @@ function addUpdateComponent_handler() {
         if ($('#hdnComponentId').val() == '') {
             ipcRenderer.send('Component:addComponent', componentObj);
             ipcRenderer.once('Component:addComponentOK', (e, res) => {
-                if (res) {
+                if (res === "OK") {
                     alert("Successfully added component");
                     ipcRenderer.send("ReloadPageOnUpdate");
                 }
                 else {
-                    $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when adding component</div>');
+                    $('#regionMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+res+'</div>');
                 }
             });
         }

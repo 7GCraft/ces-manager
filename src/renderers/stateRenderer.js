@@ -75,7 +75,6 @@ function getStateInfo() {
                 let id = file.match(/(\d+)/);
 
                 if (parseInt(window.process.argv.slice(-1)) == id[0]) {
-                    console.log(file);
                     $('.jumbotron').css('background-image', `url(../images/${file})`);
                     $('.jumbotron').css('background-size', 'contain');
                     break;
