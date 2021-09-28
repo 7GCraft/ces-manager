@@ -638,6 +638,7 @@ const addMultipleComponents = async (components) => {
     let parentArray = [];
     let childrenArray = [];
     let mapUniqueIDwithComponentIDDict = {};
+    let totalCost = 0;
     components.forEach((component) => {
         let tempValue = null;
         if (component.value !== null) {
@@ -665,7 +666,17 @@ const addMultipleComponents = async (components) => {
             parentArray.push(tempComponent);
             mapUniqueIDwithComponentIDDict[component.uniqueID] = null;
         }
+
+        totalCost += parseInt(component.cost);
     });
+
+    let costCalcReturn = await calculateComponentCost(totalCost, components[0].regionId)
+
+    if(costCalcReturn === "Cost exceeding treasury amount"){
+        resStatus = false;
+        return resStatus
+    }
+
     try {
         await knex.transaction(async trx => {
             await trx.insert(parentArray).into(constants.TABLE_COMPONENT);
