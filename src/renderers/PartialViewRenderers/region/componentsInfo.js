@@ -168,30 +168,67 @@ function getFacilitiesList() {
 }
 
 function rbsComponentsDisplay_onChange() {
-    $('input[type=radio][name=componentDisplay]').on('change', e => {
-        e.preventDefault
+    $('input[type=radio][name=usedComponentDisplay]').on('change', e => {
+        e.preventDefault();
+        rbsComponentsDisplayer();
+    });
 
-        switch ($('input[name=componentDisplay]:checked').val()) {
-            case 'all':
-                ipcRenderer.send('Component:getComponentList', parseInt(getProcessArgObj()));
-                ipcRenderer.once('Component:getComponentListOK', (e, res) => {
-                    setComponentList(res);
-                })
-                break;
-            case 'used':
-                ipcRenderer.send('Component:getUsedComponentList', parseInt(getProcessArgObj()));
-                ipcRenderer.once('Component:getUsedComponentListOK', (e, res) => {
-                    setComponentList(res);
-                })
-                break;
-            case 'unused':
-                ipcRenderer.send('Component:getUnusedComponentList', parseInt(getProcessArgObj()));
-                ipcRenderer.once('Component:getUnusedComponentListOK', (e, res) => {
-                    setComponentList(res);
-                })
-                break;
+    $('input[type=radio][name=activatedComponentDisplay]').on('change', e => {
+        e.preventDefault();
+        rbsComponentsDisplayer();
+    });
+}
+
+/**
+ * Display component's rows based on radio button filter:
+ * Used/Unused, Activated/Unactivated Components
+ */
+function rbsComponentsDisplayer() {
+    let usedComponent = $('input[name=usedComponentDisplay]:checked').val();
+
+    let componentGetterEvent = 'Component:getComponentList';
+    let componentReceiverEvent = 'Component:getComponentListOK';
+    if (usedComponent === 'used') {
+        componentGetterEvent = 'Component:getUsedComponentList';
+        componentReceiverEvent = 'Component:getUsedComponentListOK';
+    } else if (usedComponent === 'unused') {
+        componentGetterEvent = 'Component:getUnusedComponentList';
+        componentReceiverEvent = 'Component:getUnusedComponentListOK';
+    }
+
+    ipcRenderer.send(componentGetterEvent, parseInt(getProcessArgObj()));
+    ipcRenderer.once(componentReceiverEvent, (e, res) => {
+        setComponentList(res);
+        filterComponents();
+    });
+}
+
+/**
+ * Filter component's table list based on search string filter 
+ * and whether the component is activated or not
+ */
+function filterComponents() {
+    let searchString = $('#txtComponentSearch').val().toLowerCase();
+    let activatedComponent = $('input[name=activatedComponentDisplay]:checked').val();
+    let showActivated = (activatedComponent === 'activated');
+    let hiddenRowIds = [];
+
+    $('#componentsList tr').not('#componentTemplateRow').each(function (i, row) {
+        const componentData = $(this).data('componentData');
+        let doShowActivated = (activatedComponent === 'all') ||
+                              (showActivated && componentData.activationTime <= 0) ||
+                              (!showActivated && componentData.activationTime > 0);
+        let doShow = ($(this).text().toLowerCase().indexOf(searchString) > -1) && doShowActivated;
+        if (doShow) {
+            $(this).show();
+        } else {
+            hiddenRowIds.push(`#${row.id}`);
+            $(this).hide();
         }
-    })
+    });
+
+    hiddenRowIds.push('#componentTemplateRow');
+    indexComponentTable('componentsList', 'numberCell', hiddenRowIds);
 }
 
 function addUpdateComponent_handler() {
@@ -393,6 +430,10 @@ function createComponentRow(component) {
     let classType = getComponentTypeColorClass(component.componentType.componentTypeId);
     let templateRowId = (component.isChild) ? '#childComponentTemplateRow' : '#componentTemplateRow';
     let clonedTemplate = $(templateRowId).clone().attr('id', rowId).data('componentData', component);
+
+    if (component.facilityId === null) {
+        clonedTemplate.css('background-color', '#f2c9c9');
+    }
     clonedTemplate.find('#nameCell').text(component.componentName);
 
     let valueText = (component.componentType.componentTypeId == 3) ? component.value.ResourceName : (component.componentType.componentTypeId == 2) ? component.componentName : component.value;
@@ -520,13 +561,6 @@ function sortComponents(index) {
             }
         }
     }
-}
-
-function searchComponents() {
-    let value = $('#txtComponentSearch').val().toLowerCase();
-    $('#componentsList tr').filter(function () {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-    });
 }
 
 /**
