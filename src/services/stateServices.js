@@ -186,11 +186,16 @@ const getAdminCostByStateId = async (id) => {
     let resValue = 0;
 
     let facilityCount = await facilityServices.getFacilityCountByStateId(id);
+    // let regionCount = await regionServices.getRegionCountByStateId(id);
 
     if (facilityCount === -1) {
         resValue = -1;
         return resValue;
     }
+    // if (regionCount === -1) {
+    //     resValue = -1;
+    //     return resValue;
+    // }
 
     let adminCost = 0.28 * facilityCount * facilityCount;
 

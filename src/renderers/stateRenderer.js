@@ -17,6 +17,24 @@ $(function () {
     pageRegion_eventHandler();
 })
 
+//helper functions
+function getPopulationCap(developmentId){
+    switch(developmentId){
+        case 1:
+            return 10;
+        case 2:
+            return 20;
+        case 3:
+            return 40;
+        case 4:
+            return 60;
+        case 5:
+            return 80;
+        case 6:
+            return 100;
+    }
+}
+
 function getStateInfo() {
     ipcRenderer.send("State:getStateInfo", parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once("State:getStateInfoOK", function (e, res) {
@@ -91,7 +109,8 @@ function getRegions() {
         $('#listOfRegions').empty();
         if (Array.isArray(res) && res.length) {
             res.forEach(region => {
-                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + '</span></li>')
+                PopulationCap = getPopulationCap(region.DevelopmentId);
+                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + ' / ' + PopulationCap + '</span></li>')
             });
         }
     });
