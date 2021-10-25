@@ -372,13 +372,13 @@ const getRegionById = async (id) => {
     let resValue = 0;
 
     let regionCount = await knex(constants.TABLE_STATE)
-        .count(constants.COLUMN_FACILITY_ID + ' AS count')
+        .count(constants.COLUMN_REGION_ID + ' AS count')
         .join(
             constants.TABLE_REGION,
             constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID,
             constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID
         )
-        .where(constants.COLUMN_STATE_ID, id)
+        .where(constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID, id)
         .catch(e => {
             console.error(e);
             resValue = -1;
@@ -609,4 +609,4 @@ exports.getDevelopmentAll = getDevelopmentAll;
 
 // console.log(testRegion);
 
-// getRegionByStateId(1).then(data => console.log(data));
+//getRegionCountByStateId(7).then(data => console.log(data));

@@ -56,7 +56,8 @@ const getStateAll = async () => {
             rawState.name,
             rawState.treasuryAmt,
             rawState.desc,
-            rawState.expenses
+            rawState.expenses,
+            rawState.adminRegionModifier
         );
 
         let regions = await regionServices.getRegionByStateId(state.stateID);
@@ -95,7 +96,8 @@ const getStateAllByIds = async (ids) => {
             rawState.name,
             rawState.treasuryAmt,
             rawState.desc,
-            rawState.expenses
+            rawState.expenses,
+            rawState.adminRegionModifier
         );
 
         let regions = await regionServices.getRegionByStateId(state.stateID);
@@ -135,7 +137,8 @@ const getStateAllByIdsWithoutTrade = async (ids) => {
             rawState.name,
             rawState.treasuryAmt,
             rawState.desc,
-            rawState.expenses
+            rawState.expenses,
+            rawState.adminRegionModifier
         );
 
         let regions = await regionServices.getRegionByStateId(state.stateID);
@@ -166,7 +169,7 @@ const getStateById = async (id) => {
 
     rawState = rawState[0];
 
-    let state = new State(rawState.stateId, rawState.name, rawState.treasuryAmt, rawState.desc, rawState.expenses);
+    let state = new State(rawState.stateId, rawState.name, rawState.treasuryAmt, rawState.desc, rawState.expenses, rawState.adminRegionModifier);
 
     let regions = await regionServices.getRegionByStateId(state.stateID);
 
@@ -185,19 +188,28 @@ const getStateById = async (id) => {
 const getAdminCostByStateId = async (id) => {
     let resValue = 0;
 
+    let modifier = await knex(constants.TABLE_STATE)
+        .select(constants.COLUMN_ADMIN_MODIFIER)
+        .where(constants.COLUMN_STATE_ID, id)
+        .catch(e => {
+            console.error(e);
+            resValue = -1;
+        });
+    modifier = modifier[0].adminRegionModifier
     let facilityCount = await facilityServices.getFacilityCountByStateId(id);
-    // let regionCount = await regionServices.getRegionCountByStateId(id);
+    let regionCount = await regionServices.getRegionCountByStateId(id);
+    
 
     if (facilityCount === -1) {
         resValue = -1;
         return resValue;
     }
-    // if (regionCount === -1) {
-    //     resValue = -1;
-    //     return resValue;
-    // }
+    if (regionCount === -1) {
+        resValue = -1;
+        return resValue;
+    }
 
-    let adminCost = 0.28 * facilityCount * facilityCount;
+    let adminCost = (0.28 * facilityCount * facilityCount) + (400 * (1.16) ** regionCount * (1 + modifier));
 
     resValue = adminCost;
 
@@ -242,7 +254,8 @@ const updateState = async (state) => {
             name: state.stateName,
             treasuryAmt: state.treasuryAmt,
             desc: state.desc,
-            expenses: state.expenses
+            expenses: state.expenses,
+            adminRegionModifier: state.adminRegionModifier
         })
         .catch(e => {
             console.error(e);
@@ -319,7 +332,7 @@ exports.deleteStateById = deleteStateById;
 //     .then(data => console.log(data));
 // getStateById(1)
 //     .then(data => console.log(data));
-//getAdminCostByStateId(7).then(data => console.log(data));
+// getAdminCostByStateId(7).then(data => console.log(data));
 // addState('Cla Lar', 0, 'Kingdom of Cla Lar');
 // addState('Cypra', 0);
 // addState('Tranos');

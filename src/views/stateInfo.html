@@ -37,6 +37,7 @@
                 Total Income : <span id="lblTotalIncome"></span> <br>
                 Military, Diplomatic & Misc. Expenses : <span id="lblExpenses"></span> <br>
                 Administration Cost : <span id="lblAdminCost"></span> <br>
+                Admin Region Cost Modifier : <span id="lblAdminRegionModifier"></span> <br>
                 Total Expenses : <span id="lblTotalExpenses"></span> <br>
                 Total Food Produced : <span id="lblFoodProduced"></span> <br>
                 Total Food Consumed : <span id="lblFoodConsumed"></span> <br>
@@ -129,6 +130,13 @@
                             <label class="col-sm-5 col-form-label" for="nmbTreasury">Treasury</label>
                             <div class="col-sm-7">
                                 <input class="form-control" type="number" id="nmbTreasury" required step="any">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="nmbAdminRegionModifier">Admin Region Modifier (%)</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="number" id="nmbAdminRegionModifier" min="-100" max="100" required step="any">
                             </div>
                         </div>
 
