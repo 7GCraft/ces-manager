@@ -2,6 +2,8 @@
 
 > An Electron app to manage 7GCraft's ClanCraft CES
 
+<p align="center"><img src="images/logo.png" alt="Logo"></p>
+
 # Why
 
 <img src="images/screenshot.jpg" alt="Screenshot">
