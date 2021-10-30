@@ -3,6 +3,7 @@ const resource = require('../../services/resourceServices');
 
 const handle = () => {
     ipcMain.on('Resource:getAllResourceTiers', getAllResourceTiers);
+    ipcMain.on('Resource:getAllResourcesByStateId', getAllResourcesByStateId);
     ipcMain.on('Resource:updateResourceAll', updateResourceAll);
     ipcMain.on('Resource:addResource', addResource);
     ipcMain.on('Resource:deleteResourceById', deleteResourceById);
@@ -20,6 +21,16 @@ const getAllResourceTiers = (e) => {
         e.sender.send('Resource:getAllResourceTiersOk', result);
     });
 }
+
+/**
+ * Get All resources inside a state by given state id
+ */
+const getAllResourcesByStateId = (e, arg) => {
+    let response = resource.getAllResourcesByStateId(arg);
+    response.then(function (result) {
+        e.sender.send('Resource:getAllResourcesByStateIdOk', result);
+    });
+};
 
 /**
  * Update many resources

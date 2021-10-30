@@ -4,7 +4,28 @@ const $ = require('jquery');
 const fs = require('fs');
 require('bootstrap');
 
+// START UTILITY FUNCTIONS
+function getProcessArgObj() {
+    return JSON.parse(window.process.argv.slice(-1));
+}
+
+function getResourceTierLabel(resourceTierID) {
+    switch (resourceTierID) {
+        case 1: return 'Tier I';
+        case 2: return 'Tier II';
+        case 3: return 'Tier III';
+        case 4: return 'Tier IV';
+        case 5: return 'Tier V';
+        case 6: return 'Tier VI';
+    }
+}
+// END UTILITY FUNCTIONS
+
 $(function () {
+    //Assign tooltip to question mark icon beside productive header in resources tab
+    $('.questionIcon').tooltip({
+        title: 'Resources worked by functional facilities'
+    });
     //Load all state info on page open
     getStateInfo();
     //Delete state
@@ -18,9 +39,8 @@ $(function () {
 })
 
 function getStateInfo() {
-    ipcRenderer.send("State:getStateInfo", parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.send("State:getStateInfo", parseInt(getProcessArgObj()));
     ipcRenderer.once("State:getStateInfoOK", function (e, res) {
-        let count = 1;
         $('#lblStateName').text(res.stateName);
         $('#lblDescription').text(res.desc);
         $('#lblStateTreasury').text(parseFloat(res.treasuryAmt).toFixed(1));
@@ -40,25 +60,10 @@ function getStateInfo() {
         $('#nmbTreasury').val(res.treasuryAmt);
         $('#txtDescription').val(res.desc);
         $('#nmbExpenses').val(res.expenses);
-
-        $('#tblResources').empty();
-        res.ProductiveResources.forEach(resource => {
-            let tierStr = () => {
-                switch (resource.ResourceTierID) {
-                    case 1: return 'Tier I';
-                    case 2: return 'Tier II';
-                    case 3: return 'Tier III';
-                    case 4: return 'Tier IV';
-                    case 5: return 'Tier V';
-                    case 6: return 'Tier VI';
-                }
-            }
-            $('#tblResources').append('<tr><th scope="row">' + count + '</th><td>' + resource.ResourceName + '</td><td>' + tierStr() + '</td></tr>')
-            count++;
-        })
     });
 
     getRegions();
+    getResources();
     getTradeAgreements();
 
     let imagePath = 'src/images';
@@ -74,7 +79,7 @@ function getStateInfo() {
             for (let file of files) {
                 let id = file.match(/(\d+)/);
 
-                if (parseInt(window.process.argv.slice(-1)) == id[0]) {
+                if (parseInt(getProcessArgObj()) == id[0]) {
                     console.log(file);
                     $('.jumbotron').css('background-image', `url(../images/${file})`);
                     $('.jumbotron').css('background-size', 'contain');
@@ -87,7 +92,7 @@ function getStateInfo() {
 }
 
 function getRegions() {
-    ipcRenderer.send("State:getRegionsForState", parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.send("State:getRegionsForState", parseInt(getProcessArgObj()));
     ipcRenderer.once("State:getRegionsForStateOK", (e, res) => {
         $('#listOfRegions').empty();
         if (Array.isArray(res) && res.length) {
@@ -98,8 +103,26 @@ function getRegions() {
     });
 }
 
+function getResources() {
+    ipcRenderer.send('Resource:getAllResourcesByStateId', parseInt(getProcessArgObj()));
+    ipcRenderer.once('Resource:getAllResourcesByStateIdOk', (e, res) => {
+        $('#tblResources tr').not('#noResourceRow,#resourceTemplateRow').remove();
+        if (Array.isArray(res) && res.length) {
+            $('#noResourceRow').hide();
+            res.forEach(resource => {
+                const resourceRow = createResourceRow(resource);
+                $('#tblResources').append(resourceRow);
+            });
+            indexTable('tblResources', 'numberCell', ['#resourceTemplateRow', '#noResourceRow']);
+        }
+        else {
+            $('#noResourceRow').show();
+        }
+    })
+}
+
 function getTradeAgreements() {
-    ipcRenderer.send('Trade:getTradeAgreementsByStateId', parseInt(window.process.argv.slice(-1)));
+    ipcRenderer.send('Trade:getTradeAgreementsByStateId', parseInt(getProcessArgObj()));
     ipcRenderer.once('Trade:getTradeAgreementsByStateIdOK', (e, res) => {
         $('#tradeAgreements').empty();
         if (Array.isArray(res) && res.length) {
@@ -126,7 +149,7 @@ function getTradeAgreements() {
                     if (agreement.traders[1].resources !== null) {
                         agreement.traders[1].resources.forEach(resource => {
                             if (resource != null) resourceStr2 += resource.ResourceName + ', ';
-                            else secondHasDisabledResource = true; 
+                            else secondHasDisabledResource = true;
                         })
                         resourceStr2 = resourceStr2.slice(0, -2);
                     } else {
@@ -164,7 +187,7 @@ function btnDeleteState_onClick() {
     $('#btnDeleteState').on('click', (e) => {
         e.preventDefault();
 
-        ipcRenderer.send("State:deleteState", parseInt(window.process.argv.slice(-1)))
+        ipcRenderer.send("State:deleteState", parseInt(getProcessArgObj()))
         ipcRenderer.once("State:deleteStateOK", (e, res) => {
             if (res) {
                 alert("Successfully deleted state");
@@ -178,13 +201,47 @@ function btnDeleteState_onClick() {
     });
 }
 
+/**
+ * Create an HTML element from given resource data based on view template
+ * @param {Object} resource Resource object with additional CountAll and CountProductive properties
+ * @returns {JQuery<HTMLElement>} Row HTML Element
+ */
+function createResourceRow(resource) {
+    let clonedTemplate = $('#resourceTemplateRow').clone().removeAttr('id');
+    clonedTemplate.data('resourceData', resource);
+    clonedTemplate.find('#nameCell').text(resource.ResourceName);
+
+    let resourceTierLabel = getResourceTierLabel(resource.ResourceTierID);
+    clonedTemplate.find('#tierCell').text(resourceTierLabel);
+
+    clonedTemplate.find('#countAllCell').text(resource.CountAll);
+    clonedTemplate.find('#countProductiveCell').text(resource.CountProductive);
+    return clonedTemplate;
+}
+
+/**
+ * Index a table by giving number to each rows
+ * @param {String} tableId Component's table ID that needs to be indexed
+ * @param {String} numberCellId ID attribute of HTML element from row that needs to be given number
+ * @param {String[]} excludedRows List of excluded class/id rows to be excluded from indexing
+ */
+function indexTable(tableId, numberCellId, excludedRows = null) {
+    let rows = $(`#${tableId}`).children('tr');
+    if (excludedRows !== null) {
+        rows = rows.not(excludedRows.join());
+    }
+    rows.each(function (i, row) {
+        $(row).find(`#${numberCellId}`).text(i + 1);
+    });
+}
+
 function frmUpdateState_onSubmit() {
     $('#frmUpdateState').on('submit', (e) => {
         e.preventDefault();
 
         let stateObj = {};
 
-        stateObj["stateID"] = parseInt(window.process.argv.slice(-1))
+        stateObj["stateID"] = parseInt(getProcessArgObj())
         stateObj["stateName"] = $('#txtStateName').val();
         stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
         stateObj["expenses"] = ($('#nmbExpenses').val() == "") ? 0 : parseInt($('#nmbExpenses').val());

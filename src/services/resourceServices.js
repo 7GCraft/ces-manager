@@ -83,6 +83,82 @@ const getResourceTierAll = async function () {
 };
 
 /**
+ * Get All resources inside a state by given state id
+ * 
+ * Resource object also contains total of how many such resource's components in that state 
+ * and also how many of them are productive (assigned to a functional facility).
+ * @param {Number} stateId
+ * @returns {Resource[]} Array of resource objects if successful, null otherwise
+ */
+const getAllResourcesByStateId = async function (stateId) {
+    let resourceIdWithFunctionals = await knex
+        .from(constants.TABLE_COMPONENT)
+        .join
+        (
+            constants.TABLE_REGION,
+            constants.TABLE_COMPONENT + '.' + constants.COLUMN_REGION_ID,
+            '=',
+            constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID
+        )
+        .leftJoin
+        (
+            constants.TABLE_FACILITY,
+            constants.TABLE_COMPONENT + '.' + constants.COLUMN_FACILITY_ID,
+            '=',
+            constants.TABLE_FACILITY + '.' + constants.COLUMN_FACILITY_ID,
+        )
+        .where(constants.COLUMN_COMPONENT_TYPE_ID, 3)
+        .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, stateId)
+        .select(constants.COLUMN_COMPONENT_VALUE, constants.COLUMN_IS_FUNCTIONAL)
+        .catch(e => {
+            console.error(e);
+        });
+
+    if (resourceIdWithFunctionals.length === 0) return null;
+
+    let resourceWithProductiveCountDict = {};
+    resourceIdWithFunctionals.forEach(resource => {
+        let resourceId = resource.value.split(';')[1];
+        if (!(resourceId in resourceWithProductiveCountDict)) {
+            resourceWithProductiveCountDict[resourceId] = {
+                countAll: 0,
+                countProductive: 0
+            };
+        }
+        resourceWithProductiveCountDict[resourceId].countAll++;
+        if (resource.isFunctional !== null && resource.isFunctional === 1) {
+            resourceWithProductiveCountDict[resourceId].countProductive++;
+        }
+    });
+
+    let resources = await knex
+        .select('*')
+        .from(constants.TABLE_RESOURCE)
+        .whereIn(constants.COLUMN_RESOURCE_ID, Object.keys(resourceWithProductiveCountDict))
+        .catch(e => {
+            console.error(e);
+        });
+
+    if (resources.length != Object.keys(resourceWithProductiveCountDict).length) 
+        throw "Resource's component type count does not match with resource count at MsResource";
+
+    let results = [];
+    for (let resource of resources) {
+        // let resourceInfo = new Resource(resource.resourceId, resource.name, resource.resourceTierId)
+        // results.push(resourceInfo);
+        
+        results.push({
+            ResourceID: resource.resourceId,
+            ResourceName: resource.name,
+            ResourceTierID: resource.resourceTierId,
+            CountAll: resourceWithProductiveCountDict[resource.resourceId].countAll,
+            CountProductive: resourceWithProductiveCountDict[resource.resourceId].countProductive
+        });
+    }
+    return results;
+}
+
+/**
  * Updates a resource tier.
  * @param {ResourceTier} resourceTier must be a resource tier object.
  * @returns {Boolean} true if successful, false otherwise.
@@ -315,6 +391,7 @@ const deleteResourceById = async function (id) {
 
 exports.getResourceTierById = getResourceTierById;
 exports.getResourceTierAll = getResourceTierAll;
+exports.getAllResourcesByStateId = getAllResourcesByStateId;
 exports.updateResourceTier = updateResourceTier;
 exports.updateResourceTierAll = updateResourceTierAll;
 exports.getResourceAll = getResourceAll;
