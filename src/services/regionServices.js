@@ -93,7 +93,7 @@ const getRegionListByStateId = async (stateId) => {
             constants.COLUMN_POPULATION,
             constants.COLUMN_TAX_RATE,
             constants.COLUMN_RATE + ' AS corruptionRate',
-            constants.COLUMN_POPULATION
+            constants.COLUMN_DEVELOPMENT_ID,
         ])
         .from(constants.TABLE_REGION)
         .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, stateId)
@@ -141,7 +141,8 @@ const getRegionListByStateId = async (stateId) => {
             moneyOutput,
             foodOutput,
             rawRegion.state,
-            rawRegion.population
+            rawRegion.population,
+            rawRegion.developmentId
         );
 
         regionList.push(regionListItem);
@@ -363,6 +364,32 @@ const getRegionById = async (id) => {
 };
 
 /**
+ * Gets the number of regions that the state of the given ID has.
+ * @param {Number} id must be an integer. 
+ * @returns a positive integer if successful, -1 otherwise.
+ */
+ const getRegionCountByStateId = async (id) => {
+    let resValue = 0;
+
+    let regionCount = await knex(constants.TABLE_STATE)
+        .count(constants.COLUMN_FACILITY_ID + ' AS count')
+        .join(
+            constants.TABLE_REGION,
+            constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID,
+            constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID
+        )
+        .where(constants.COLUMN_STATE_ID, id)
+        .catch(e => {
+            console.error(e);
+            resValue = -1;
+        });
+
+    resValue = regionCount[0].count;
+
+    return resValue;
+}
+
+/**
  * Creates a new region.
  * @param {Region} region must be a region object.
  * @returns {Boolean} true if successful, false otherwise.
@@ -541,6 +568,7 @@ const getDevelopmentAll = async () => {
 
 exports.getRegionListAll = getRegionListAll;
 exports.getRegionListByStateId = getRegionListByStateId;
+exports.getRegionCountByStateId = getRegionCountByStateId;
 exports.getRegionByStateId = getRegionByStateId;
 exports.getRegionById = getRegionById;
 exports.addRegion = addRegion;

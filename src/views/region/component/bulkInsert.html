@@ -73,6 +73,13 @@
                 </div>
 
                 <div class="form-group row">
+                    <label class="col-sm-5 col-form-label" for="nmbCost">Cost</label>
+                    <div class="col-sm-7">
+                        <input class="form-control" type="number" id="nmbCost" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
                     <label class="col-sm-5 col-form-label" for="nmbActivation">Activation Time</label>
                     <div class="col-sm-7">
                         <input class="form-control" type="number" id="nmbActivation" min="0" required>
@@ -102,6 +109,7 @@
                         <th scope="col">Component Name</th>
                         <th scope="col">Component Type</th>
                         <th scope="col">Value</th>
+                        <th scope="col">Cost</th>
                         <th scope="col">Activation Time</th>
                         <th scope="col">Facility</th>
                         <th scope="col">Action</th>
@@ -112,6 +120,7 @@
                             <td id="nameCell"></td>
                             <td id="typeCell"></td>
                             <td id="valueCell"></td>
+                            <td id="costCell"></td>
                             <td id="activationTimeCell"></td>
                             <td id="facilityCell"></td>
                             <td id="actionCell" class="d-flex justify-content-around">

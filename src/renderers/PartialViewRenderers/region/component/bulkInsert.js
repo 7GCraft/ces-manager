@@ -271,6 +271,7 @@ function getDataFromForm() {
         componentObj['value'] = (componentTypeId == 1 || componentTypeId == 4 || componentTypeId == 5) ? parseInt($('#txtValue').val() || 0) : $('#txtValue').val();
     }
 
+    componentObj['cost'] = $('#nmbCost').val();
     componentObj['activationTime'] = $('#nmbActivation').val();
     return componentObj;
 }
@@ -341,6 +342,9 @@ function createRowFromData(data) {
     }
     let valueCell = clonedTemplateRow.find('#valueCell');
     valueCell.text(valueText).addClass(colorClass);
+    
+    let costText = data.cost;
+    clonedTemplateRow.find('#costCell').text(costText);
 
     let activationLabel = getActivationLabel(parseInt(data.activationTime));
     clonedTemplateRow.find('#activationTimeCell').text(activationLabel);

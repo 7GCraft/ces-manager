@@ -386,7 +386,7 @@ const getComponentUnusedByRegionId = async (id) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const addComponent = async (component) => {
-    let resStatus = true;
+    let resStatus = "OK";
 
     let newValue = null;
 
@@ -404,6 +404,13 @@ const addComponent = async (component) => {
         newParentId = component.parentId;
     }
 
+    let costCalcReturn = await calculateComponentCost(component.cost, component.regionId)
+
+    if(costCalcReturn === "Cost exceeding treasury amount"){
+        resStatus = costCalcReturn;
+        return resStatus
+    }
+
     await knex
         .insert({
             name: component.componentName,
@@ -418,9 +425,45 @@ const addComponent = async (component) => {
         .into(constants.TABLE_COMPONENT)
         .catch(e => {
             console.error(e);
-            resStatus = false;
+            resStatus = "SQL Error. Something went wrong when inserting component";
         });
 
+    return resStatus;
+}
+
+/**
+ * Calculates component cost by subtracting treasury amount by cost
+ * @param {Number} cost must be an integer.
+ * @param {Number} regionId must be an integer.
+ * @returns {Boolean} true if successful, false otherwise.
+ */
+const calculateComponentCost = async (cost, regionId) => {
+    let resStatus = "OK";
+    let stateTreasury = await knex
+        .select(constants.COLUMN_TREASURY_AMT, constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID)
+        .from(constants.TABLE_REGION)
+        .join(
+            constants.TABLE_STATE,
+            constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID,
+            constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID
+        )
+        .where(constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID, regionId);
+
+    let newTreasuryAmt = stateTreasury[0].treasuryAmt - cost;
+    
+    if(newTreasuryAmt < 0){
+        resStatus = "Cost exceeding treasury amount";
+        return resStatus;
+    }
+
+    await knex(constants.TABLE_STATE)
+        .update({ treasuryAmt: newTreasuryAmt })
+        .where(constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID, stateTreasury[0].stateId)
+        .catch(e => {
+            console.error(e);
+            resStatus = "SQL Error. Something went wrong when updating Treasury";
+        });
+    //console.log(resStatus);
     return resStatus;
 }
 
@@ -595,6 +638,7 @@ const addMultipleComponents = async (components) => {
     let parentArray = [];
     let childrenArray = [];
     let mapUniqueIDwithComponentIDDict = {};
+    let totalCost = 0;
     components.forEach((component) => {
         let tempValue = null;
         if (component.value !== null) {
@@ -622,7 +666,17 @@ const addMultipleComponents = async (components) => {
             parentArray.push(tempComponent);
             mapUniqueIDwithComponentIDDict[component.uniqueID] = null;
         }
+
+        totalCost += parseInt(component.cost);
     });
+
+    let costCalcReturn = await calculateComponentCost(totalCost, components[0].regionId)
+
+    if(costCalcReturn === "Cost exceeding treasury amount"){
+        resStatus = false;
+        return resStatus
+    }
+
     try {
         await knex.transaction(async trx => {
             await trx.insert(parentArray).into(constants.TABLE_COMPONENT);
@@ -664,6 +718,7 @@ exports.getComponentResourceFunctionalByStateId = getComponentResourceFunctional
 exports.getComponentFunctionalByIds = getComponentFunctionalByIds;
 exports.getComponentUnusedByRegionId = getComponentUnusedByRegionId;
 exports.addComponent = addComponent;
+exports.calculateComponentCost = calculateComponentCost;
 exports.updateComponent = updateComponent;
 exports.deleteComponentById = deleteComponentById;
 exports.getComponentTypeAll = getComponentTypeAll;
@@ -683,3 +738,4 @@ exports.addMultipleComponents = addMultipleComponents;
 //getComponentFunctionalByRegionId(1).then(data => console.log(data));
  //getComponentUnusedByRegionId(1).then(data => console.log(data));
 // getComponentResourceFunctionalByStateId(8).then(data => console.log(data));
+//calculateComponentCost(8000, 1);
