@@ -2,10 +2,6 @@
     margin: 10px 0;
 }
 
-#rbsComponentsDisplay{
-    float: left;
-}
-
 #componentTemplateRow, #childComponentTemplateRow {
     display: none;
 }
