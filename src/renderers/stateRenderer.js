@@ -38,6 +38,24 @@ $(function () {
     pageRegion_eventHandler();
 })
 
+//helper functions
+function getPopulationCap(developmentId){
+    switch(developmentId){
+        case 1:
+            return 10;
+        case 2:
+            return 20;
+        case 3:
+            return 40;
+        case 4:
+            return 60;
+        case 5:
+            return 80;
+        case 6:
+            return 100;
+    }
+}
+
 function getStateInfo() {
     ipcRenderer.send("State:getStateInfo", parseInt(getProcessArgObj()));
     ipcRenderer.once("State:getStateInfoOK", function (e, res) {
@@ -46,6 +64,7 @@ function getStateInfo() {
         $('#lblStateTreasury').text(parseFloat(res.treasuryAmt).toFixed(1));
         $('#lblTotalIncome').text(parseFloat(res.TotalIncome).toFixed(2));
         $('#lblExpenses').text(res.expenses);
+        $('#lblAdminRegionModifier').text(res.adminRegionModifier * 100 + '%');
         $('#lblFoodProduced').text(res.TotalFoodProduced);
         $('#lblFoodConsumed').text(res.TotalFoodConsumed);
         $('#lblFoodAvailable').text(res.TotalFoodAvailable);
@@ -58,6 +77,7 @@ function getStateInfo() {
 
         $('#txtStateName').val(res.stateName);
         $('#nmbTreasury').val(res.treasuryAmt);
+        $('#nmbAdminRegionModifier').val(res.adminRegionModifier * 100);
         $('#txtDescription').val(res.desc);
         $('#nmbExpenses').val(res.expenses);
     });
@@ -97,7 +117,8 @@ function getRegions() {
         $('#listOfRegions').empty();
         if (Array.isArray(res) && res.length) {
             res.forEach(region => {
-                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + '</span></li>')
+                PopulationCap = getPopulationCap(region.DevelopmentId);
+                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + ' / ' + PopulationCap + '</span></li>')
             });
         }
     });
@@ -244,6 +265,7 @@ function frmUpdateState_onSubmit() {
         stateObj["stateID"] = parseInt(getProcessArgObj())
         stateObj["stateName"] = $('#txtStateName').val();
         stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
+        stateObj["adminRegionModifier"] = ($('#nmbAdminRegionModifier').val() == "") ? 0 : parseFloat($('#nmbAdminRegionModifier').val() / 100);
         stateObj["expenses"] = ($('#nmbExpenses').val() == "") ? 0 : parseInt($('#nmbExpenses').val());
         stateObj["desc"] = $('#txtDescription').val();
 
