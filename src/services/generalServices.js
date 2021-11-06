@@ -11,6 +11,25 @@ const tradeAgreementServices = require(config.paths.tradeAgreementServices);
 const facility = require('./facilityServices'); 
 
 const excel = require('exceljs')
+
+//helper functions
+function getPopulationCap(developmentId) {
+    switch (developmentId) {
+        case 1:
+            return 10;
+        case 2:
+            return 20;
+        case 3:
+            return 40;
+        case 4:
+            return 60;
+        case 5:
+            return 80;
+        case 6:
+            return 100;
+    }
+}
+
 /**
  * Advances the economy by one season.
  * Calculates the change in income and population of each state and region.
@@ -201,37 +220,40 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 {key: 'initialStateInfo', width: 10, style: { font: { name: 'Calibri' }}},
                 {key: 'to_state', width: 5, style: { font: { name: 'Calibri' }}},
                 {key: 'updatedStateInfo', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'empty_1', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'empty_2', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'regionName', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'regionIncome', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'foodProduced', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'populationUsed', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'currPopulation', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'maxPopulation', width: 10, style: { font: { name: 'Calibri' }}},
             ]
-            let facilityCount = await facility.getFacilityCountByStateId(initialState[i].stateID)
-            console.log(initialState[i].adminCost)
-            console.log(updatedState[i].adminCost)
-            console.log(initialState[i].expenses)
-            console.log(updatedState[i].expenses)
-            let initialTotalExpenses =  (parseFloat(initialState[i].adminCost).toFixed(2) + parseFloat(initialState[i].expenses).toFixed(2)).toString();
-            let updatedTotalExpenses = (parseFloat(updatedState[i].adminCost).toFixed(2) + parseFloat(updatedState[i].expenses).toFixed(2)).toString();
-            let initialExpectedIncome = (parseFloat(initialState[i].TotalIncome).toFixed(2) - parseFloat(initialState[i].expenses).toFixed(2) - parseFloat(initialState[i].adminCost).toFixed(2)).toString();
-            let updatedExpectedIncome = (parseFloat(updatedState[i].TotalIncome).toFixed(2) - parseFloat(updatedState[i].expenses).toFixed(2) - parseFloat(updatedState[i].adminCost).toFixed(2)).toString();
+            let facilityCount = await facility.getFacilityCountByStateId(updatedState[i].stateID)
+            let adminCost = await stateServices.getAdminCostByStateId(updatedState[i].stateID);
+            let updatedTotalExpenses = parseFloat(parseFloat(adminCost).toFixed(2) + parseFloat(updatedState[i].expenses).toFixed(2)).toFixed(2);
+            let updatedExpectedIncome = parseFloat(parseFloat(updatedState[i].TotalIncome).toFixed(2) - parseFloat(updatedState[i].expenses).toFixed(2) - parseFloat(adminCost).toFixed(2)).toFixed(2);
 
             initialStateInfo = [
                 initialState[i].treasuryAmt,
                 initialState[i].TotalIncome,
-                initialState[i].expenses,
-                initialState[i].adminCost,
-                initialState[i].adminRegionModifier * 100 + '%',
-                initialTotalExpenses,
+                'N/A',
+                'N/A',
+                'N/A',
+                'N/A',
                 initialState[i].TotalFoodProduced,
                 initialState[i].TotalFoodConsumed,
                 initialState[i].TotalFoodAvailable,
                 initialState[i].TotalPopulation,
-                initialState[i].AvgDevLevel,
-                '',
-                initialExpectedIncome,
+                'N/A',
+                'N/A',
+                'N/A',
             ]
             updatedStateInfo = [
                 updatedState[i].treasuryAmt,
                 updatedState[i].TotalIncome,
                 updatedState[i].expenses,
-                updatedState[i].adminCost,
+                adminCost,
                 updatedState[i].adminRegionModifier * 100 + '%',
                 updatedTotalExpenses,
                 updatedState[i].TotalFoodProduced,
@@ -251,9 +273,9 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 gradient: 'angle',
                 degree: 0,
                 stops: [
-                    {position:0, color:{argb:'71C9CE'}},
-                    {position:0.5, color:{argb:'A6E3E9'}},
-                    {position:1, color:{argb:'71C9CE'}}
+                    {position:0, color:{argb:'C85C5C'}},
+                    {position:0.5, color:{argb:'F9975D'}},
+                    {position:1, color:{argb:'C85C5C'}}
                 ]
             };
 
@@ -266,9 +288,9 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 gradient: 'angle',
                 degree: 0,
                 stops: [
-                    {position:0, color:{argb:'E3FDFD'}},
-                    {position:0.5, color:{argb:'CBF1F5'}},
-                    {position:1, color:{argb:'A6E3E9'}}
+                    {position:0, color:{argb:'C85C5C'}},
+                    {position:0.5, color:{argb:'F9975D'}},
+                    {position:1, color:{argb:'C85C5C'}}
                 ]
             };
 
@@ -286,14 +308,42 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     {position:1, color:{argb:'C85C5C'}}
                 ]
             };
+
+            sheet.mergeCells('G6:L6');
+            sheet.getCell('G6').value = 'Region Info';
+            sheet.getCell('G6').font = {name: 'Georgia Pro Black', size: 14};
+            sheet.getCell('G6').alignment = { vertical: 'middle', horizontal: 'center' };
+            sheet.getCell('G6').fill = {
+                type: 'gradient',
+                gradient: 'angle',
+                degree: 0,
+                stops: [
+                    {position:0, color:{argb:'C85C5C'}},
+                    {position:0.5, color:{argb:'F9975D'}},
+                    {position:1, color:{argb:'C85C5C'}}
+                ]
+            };
+            let increment = 0;
             for(let j = 0; j < stateInfoRowNames.length; j++){
-                sheet.addRow({
-                    stateInfoNames: stateInfoRowNames[j],
-                    initialStateInfo : initialStateInfo[j],
-                    to_state : 'to',
-                    updatedStateInfo : updatedStateInfo[j]
-                })
+                sheet.getCell('A'+ (7 + increment).toString()).value = stateInfoRowNames[j];
+                sheet.getCell('B'+ (7 + increment).toString()).value = initialStateInfo[j];
+                sheet.getCell('C'+ (7 + increment).toString()).value = 'to';
+                sheet.getCell('D'+ (7 + increment).toString()).value = updatedStateInfo[j];
+
+                increment += 1;
             }
+
+            increment = 0;
+            updatedState[i].regions.forEach(region => {
+                sheet.getCell('G'+ (7 + increment).toString()).value = region.regionName;
+                sheet.getCell('H'+ (7 + increment).toString()).value = region.totalIncome;
+                sheet.getCell('I'+ (7 + increment).toString()).value = region.totalFoodAvailable;
+                sheet.getCell('J'+ (7 + increment).toString()).value = region.usedPopulation;
+                sheet.getCell('K'+ (7 + increment).toString()).value = region.population;
+                sheet.getCell('L'+ (7 + increment).toString()).value = getPopulationCap(region.development.developmentId);
+                increment += 1;
+            });
+            
         }
 
         workbook.xlsx.writeFile("report_"+prevSeasonYear[0]+prevSeasonYear[1]+"-"+currSeasonYear[0]+currSeasonYear[1]+".xlsx");
