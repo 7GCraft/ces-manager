@@ -45,17 +45,17 @@ const advanceSeason = async () => {
     for (let state of states) {
         let seasonalIncome = state.TotalIncome;
 
-        let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
+        // let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
 
-        if (tradeAgreements != null) {
-            for (let tradeAgreement of tradeAgreements) {
-                for (let trader of tradeAgreement.traders) {
-                    if (trader.state.stateID === state.stateID) {
-                        seasonalIncome += trader.tradeValue;
-                    }
-                }
-            }
-        }
+        // if (tradeAgreements != null) {
+        //     for (let tradeAgreement of tradeAgreements) {
+        //         for (let trader of tradeAgreement.traders) {
+        //             if (trader.state.stateID === state.stateID) {
+        //                 seasonalIncome += trader.tradeValue;
+        //             }
+        //         }
+        //     }
+        // }
 
         let adminCost = await stateServices.getAdminCostByStateId(state.stateID);
         if (adminCost === -1) adminCost = 0;
