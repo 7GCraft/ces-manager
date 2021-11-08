@@ -29,7 +29,6 @@ function getPopulationCap(developmentId) {
             return 100;
     }
 }
-
 /**
  * Advances the economy by one season.
  * Calculates the change in income and population of each state and region.
@@ -39,10 +38,6 @@ const advanceSeason = async () => {
     let resStatus = true;
 
     const states = await stateServices.getStateAll();
-    // const tradeAgreements = await tradeAgreementServices.getTradeAgreementAll();
-    // console.log(tradeAgreements);
-    // console.log(tradeAgreements[0].traders);
-    // console.log(tradeAgreements[1].traders);
     if (states === null) resStatus = false;
 
     for (let state of states) {
@@ -192,6 +187,10 @@ const getCurrentSeason = async () => {
     return season;
 }
 
+/**
+ * Exports seasonal report to excel. Called from advanceSeason()
+ * @returns {Boolean} true if successful, false otherwise.
+ */
 const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSeasonYear) => {
     let resStatus = true;
     const workbook = new excel.Workbook();
@@ -214,6 +213,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
     let initialStateInfo = [];
     let updatedStateInfo = [];
     try{
+        const tradeAgreements = await tradeAgreementServices.getTradeAgreementAll();
         for(let i = 0; i < initialState.length; i++){
             let sheet = workbook.addWorksheet(initialState[i].stateName);
             sheet.columns = [
@@ -224,7 +224,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 {key: 'empty_1', width: 10, style: { font: { name: 'Calibri' }}},
                 {key: 'empty_2', width: 10, style: { font: { name: 'Calibri' }}},
                 {key: 'regionName', width: 25, style: { font: { name: 'Calibri' }}},
-                {key: 'regionIncome', width: 25, style: { font: { name: 'Calibri' }}},
+                {key: 'regionIncome', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
                 {key: 'foodProduced', width: 25, style: { font: { name: 'Calibri' }}},
                 {key: 'populationUsed', width: 25, style: { font: { name: 'Calibri' }}},
                 {key: 'currPopulation', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
@@ -245,7 +245,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 'N/A',
                 'N/A',
                 'N/A',
-                updatedState[i].TotalPopulation,
+                initialState[i].TotalPopulation,
                 'N/A',
                 'N/A',
                 'N/A',
@@ -413,6 +413,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             let lastRowNum = sheet.lastRow.number;
             lastRowNum += 2;
 
+            //Reformat state resources by name, tier, and count
             let stateResources = [];
             updatedState[i].ProductiveResources.map(resource => {
                 resourceIdx = stateResources.findIndex(obj => obj.name == resource.ResourceName);
@@ -427,7 +428,6 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             stateResources.sort((a, b) => {
                 return a.tier - b.tier || a.name.localeCompare(b.name)
             });
-            console.log(stateResources);
 
             if(Array.isArray(stateResources) && stateResources.length){
                 sheet.mergeCells('A'+lastRowNum + ':C' + lastRowNum);
@@ -453,8 +453,8 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
 
                 increment = 1;
                 
-                sheet.getCell('A'+(lastRowNum + increment).toString()).value = "Tier";
-                sheet.getCell('B'+(lastRowNum + increment).toString()).value = "Name";
+                sheet.getCell('A'+(lastRowNum + increment).toString()).value = "Name";
+                sheet.getCell('B'+(lastRowNum + increment).toString()).value = "Tier";
                 sheet.getCell('C'+(lastRowNum + increment).toString()).value = "Count";
 
                 ['A'+(lastRowNum + increment).toString(),
@@ -486,9 +486,84 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 
                 increment = 2;
                 stateResources.forEach(resource => {
-                    sheet.getCell('A'+ (lastRowNum + increment).toString()).value = resource.tier;
-                    sheet.getCell('B'+ (lastRowNum + increment).toString()).value = resource.name;
+                    sheet.getCell('A'+ (lastRowNum + increment).toString()).value = resource.name;
+                    sheet.getCell('B'+ (lastRowNum + increment).toString()).value = resource.tier;
                     sheet.getCell('C'+ (lastRowNum + increment).toString()).value = resource.count;
+                    increment += 1;
+                });
+            }
+
+            //Reformat trade agreements to Partner State, Our Trade Power, and Income From Trade
+            let stateTradeAgreements = [];
+
+            tradeAgreements.map(agreement => {
+                let traderIdx = agreement.traders.findIndex(obj => obj.state.stateID == initialState[i].stateID);
+                if (traderIdx > -1){
+                    stateTradeAgreements.push({'partnerState':(traderIdx == 0) ? agreement.traders[1].state.stateName : agreement.traders[0].state.stateName, 'tradePower': parseFloat(agreement.traders[traderIdx].tradePower * 100).toFixed(2) + '%', 'tradeValue': agreement.traders[traderIdx].tradeValue })
+                }
+            });
+
+            if(Array.isArray(stateTradeAgreements) && stateTradeAgreements.length){
+                sheet.mergeCells('G'+lastRowNum + ':I' + lastRowNum);
+                sheet.getCell('G'+lastRowNum).value = 'Trade Agreements';
+                sheet.getCell('G'+lastRowNum).font = {name: 'Calibri', size: 14, bold: true};
+                sheet.getCell('G'+lastRowNum).alignment = { vertical: 'middle', horizontal: 'center' };
+                sheet.getCell('G'+lastRowNum).fill = {
+                    type: 'gradient',
+                    gradient: 'angle',
+                    degree: 0,
+                    stops: [
+                        {position:0, color:{argb:'C85C5C'}},
+                        {position:0.5, color:{argb:'F9975D'}},
+                        {position:1, color:{argb:'C85C5C'}}
+                    ]
+                };
+                sheet.getCell('G'+lastRowNum).border = {
+                    top: {style:'thin'},
+                    left: {style:'thin'},
+                    bottom: {style:'thin'},
+                    right: {style:'thin'}
+                };
+
+                increment = 1;
+                
+                sheet.getCell('G'+(lastRowNum + increment).toString()).value = "Trade Partner";
+                sheet.getCell('H'+(lastRowNum + increment).toString()).value = "Our Trade Power";
+                sheet.getCell('I'+(lastRowNum + increment).toString()).value = "Income From Trade";
+
+                ['G'+(lastRowNum + increment).toString(),
+                'H'+(lastRowNum + increment).toString(),
+                'I'+(lastRowNum + increment).toString(),
+                ].map(key => {
+                    sheet.getCell(key).fill ={
+                        type: 'pattern',
+                        pattern: 'lightVertical',
+                        fgColor: { argb: '96C8FB' },
+                        bgColor: { argb: '96C8FB' }
+                    }
+                    sheet.getCell(key).font ={
+                        name: 'Calibri',
+                        size: 14,
+                        bold: true
+                    }
+                    sheet.getCell(key).border = {
+                        top: {style:'thin'},
+                        left: {style:'thin'},
+                        bottom: {style:'thin'},
+                        right: {style:'thin'}
+                    };
+                    sheet.getCell(key).alignment = {
+                        vertical: 'bottom',
+                        horizontal: 'right'
+                    };
+                })
+                
+                increment = 2;
+                stateTradeAgreements.forEach(agreement => {
+                    console.log(agreement);
+                    sheet.getCell('G'+ (lastRowNum + increment).toString()).value = agreement.partnerState;
+                    sheet.getCell('H'+ (lastRowNum + increment).toString()).value = agreement.tradePower;
+                    sheet.getCell('I'+ (lastRowNum + increment).toString()).value = agreement.tradeValue;
                     increment += 1;
                 });
             }
