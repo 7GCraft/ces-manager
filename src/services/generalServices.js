@@ -265,9 +265,9 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 updatedExpectedIncome,
             ]
             //Make title for each sheet with stylings
-            sheet.mergeCells('A1:J3');
+            sheet.mergeCells('A1:L3');
             sheet.getCell('A1').value = initialState[i].stateName;
-            sheet.getCell('A1').font = {name: 'Georgia Pro Black', size: 24};
+            sheet.getCell('A1').font = {name: 'Calibri', size: 24, bold: true};
             sheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' }; sheet.getCell('A1').fill = {
                 type: 'gradient',
                 gradient: 'angle',
@@ -279,24 +279,24 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 ]
             };
 
-            sheet.mergeCells('A4:J4')
+            sheet.mergeCells('A4:L4')
             sheet.getCell('A4').value = prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1];
-            sheet.getCell('A4').font = {name: 'Georgia Pro Black', size: 14};
+            sheet.getCell('A4').font = {name: 'Calibri', size: 14, bold: true};
             sheet.getCell('A4').alignment = { vertical: 'middle', horizontal: 'center' };
             sheet.getCell('A4').fill = {
                 type: 'gradient',
                 gradient: 'angle',
                 degree: 0,
                 stops: [
-                    {position:0, color:{argb:'C85C5C'}},
-                    {position:0.5, color:{argb:'F9975D'}},
-                    {position:1, color:{argb:'C85C5C'}}
+                    {position:0, color:{argb:'96C8FB'}},
+                    {position:0.5, color:{argb:'96C8FB'}},
+                    {position:1, color:{argb:'96C8FB'}}
                 ]
             };
 
             sheet.mergeCells('A6:D6');
             sheet.getCell('A6').value = 'General State Info';
-            sheet.getCell('A6').font = {name: 'Georgia Pro Black', size: 14};
+            sheet.getCell('A6').font = {name: 'Calibri', size: 14, bold: true};
             sheet.getCell('A6').alignment = { vertical: 'middle', horizontal: 'center' };
             sheet.getCell('A6').fill = {
                 type: 'gradient',
@@ -311,7 +311,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
 
             sheet.mergeCells('G6:L6');
             sheet.getCell('G6').value = 'Region Info';
-            sheet.getCell('G6').font = {name: 'Georgia Pro Black', size: 14};
+            sheet.getCell('G6').font = {name: 'Calibri', size: 14, bold: true};
             sheet.getCell('G6').alignment = { vertical: 'middle', horizontal: 'center' };
             sheet.getCell('G6').fill = {
                 type: 'gradient',
@@ -334,13 +334,39 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             }
 
             increment = 0;
+            sheet.getCell('G7').value = "Region Name";
+            sheet.getCell('H7').value = "Total Income";
+            sheet.getCell('I7').value = "Total Food Available";
+            sheet.getCell('J7').value = "Used Population";
+            sheet.getCell('K7').value = "Current Population";
+            sheet.getCell('L7').value = "Population Cap";
+            ['G7',
+            'H7',
+            'I7',
+            'J7',
+            'K7',
+            'L7',
+            ].map(key => {
+                sheet.getColumn(key.split('7')[0]).width = 25
+                sheet.getCell(key).fill ={
+                    type: 'pattern',
+                    pattern: 'lightVertical',
+                    fgColor: { argb: '96C8FB' },
+                    bgColor: { argb: '96C8FB' }
+                }
+                sheet.getCell(key).font ={
+                    name: 'Calibri',
+                    size: 14,
+                    bold: true
+                }
+            })
             updatedState[i].regions.forEach(region => {
-                sheet.getCell('G'+ (7 + increment).toString()).value = region.regionName;
-                sheet.getCell('H'+ (7 + increment).toString()).value = region.totalIncome;
-                sheet.getCell('I'+ (7 + increment).toString()).value = region.totalFoodAvailable;
-                sheet.getCell('J'+ (7 + increment).toString()).value = region.usedPopulation;
-                sheet.getCell('K'+ (7 + increment).toString()).value = region.population;
-                sheet.getCell('L'+ (7 + increment).toString()).value = getPopulationCap(region.development.developmentId);
+                sheet.getCell('G'+ (8 + increment).toString()).value = region.regionName;
+                sheet.getCell('H'+ (8 + increment).toString()).value = region.totalIncome;
+                sheet.getCell('I'+ (8 + increment).toString()).value = region.totalFoodAvailable;
+                sheet.getCell('J'+ (8 + increment).toString()).value = region.usedPopulation;
+                sheet.getCell('K'+ (8 + increment).toString()).value = region.population;
+                sheet.getCell('L'+ (8 + increment).toString()).value = getPopulationCap(region.development.developmentId);
                 increment += 1;
             });
             
