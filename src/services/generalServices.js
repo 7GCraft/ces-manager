@@ -39,13 +39,14 @@ const advanceSeason = async () => {
     let resStatus = true;
 
     const states = await stateServices.getStateAll();
-
+    // const tradeAgreements = await tradeAgreementServices.getTradeAgreementAll();
+    // console.log(tradeAgreements);
+    // console.log(tradeAgreements[0].traders);
+    // console.log(tradeAgreements[1].traders);
     if (states === null) resStatus = false;
 
     for (let state of states) {
         let seasonalIncome = state.TotalIncome;
-
-        // let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
 
         // if (tradeAgreements != null) {
         //     for (let tradeAgreement of tradeAgreements) {
@@ -218,16 +219,16 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             sheet.columns = [
                 {key: 'stateInfoNames', width: 42.5, style: { font: { name: 'Calibri' }}},
                 {key: 'initialStateInfo', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'to_state', width: 5, style: { font: { name: 'Calibri' }}},
-                {key: 'updatedStateInfo', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'to_state', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'updatedStateInfo', width: 10, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
                 {key: 'empty_1', width: 10, style: { font: { name: 'Calibri' }}},
                 {key: 'empty_2', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'regionName', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'regionIncome', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'foodProduced', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'populationUsed', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'currPopulation', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'maxPopulation', width: 10, style: { font: { name: 'Calibri' }}},
+                {key: 'regionName', width: 25, style: { font: { name: 'Calibri' }}},
+                {key: 'regionIncome', width: 25, style: { font: { name: 'Calibri' }}},
+                {key: 'foodProduced', width: 25, style: { font: { name: 'Calibri' }}},
+                {key: 'populationUsed', width: 25, style: { font: { name: 'Calibri' }}},
+                {key: 'currPopulation', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
+                {key: 'maxPopulation', width: 25, style: { font: { name: 'Calibri' }}},
             ]
             let facilityCount = await facility.getFacilityCountByStateId(updatedState[i].stateID)
             let adminCost = await stateServices.getAdminCostByStateId(updatedState[i].stateID);
@@ -236,15 +237,15 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
 
             initialStateInfo = [
                 initialState[i].treasuryAmt,
-                initialState[i].TotalIncome,
                 'N/A',
                 'N/A',
                 'N/A',
                 'N/A',
-                initialState[i].TotalFoodProduced,
-                initialState[i].TotalFoodConsumed,
-                initialState[i].TotalFoodAvailable,
-                initialState[i].TotalPopulation,
+                'N/A',
+                'N/A',
+                'N/A',
+                'N/A',
+                updatedState[i].TotalPopulation,
                 'N/A',
                 'N/A',
                 'N/A',
@@ -278,6 +279,12 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     {position:1, color:{argb:'C85C5C'}}
                 ]
             };
+            sheet.getCell('A1').border = {
+                top: {style:'thin'},
+                left: {style:'thin'},
+                bottom: {style:'thin'},
+                right: {style:'thin'}
+            };
 
             sheet.mergeCells('A4:L4')
             sheet.getCell('A4').value = prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1];
@@ -292,6 +299,12 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     {position:0.5, color:{argb:'96C8FB'}},
                     {position:1, color:{argb:'96C8FB'}}
                 ]
+            };
+            sheet.getCell('A4').border = {
+                top: {style:'thin'},
+                left: {style:'thin'},
+                bottom: {style:'thin'},
+                right: {style:'thin'}
             };
 
             sheet.mergeCells('A6:D6');
@@ -308,6 +321,12 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     {position:1, color:{argb:'C85C5C'}}
                 ]
             };
+            sheet.getCell('A6').border = {
+                top: {style:'thin'},
+                left: {style:'thin'},
+                bottom: {style:'thin'},
+                right: {style:'thin'}
+            };
 
             sheet.mergeCells('G6:L6');
             sheet.getCell('G6').value = 'Region Info';
@@ -323,8 +342,21 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     {position:1, color:{argb:'C85C5C'}}
                 ]
             };
+            sheet.getCell('G6').border = {
+                top: {style:'thin'},
+                left: {style:'thin'},
+                bottom: {style:'thin'},
+                right: {style:'thin'}
+            };
+
             let increment = 0;
-            for(let j = 0; j < stateInfoRowNames.length; j++){
+            sheet.getCell('A'+ (7 + increment).toString()).value = stateInfoRowNames[0];
+            sheet.getCell('B'+ (7 + increment).toString()).value = initialStateInfo[0];
+            sheet.getCell('C'+ (7 + increment).toString()).value = 'to';
+            sheet.getCell('D'+ (7 + increment).toString()).value = updatedStateInfo[0];
+            increment += 1;
+
+            for(let j = 1; j < stateInfoRowNames.length; j++){
                 sheet.getCell('A'+ (7 + increment).toString()).value = stateInfoRowNames[j];
                 sheet.getCell('B'+ (7 + increment).toString()).value = initialStateInfo[j];
                 sheet.getCell('C'+ (7 + increment).toString()).value = 'to';
@@ -347,7 +379,6 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             'K7',
             'L7',
             ].map(key => {
-                sheet.getColumn(key.split('7')[0]).width = 25
                 sheet.getCell(key).fill ={
                     type: 'pattern',
                     pattern: 'lightVertical',
@@ -359,17 +390,108 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     size: 14,
                     bold: true
                 }
+                
+                sheet.getCell(key).border = {
+                    top: {style:'thin'},
+                    left: {style:'thin'},
+                    bottom: {style:'thin'},
+                    right: {style:'thin'}
+                };
             })
-            updatedState[i].regions.forEach(region => {
-                sheet.getCell('G'+ (8 + increment).toString()).value = region.regionName;
-                sheet.getCell('H'+ (8 + increment).toString()).value = region.totalIncome;
-                sheet.getCell('I'+ (8 + increment).toString()).value = region.totalFoodAvailable;
-                sheet.getCell('J'+ (8 + increment).toString()).value = region.usedPopulation;
-                sheet.getCell('K'+ (8 + increment).toString()).value = region.population;
-                sheet.getCell('L'+ (8 + increment).toString()).value = getPopulationCap(region.development.developmentId);
+
+            for(let j = 0; j < updatedState[i].regions.length; j++){
+                sheet.getCell('G'+ (8 + increment).toString()).value = updatedState[i].regions[j].regionName;
+                sheet.getCell('H'+ (8 + increment).toString()).value = updatedState[i].regions[j].totalIncome;
+                sheet.getCell('I'+ (8 + increment).toString()).value = updatedState[i].regions[j].totalFoodAvailable;
+                sheet.getCell('J'+ (8 + increment).toString()).value = updatedState[i].regions[j].usedPopulation;
+                sheet.getCell('K'+ (8 + increment).toString()).value = initialState[i].regions[j].population + ' -> ' + updatedState[i].regions[j].population;
+                sheet.getCell('L'+ (8 + increment).toString()).value = getPopulationCap(updatedState[i].regions[j].development.developmentId);
                 increment += 1;
-            });
+
+            }
             
+            let lastRowNum = sheet.lastRow.number;
+            lastRowNum += 2;
+
+            let stateResources = [];
+            updatedState[i].ProductiveResources.map(resource => {
+                resourceIdx = stateResources.findIndex(obj => obj.name == resource.ResourceName);
+                if(resourceIdx >= 0){
+                    stateResources[resourceIdx].count += 1;
+                }
+                else{
+                    stateResources.push({'name': resource.ResourceName, 'tier': resource.ResourceTierID, 'count' : 1})
+                }
+            });
+
+            stateResources.sort((a, b) => {
+                return a.tier - b.tier || a.name.localeCompare(b.name)
+            });
+            console.log(stateResources);
+
+            if(Array.isArray(stateResources) && stateResources.length){
+                sheet.mergeCells('A'+lastRowNum + ':C' + lastRowNum);
+                sheet.getCell('A'+lastRowNum).value = 'Productive Resources';
+                sheet.getCell('A'+lastRowNum).font = {name: 'Calibri', size: 14, bold: true};
+                sheet.getCell('A'+lastRowNum).alignment = { vertical: 'middle', horizontal: 'center' };
+                sheet.getCell('A'+lastRowNum).fill = {
+                    type: 'gradient',
+                    gradient: 'angle',
+                    degree: 0,
+                    stops: [
+                        {position:0, color:{argb:'C85C5C'}},
+                        {position:0.5, color:{argb:'F9975D'}},
+                        {position:1, color:{argb:'C85C5C'}}
+                    ]
+                };
+                sheet.getCell('A'+lastRowNum).border = {
+                    top: {style:'thin'},
+                    left: {style:'thin'},
+                    bottom: {style:'thin'},
+                    right: {style:'thin'}
+                };
+
+                increment = 1;
+                
+                sheet.getCell('A'+(lastRowNum + increment).toString()).value = "Tier";
+                sheet.getCell('B'+(lastRowNum + increment).toString()).value = "Name";
+                sheet.getCell('C'+(lastRowNum + increment).toString()).value = "Count";
+
+                ['A'+(lastRowNum + increment).toString(),
+                'B'+(lastRowNum + increment).toString(),
+                'C'+(lastRowNum + increment).toString(),
+                ].map(key => {
+                    sheet.getCell(key).fill ={
+                        type: 'pattern',
+                        pattern: 'lightVertical',
+                        fgColor: { argb: '96C8FB' },
+                        bgColor: { argb: '96C8FB' }
+                    }
+                    sheet.getCell(key).font ={
+                        name: 'Calibri',
+                        size: 14,
+                        bold: true
+                    }
+                    sheet.getCell(key).border = {
+                        top: {style:'thin'},
+                        left: {style:'thin'},
+                        bottom: {style:'thin'},
+                        right: {style:'thin'}
+                    };
+                    sheet.getCell(key).alignment = {
+                        vertical: 'bottom',
+                        horizontal: 'right'
+                    };
+                })
+                
+                increment = 2;
+                stateResources.forEach(resource => {
+                    sheet.getCell('A'+ (lastRowNum + increment).toString()).value = resource.tier;
+                    sheet.getCell('B'+ (lastRowNum + increment).toString()).value = resource.name;
+                    sheet.getCell('C'+ (lastRowNum + increment).toString()).value = resource.count;
+                    increment += 1;
+                });
+            }
         }
 
         workbook.xlsx.writeFile("report_"+prevSeasonYear[0]+prevSeasonYear[1]+"-"+currSeasonYear[0]+currSeasonYear[1]+".xlsx");
