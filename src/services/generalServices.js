@@ -36,7 +36,6 @@ function getPopulationCap(developmentId) {
  */
 const advanceSeason = async () => {
     let resStatus = true;
-
     const states = await stateServices.getStateAll();
     if (states === null) resStatus = false;
 
@@ -106,8 +105,13 @@ const advanceSeason = async () => {
     const advancedStates= await stateServices.getStateAll();
     const currSeasonYear = [season, year];
     
-    resStatus = exportToExcel(states, advancedStates, prevSeasonYear, currSeasonYear)
-    return resStatus;
+    let buffer = exportToExcel(states, advancedStates, prevSeasonYear, currSeasonYear)
+    if(!resStatus){
+        return resStatus;
+    }
+    else{
+        return buffer;
+    }
 };
 
 const advanceSeasonByStateId = async (id) => {
@@ -560,7 +564,6 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 
                 increment = 2;
                 stateTradeAgreements.forEach(agreement => {
-                    console.log(agreement);
                     sheet.getCell('G'+ (lastRowNum + increment).toString()).value = agreement.partnerState;
                     sheet.getCell('H'+ (lastRowNum + increment).toString()).value = agreement.tradePower;
                     sheet.getCell('I'+ (lastRowNum + increment).toString()).value = agreement.tradeValue;
@@ -568,9 +571,10 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 });
             }
         }
-
-        workbook.xlsx.writeFile("report_"+prevSeasonYear[0]+prevSeasonYear[1]+"-"+currSeasonYear[0]+currSeasonYear[1]+".xlsx");
-        return resStatus;
+        const fileBuffer = await workbook.xlsx.writeBuffer();
+        const fileName = "report_"+prevSeasonYear[0]+prevSeasonYear[1]+"-"+currSeasonYear[0]+currSeasonYear[1];
+        //workbook.xlsx.writeFile("report_"+prevSeasonYear[0]+prevSeasonYear[1]+"-"+currSeasonYear[0]+currSeasonYear[1]+".xlsx");
+        return [fileName, fileBuffer];
     }
     catch(e){
         console.error(e);
@@ -581,5 +585,3 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
 
 exports.advanceSeason = advanceSeason;
 exports.getCurrentSeason = getCurrentSeason;
-
-advanceSeason();
