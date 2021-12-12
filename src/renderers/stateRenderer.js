@@ -39,8 +39,8 @@ $(function () {
 })
 
 //helper functions
-function getPopulationCap(developmentId){
-    switch(developmentId){
+function getPopulationCap(developmentId) {
+    switch (developmentId) {
         case 1:
             return 10;
         case 2:
@@ -118,7 +118,7 @@ function getRegions() {
         if (Array.isArray(res) && res.length) {
             res.forEach(region => {
                 PopulationCap = getPopulationCap(region.DevelopmentId);
-                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + ' / ' + PopulationCap + '</span></li>')
+                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + ' / ' + PopulationCap + '</span><span class="usedPopulation">' + region.UsedPopulation + ' / ' + region.Population + '</span></li>')
             });
         }
     });

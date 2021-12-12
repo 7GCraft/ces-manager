@@ -25,7 +25,14 @@ function btnNextSeason_onclick() {
         ipcRenderer.send('General:advancingSeason');
         ipcRenderer.once('General:advancingSeasonOK', (e, res) => {
             $('#mdlAdvanceSeason').modal('hide');
-            if (res) {
+            if (res !== false) {
+                let blob = new Blob([res[1]], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", })
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                let fileName = res[0];
+                link.download = fileName;
+                link.click();
+                link.remove();
                 $('#nextSeasonMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully advanced to next season</div>');
             }
             else {

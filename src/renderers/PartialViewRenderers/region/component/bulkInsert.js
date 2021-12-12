@@ -236,7 +236,7 @@ function frmAddComponent_SubmitHandler(e) {
 
         $('#frmAddComponent').trigger('reset');
         indexComponentTable();
-        updateUnusedPopulation(data);
+        updateUnusedPopulation(data, false);
 
         let currUniqueID = parseInt($('#hdnUniqueID').val());
         $('#hdnUniqueID').val(currUniqueID + 1);
@@ -298,10 +298,13 @@ function validateAddComponent(componentObj) {
     return isValid;
 }
 
-function updateUnusedPopulation(data) {
+function updateUnusedPopulation(data, isDelete) {
     if (data.componentType.componentTypeId == 1) {
         let unusedPopulation = parseInt($('#hdnUnusedPopulation').val());
-        $('#hdnUnusedPopulation').val(unusedPopulation - data.value);
+        let usedPopulation = data.value;
+        if (isDelete)
+            usedPopulation = usedPopulation * -1;
+        $('#hdnUnusedPopulation').val(unusedPopulation - usedPopulation);
     }
 }
 
@@ -484,6 +487,7 @@ function deleteComponent(deletedRowId) {
     $('#mdlDeleteComponent').modal('hide');
     indexComponentTable();
     updateSelParent(data, true);
+    updateUnusedPopulation(data, true);
 }
 
 function btnShowChildren_ClickHandler(btn) {

@@ -16,6 +16,12 @@
     color: #e68a2e;
 }
 
+.usedPopulation{
+    position: absolute;
+    left : 650px;
+    color: #e68a2e;
+}
+
 .regionList{
     list-style: none;
 }

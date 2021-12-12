@@ -53,8 +53,7 @@ const getRegionListAll = async () => {
 
         if (facilities !== null) {
             for (let facility of facilities) {
-                if (facility.isFunctional)
-                {
+                if (facility.isFunctional) {
                     foodOutput += facility.foodOutput;
                     moneyOutput += facility.moneyOutput;
                 }
@@ -113,6 +112,35 @@ const getRegionListByStateId = async (stateId) => {
 
     if (rawRegions.length === 0) return null;
 
+    let regionsWithUsedPopulations = await knex
+        .select([
+            constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID,
+            constants.TABLE_COMPONENT + '.' + constants.COLUMN_COMPONENT_VALUE,
+        ])
+        .from(constants.TABLE_REGION)
+        .join(
+            constants.TABLE_COMPONENT,
+            constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID,
+            constants.TABLE_COMPONENT + '.' + constants.COLUMN_REGION_ID,
+        )
+        .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, stateId)
+        .where(constants.TABLE_COMPONENT + '.' + constants.COLUMN_COMPONENT_TYPE_ID, 1)
+        .where(constants.TABLE_COMPONENT + '.' + constants.COLUMN_ACTIVATION_TIME, 0)
+        .catch(e => {
+            console.error(e);
+        });
+
+    let regionsWithUsedPopulationsDict = null;
+    if (regionsWithUsedPopulations.length > 0) {
+        regionsWithUsedPopulationsDict = {};
+        for (let region of regionsWithUsedPopulations) {
+            if (!(region.regionId in regionsWithUsedPopulationsDict)) {
+                regionsWithUsedPopulationsDict[region.regionId] = [];
+            }
+            regionsWithUsedPopulationsDict[region.regionId].push(region.value);
+        }
+    }
+
     let regionList = [];
 
     for (let rawRegion of rawRegions) {
@@ -123,8 +151,7 @@ const getRegionListByStateId = async (stateId) => {
 
         if (facilities !== null) {
             for (let facility of facilities) {
-                if (facility.isFunctional)
-                {
+                if (facility.isFunctional) {
                     foodOutput += facility.foodOutput;
                     moneyOutput += facility.moneyOutput;
                 }
@@ -135,6 +162,14 @@ const getRegionListByStateId = async (stateId) => {
         moneyOutput += rawRegion.population * 100 * rawRegion.taxRate;
         moneyOutput -= moneyOutput * rawRegion.corruptionRate;
 
+        let usedPopulation = 0;
+        if (regionsWithUsedPopulationsDict != null && regionsWithUsedPopulationsDict[rawRegion.regionId] != undefined) {
+            rawUsedPopulations = regionsWithUsedPopulationsDict[rawRegion.regionId].map(val => {
+                return parseInt(val.split(";")[1]);
+            });
+            usedPopulation = rawUsedPopulations.reduce((total, num) => { return total + num });
+        }
+
         let regionListItem = new RegionListItem(
             rawRegion.regionId,
             rawRegion.name,
@@ -142,6 +177,7 @@ const getRegionListByStateId = async (stateId) => {
             foodOutput,
             rawRegion.state,
             rawRegion.population,
+            usedPopulation,
             rawRegion.developmentId
         );
 
@@ -368,7 +404,7 @@ const getRegionById = async (id) => {
  * @param {Number} id must be an integer. 
  * @returns a positive integer if successful, -1 otherwise.
  */
- const getRegionCountByStateId = async (id) => {
+const getRegionCountByStateId = async (id) => {
     let resValue = 0;
 
     let regionCount = await knex(constants.TABLE_STATE)
@@ -585,7 +621,7 @@ exports.getDevelopmentAll = getDevelopmentAll;
 // getRegionListByStateId(1)
 //     .then(data => console.log(data));
 //getRegionById(2)
-    //.then(data => console.log(data));
+//.then(data => console.log(data));
 // addRegion('Ges Ogygia', 4, 4, 3, 5, 63);
 // addRegion('Giosria', 8, 2, 13, 3, 24, "Capital of Cypra.");
 // getRegionById(5)
