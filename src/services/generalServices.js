@@ -236,7 +236,6 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             ]
             let facilityCount = await facility.getFacilityCountByStateId(updatedState[i].stateID)
             let adminCost = await stateServices.getAdminCostByStateId(updatedState[i].stateID);
-            let updatedTotalExpenses = parseFloat(parseFloat(adminCost).toFixed(2) + parseFloat(updatedState[i].expenses).toFixed(2)).toFixed(2);
             let updatedExpectedIncome = parseFloat(parseFloat(updatedState[i].TotalIncome).toFixed(2) - parseFloat(updatedState[i].expenses).toFixed(2) - parseFloat(adminCost).toFixed(2)).toFixed(2);
 
             initialStateInfo = [
@@ -260,7 +259,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 updatedState[i].expenses,
                 adminCost,
                 updatedState[i].adminRegionModifier * 100 + '%',
-                updatedTotalExpenses,
+                adminCost + updatedState[i].expenses,
                 updatedState[i].TotalFoodProduced,
                 updatedState[i].TotalFoodConsumed,
                 updatedState[i].TotalFoodAvailable,
