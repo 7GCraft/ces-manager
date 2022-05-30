@@ -67,3 +67,8 @@
     display: table;
     clear: both;
   }
+
+  #listOfRegionsByState{
+    min-width: 550px;
+    position: relative;
+  }
