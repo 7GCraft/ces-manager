@@ -12,7 +12,11 @@ function getStateList() {
     ipcRenderer.once('State:getStateListOK', function (e, res) {
         $('#stateContainer').empty();
         $('#stateContainer').append('<ul id="ulStateList"></ul>');
-
+        res.sort(function(state1, state2) {
+            let stateNameA = state1.stateName.toUpperCase();
+            let stateNameB = state2.stateName.toUpperCase();
+            return (stateNameA < stateNameB) ? -1 : (stateNameA > stateNameB) ? 1 : 0;
+        });
         res.forEach(state => {
             $('#ulStateList').append('<li><a class="states" href="#" data-id="State' + state.stateID + '"  onclick=openStatePage(this.getAttribute("data-id"))>' + state.stateName + '</a></li>');
         });
