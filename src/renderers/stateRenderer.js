@@ -76,7 +76,7 @@ function getStateInfo() {
         $('#lblNextIncome').text(parseFloat(res.TotalIncome - res.expenses - res.adminCost).toFixed(2));
 
         $('#txtStateName').val(res.stateName);
-        $('#nmbTreasury').val(res.treasuryAmt);
+        $('#nmbTreasury').val(res.treasuryAmt.toFixed(2));
         $('#nmbAdminRegionModifier').val(res.adminRegionModifier * 100);
         $('#txtDescription').val(res.desc);
         $('#nmbExpenses').val(res.expenses);
