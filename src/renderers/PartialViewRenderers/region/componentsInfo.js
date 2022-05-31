@@ -404,6 +404,9 @@ function deleteComponent_handler() {
  * @param {Object[]} res List of components from Database
  */
 function setComponentList(res) {
+    //Refreshes the component list everytime
+
+    $('#componentsList li') ?  $('#componentsList li').remove() : '' ;
     $('#componentsList').children('tr').not('#componentTemplateRow').remove();
     if (Array.isArray(res) && res.length) {
         res.forEach((component, i) => {
