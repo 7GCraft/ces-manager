@@ -40,9 +40,29 @@ function getAllRegionsByStateId() {
     ipcRenderer.on('Region:getAllRegionsByStateIdOK', (e, res) => {
         if (Array.isArray(res) && res.length) {
             $('#listOfRegionsByState').empty();
+         
+
             res.forEach(state => {
                 if (Array.isArray(state.Regions) && state.Regions.length) {
-                    $('#listOfRegionsByState').append('<div class="regionContainer"><h5>' + state.stateName + '</h5><ul class="regionsList" id="StateRegion' + state.stateID + '"></ul></div>')
+                    let stateTitle = `<h5>${state.stateName}</h5>`
+                    let tableData = `<table class="table">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col">Region Name</th>
+                        <th scope="col">Gold</th>
+                        <th scope="col">Food</th>
+                        <th scope="col">Total Population</th>
+                        <th scope="col">Used Population</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                    </tbody>
+                  </table>
+                  `
+                  $('#listOfRegionsByState').append(stateTitle)
+                    $('#listOfRegionsByState').append(tableData)
+ 
                     state.Regions.forEach(region => {
                         PopulationCap = getPopulationCap(region.DevelopmentId);
                         $('#StateRegion' + state.stateID).append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id"))>' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + ' / ' + PopulationCap + '</span><span class="usedPopulation">' + region.UsedPopulation + ' / ' + region.Population + '</span></li>')
