@@ -60,7 +60,8 @@ function getAllRegionsByStateId() {
                   
                     </tbody>
                   </table>
-                  </div>`
+                  </div>
+                  `
                     
                     $('#listOfRegionsByState').append(table);
                     state.Regions.forEach(region => {
@@ -68,19 +69,16 @@ function getAllRegionsByStateId() {
                    
                         let regionTemplate = `  
                         <tr  id="Region${region.RegionID}">
-                        <td scope="col"><a href="#" id="${region.RegionID}">${region.RegionName}</a> </td>
+                        <td scope="col"><a href="#" id="${region.RegionID}">${region.RegionName}</a></td>
                         
                         <td scope="col" class="text-warning">${region.RegionTotalIncome}</td>
-                        <td scope="col" class="text-success" >${region.RegionTotalFood} </td>
-                        <td scope="col" >${region.Population}/${PopulationCap} </td>
+                        <td scope="col" class="text-success" >${region.RegionTotalFood}</td>
+                        <td scope="col" >${region.Population}/${PopulationCap}</td>
                         <td scope="col" >${region.UsedPopulation}/${region.Population}</td>
                       </tr>`;
                    
-                   
-                      //<li class="individualRegion" id="Region' + region.RegionID + '">
-                //    <a href=# onclick=openRegionPage(this.parentNode.getAttribute("id"))>' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span> <span class="totalFood">' + region.RegionTotalFood + '</span> <span class="population">' + region.Population + ' / ' + PopulationCap + '</span>       <span class="usedPopulation">' + region.UsedPopulation + ' / ' + region.Population + '</span></li>'
-                        $('#StateRegion' + state.stateID).append(regionTemplate)
-                        $("#"+region.RegionID).on('click',function(){
+                      $('#StateRegion' + state.stateID).append(regionTemplate)
+                        $("#"+region.RegionID).on('click',function() {
                             openRegionPage(`Region${region.RegionID}`)
                         });
                     });
