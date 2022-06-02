@@ -61,7 +61,7 @@ function getStateInfo() {
     ipcRenderer.once("State:getStateInfoOK", function (e, res) {
         $('#lblStateName').text(res.stateName);
         $('#lblDescription').text(res.desc);
-        $('#lblStateTreasury').text(parseFloat(res.treasuryAmt).toFixed(1));
+        $('#lblStateTreasury').text(parseFloat(res.treasuryAmt).toFixed(2));
         $('#lblTotalIncome').text(parseFloat(res.TotalIncome).toFixed(2));
         $('#lblExpenses').text(res.expenses);
         $('#lblAdminRegionModifier').text(res.adminRegionModifier * 100 + '%');
