@@ -115,10 +115,43 @@ function getRegions() {
     ipcRenderer.send("State:getRegionsForState", parseInt(getProcessArgObj()));
     ipcRenderer.once("State:getRegionsForStateOK", (e, res) => {
         $('#listOfRegions').empty();
+        let table = `
+        <div class="regionContainer">
+        <table class="table regionsList" >
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Money</th>
+            <th scope="col">Food</th>
+            <th scope="col">Total Pop</th>
+            <th scope="col">Used Pop</th>
+          </tr>
+        </thead>
+        <tbody id="StateRegions">
+      
+        </tbody>
+      </table>
+      </div>
+      `
+        $('#listOfRegions').append(table);
+
         if (Array.isArray(res) && res.length) {
-            res.forEach(region => {
+             res.forEach(region => {
                 PopulationCap = getPopulationCap(region.DevelopmentId);
-                $('#listOfRegions').append('<li class="individualRegion" id="Region' + region.RegionID + '"><a href=# onclick=openRegionPage(this.parentNode.getAttribute("id")) >' + region.RegionName + '</a><span class="totalIncome">' + region.RegionTotalIncome + '</span><span class="totalFood">' + region.RegionTotalFood + '</span><span class="population">' + region.Population + ' / ' + PopulationCap + '</span><span class="usedPopulation">' + region.UsedPopulation + ' / ' + region.Population + '</span></li>')
+                   
+                let regionTemplate = `
+                    <tr id="Region${region.RegionID}">
+                        <td scope="col"><a href="#" id="${region.RegionID}-link">${region.RegionName}</a></td>
+                        <td scope="col" class="text-warning">${region.RegionTotalIncome}</td>
+                        <td scope="col" class="text-success" >${region.RegionTotalFood}</td>
+                        <td scope="col" >${region.Population}/${PopulationCap}</td>
+                        <td scope="col" >${region.UsedPopulation}/${region.Population}</td>
+                    </tr>`;
+
+                $('#StateRegions').append(regionTemplate);
+                $("#"+region.RegionID+'-link').on('click',function() {
+                    openRegionPage(`Region${region.RegionID}`)
+                });
             });
         }
     });
