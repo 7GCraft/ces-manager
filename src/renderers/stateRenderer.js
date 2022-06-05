@@ -116,7 +116,7 @@ function getRegions() {
     ipcRenderer.once("State:getRegionsForStateOK", (e, res) => {
         $('#listOfRegions').empty();
         let table = `
-        <div class="regionContainer">
+        <div class="regionContainer container mt-3">
         <table class="table regionsList" >
         <thead class="thead-dark">
           <tr>

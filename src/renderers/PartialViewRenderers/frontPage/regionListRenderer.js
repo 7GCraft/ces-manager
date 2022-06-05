@@ -44,7 +44,7 @@ function getAllRegionsByStateId() {
                 if (Array.isArray(state.Regions) && state.Regions.length) {
                     let table = `
                     <h5> ${state.stateName}</h5>
-                    <div class="regionContainer">
+                    <div class="regionContainer container mt-3">
                     
                     <table class="table regionsList" >
                     <thead class="thead-dark">
