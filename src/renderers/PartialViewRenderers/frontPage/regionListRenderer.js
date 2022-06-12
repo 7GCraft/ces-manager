@@ -47,16 +47,18 @@ function getAllRegionsByStateId() {
                     <div class="regionContainer container mt-3">
                     
                     <table class="table regionsList" >
-                    <thead class="thead-dark">
-                      <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Money</th>
-                        <th scope="col">Food</th>
-                        <th scope="col">Total Pop</th>
-                        <th scope="col">Used Pop</th>
+                    <thead class="thead-dark" class="container">
+                
+                      <tr class="row">
+                        <th scope="col" class="col-sm">Name</th>
+                        <th scope="col" class="col-sm">Money</th>
+                        <th scope="col" class="col-sm">Food</th>
+                        <th scope="col" class="col-sm">Total Pop</th>
+                        <th scope="col" class="col-sm">Used Pop</th>
                       </tr>
+                 
                     </thead>
-                    <tbody id="StateRegion${state.stateID}">
+                    <tbody class="container" id="StateRegion${state.stateID}">
                   
                     </tbody>
                   </table>
@@ -68,13 +70,13 @@ function getAllRegionsByStateId() {
                         PopulationCap = getPopulationCap(region.DevelopmentId);
                    
                         let regionTemplate = `  
-                        <tr  id="Region${region.RegionID}">
-                        <td scope="col"><a href="#" id="${region.RegionID}">${region.RegionName}</a></td>
+                        <tr class="row" id="Region${region.RegionID}">
+                        <td class="col-sm" scope="col"><a href="#" id="${region.RegionID}">${region.RegionName}</a></td>
                         
-                        <td scope="col" class="text-warning">${region.RegionTotalIncome}</td>
-                        <td scope="col" class="text-success" >${region.RegionTotalFood}</td>
-                        <td scope="col" >${region.Population}/${PopulationCap}</td>
-                        <td scope="col" >${region.UsedPopulation}/${region.Population}</td>
+                        <td class="text-warning col-sm">${region.RegionTotalIncome}</td>
+                        <td  class="text-success col-sm" >${region.RegionTotalFood}</td>
+                        <td class="col-sm" >${region.Population}/${PopulationCap}</td>
+                        <td class="col-sm">${region.UsedPopulation}/${region.Population}</td>
                       </tr>`;
                    
                       $('#StateRegion' + state.stateID).append(regionTemplate)
