@@ -13,6 +13,24 @@
             <br>
             <div class="row">
                 <div class="col-12">
+                    <h5>Filters:</h5>
+                    <div class="form-group mb-30">
+                        <div class="form-check form-check-inline">
+                            <input type="radio" id="rbUsedAll" name="usedComponentDisplay" value="all" class="form-check-input" checked>
+                            <label for="rbUsedAll" class="form-check-label">All</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" id="rbUsed" name="usedComponentDisplay" value="used" class="form-check-input">
+                            <label for="rbUsed" class="form-check-label">Functional</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" id="rbUnused" name="usedComponentDisplay" value="unused" class="form-check-input">
+                            <label for="rbUnused" class="form-check-label">Non Functional</label>
+                        </div>
+                    </div>
+                  
+          
+                
                     <button class="btn btn-success" id="btnAddFacility" data-toggle="modal"
                         data-target="#mdlAddFacility">Add Facility</button>
                     <button class="btn btn-outline-primary" id="btnOpenAllFacilities" >Open All</button>
