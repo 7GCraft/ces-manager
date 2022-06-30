@@ -7,14 +7,27 @@ $(function () {
     addFacility_handler();
     //handle delete facility
     deleteFacility_handler();
+    //handle change in filters in facility
+    facilityFilter_handler();
 });
 
 function getFacilitiesInfo() {
+ 
     let facilityIds = [];
     ipcRenderer.send('Facility:getFacilitiesByRegion', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
         dataAvailable = true;
         if (res != null) {
+            $("#facilityList").empty();
+            let functionalFacilities = $('input[name=functionalFacilitiesDisplay]:checked').val();  
+
+        
+            if (functionalFacilities === 'functional') {
+                res = res.filter(facility=>facility.isFunctional)
+            } else if (functionalFacilities === 'non-functional') {
+                res = res.filter(facility=>!facility.isFunctional)
+            }
+                
             res.forEach(facility => {
                 let foodOutput = (facility.foodOutput == 0) ? '' : '<span class="valueFood">Food Output: ' + facility.foodOutput + '</span><br/>';
                 let moneyOutput = (facility.moneyOutput == 0) ? '' : '<span class="valueMoney">Money Output: ' + facility.moneyOutput + '</span><br/>';
@@ -227,4 +240,12 @@ function deleteFacility_handler() {
             $('#mdlDeleteFacility').modal('toggle');
         })
     })
+}
+
+function facilityFilter_handler(){
+    $('input[type=radio][name=functionalFacilitiesDisplay]').on('change', e => {
+        e.preventDefault();
+        getFacilitiesInfo()
+    });
+   
 }
