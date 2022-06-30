@@ -101,7 +101,7 @@ function getFacilitiesInfo() {
     $("#btnCloseAllFacilities").hide();
 }
 
-function openCloseAllFacilitiesr() {
+function openCloseAllFacilities() {
     $('#btnOpenAllFacilities').on('click', function () {
         $('#facilityList .collapse').removeAttr("data-parent");
         $('#facilityList .collapse').collapse('show');
