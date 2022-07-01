@@ -5,13 +5,13 @@ $(function () {
 
     getFacilitiesInfo();
 
-    openCloseAllFacilities();
+    addOpenCloseListListener();
 
-    addFacility();
+    addNewFacilityListener();
 
-    deleteFacility();
+    AddDeleteListener();
 
-    addFilterListener()
+    addFilterListener();
 });
 
 function getFacilitiesInfo() {
@@ -22,11 +22,11 @@ function getFacilitiesInfo() {
         dataAvailable = true;
         if (res != null) {
             $("#facilityList").empty();
-            let functionalFacilities = $('input[name=functionalFacilitiesDisplay]:checked').val();
+            let facilityFilter = $('input[name=functionalFacilitiesDisplay]:checked').val();
 
-            if (functionalFacilities === FUNCTIONAL) {
+            if (facilityFilter === FUNCTIONAL) {
                 res = res.filter(facility => facility.isFunctional)
-            } else if (functionalFacilities === NON_FUNCTIONAL) {
+            } else if (facilityFilter === NON_FUNCTIONAL) {
                 res = res.filter(facility => !facility.isFunctional)
             }
 
@@ -101,7 +101,7 @@ function getFacilitiesInfo() {
     $("#btnCloseAllFacilities").hide();
 }
 
-function openCloseAllFacilities() {
+function addOpenCloseListListener() {
     $('#btnOpenAllFacilities').on('click', function () {
         $('#facilityList .collapse').removeAttr("data-parent");
         $('#facilityList .collapse').collapse('show');
@@ -119,7 +119,7 @@ function openCloseAllFacilities() {
     })
 }
 
-function addFacility() {
+function addNewFacilityListener() {
     $('#frmAddFacility').on('submit', e => {
         e.preventDefault();
 
@@ -217,7 +217,7 @@ function setFacilityIdForDelete(facilityId, deleteOnly) {
     }
 }
 
-function deleteFacility() {
+function AddDeleteListener() {
     $('#btnDeleteFacility').on('click', (e) => {
         e.preventDefault();
         let facilityId = $('#btnDeleteFacility').data('facilityId').replace('Facility', '');
