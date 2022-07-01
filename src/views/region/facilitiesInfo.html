@@ -13,9 +13,30 @@
             <br>
             <div class="row">
                 <div class="col-12">
+                    <h5>Filters:</h5>
+                    <form id="facility-form">
+                        <div class="form-group mb-30">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="rbFacilitiesAll" name="functionalFacilitiesDisplay" value="all"
+                                    class="form-check-input" checked>
+                                <label for="rbFacilitiesAll" class="form-check-label">All</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="rbFacilitiesFunctional" name="functionalFacilitiesDisplay"
+                                    value="functional" class="form-check-input">
+                                <label for="rbFacilitiesFunctional" class="form-check-label">Functional</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="rbFacilitiesNonFunctional" name="functionalFacilitiesDisplay"
+                                    value="non-functional" class="form-check-input">
+                                <label for="rbFacilitiesNonFunctional" class="form-check-label">Non Functional</label>
+                            </div>
+                        </div>
+                    </form>
+
                     <button class="btn btn-success" id="btnAddFacility" data-toggle="modal"
                         data-target="#mdlAddFacility">Add Facility</button>
-                    <button class="btn btn-outline-primary" id="btnOpenAllFacilities" >Open All</button>
+                    <button class="btn btn-outline-primary" id="btnOpenAllFacilities">Open All</button>
                     <button class="btn btn-outline-danger" id="btnCloseAllFacilities">Close All</button>
                 </div>
             </div>

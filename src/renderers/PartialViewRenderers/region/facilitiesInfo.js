@@ -1,20 +1,35 @@
+const FUNCTIONAL = 'functional';
+const NON_FUNCTIONAL = 'non-functional';
+
 $(function () {
-    //get all facility related info
+
     getFacilitiesInfo();
-    //handler for showing or hiding all facilities
-    openCloseAllFacilities_handler();
-    //handler for facility  add
-    addFacility_handler();
-    //handle delete facility
-    deleteFacility_handler();
+
+    addOpenCloseListListener();
+
+    addNewFacilityListener();
+
+    addDeleteListener();
+
+    addFilterListener();
 });
 
 function getFacilitiesInfo() {
+
     let facilityIds = [];
     ipcRenderer.send('Facility:getFacilitiesByRegion', parseInt(window.process.argv.slice(-1)));
     ipcRenderer.once('Facility:getFacilitiesByRegionOK', (e, res) => {
         dataAvailable = true;
         if (res != null) {
+            $("#facilityList").empty();
+            let facilityFilter = $('input[name=functionalFacilitiesDisplay]:checked').val();
+
+            if (facilityFilter === FUNCTIONAL) {
+                res = res.filter(facility => facility.isFunctional)
+            } else if (facilityFilter === NON_FUNCTIONAL) {
+                res = res.filter(facility => !facility.isFunctional)
+            }
+
             res.forEach(facility => {
                 let foodOutput = (facility.foodOutput == 0) ? '' : '<span class="valueFood">Food Output: ' + facility.foodOutput + '</span><br/>';
                 let moneyOutput = (facility.moneyOutput == 0) ? '' : '<span class="valueMoney">Money Output: ' + facility.moneyOutput + '</span><br/>';
@@ -22,7 +37,6 @@ function getFacilitiesInfo() {
 
                 let noOutput = (foodOutput == '' && moneyOutput == '' && resource == '') ? 'No Output for this facility<br/>' : ''
                 $('#facilityList').append(
-
                     '<div class="card">' +
                     '<div class="card-header" id="FacilityHeading' + facility.facilityId + '">' +
                     ' <h2 class="mb-0">' +
@@ -84,12 +98,11 @@ function getFacilitiesInfo() {
             })
         }
     })
-
     $("#btnCloseAllFacilities").hide();
 }
 
-function openCloseAllFacilities_handler() {
-    $('#btnOpenAllFacilities').on('click', function() {
+function addOpenCloseListListener() {
+    $('#btnOpenAllFacilities').on('click', function () {
         $('#facilityList .collapse').removeAttr("data-parent");
         $('#facilityList .collapse').collapse('show');
         $('#btnCloseAllFacilities').show();
@@ -97,8 +110,8 @@ function openCloseAllFacilities_handler() {
         $('.btnFacilityInfo').prop('disabled', true);
     })
 
-    $('#btnCloseAllFacilities').on('click', function(e) {
-        $('#facilityList .collapse').attr("data-parent","#facilityList");
+    $('#btnCloseAllFacilities').on('click', function (e) {
+        $('#facilityList .collapse').attr("data-parent", "#facilityList");
         $('#facilityList .collapse').collapse('hide');
         $('#btnCloseAllFacilities').hide();
         $('#btnOpenAllFacilities').show();
@@ -106,7 +119,7 @@ function openCloseAllFacilities_handler() {
     })
 }
 
-function addFacility_handler() {
+function addNewFacilityListener() {
     $('#frmAddFacility').on('submit', e => {
         e.preventDefault();
 
@@ -132,7 +145,6 @@ function addFacility_handler() {
         })
     })
 }
-
 
 function toggleUpdateFacilityNameTextbox(imgId) {
     facilityId = imgId.replace('imgUpdateFacility', '');
@@ -193,7 +205,6 @@ function updateFunctional(checkFunctionalId) {
     })
 }
 
-
 function setFacilityIdForDelete(facilityId, deleteOnly) {
     console.log(facilityId);
     $('#btnDeleteFacility').attr('data-facility-id', facilityId);
@@ -206,7 +217,7 @@ function setFacilityIdForDelete(facilityId, deleteOnly) {
     }
 }
 
-function deleteFacility_handler() {
+function addDeleteListener() {
     $('#btnDeleteFacility').on('click', (e) => {
         e.preventDefault();
         let facilityId = $('#btnDeleteFacility').data('facilityId').replace('Facility', '');
@@ -223,8 +234,14 @@ function deleteFacility_handler() {
             else {
                 $('#stateMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when deleting facility</div>')
             }
-
             $('#mdlDeleteFacility').modal('toggle');
         })
     })
+}
+
+function addFilterListener() {
+    $('input[type=radio][name=functionalFacilitiesDisplay]').on('change', e => {
+        e.preventDefault();
+        getFacilitiesInfo()
+    });
 }
