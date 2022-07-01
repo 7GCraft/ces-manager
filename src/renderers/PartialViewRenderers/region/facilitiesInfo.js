@@ -9,7 +9,7 @@ $(function () {
 
     addNewFacilityListener();
 
-    AddDeleteListener();
+    addDeleteListener();
 
     addFilterListener();
 });
@@ -217,7 +217,7 @@ function setFacilityIdForDelete(facilityId, deleteOnly) {
     }
 }
 
-function AddDeleteListener() {
+function addDeleteListener() {
     $('#btnDeleteFacility').on('click', (e) => {
         e.preventDefault();
         let facilityId = $('#btnDeleteFacility').data('facilityId').replace('Facility', '');
