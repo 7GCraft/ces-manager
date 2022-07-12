@@ -70,23 +70,22 @@ const getFacilityByRegionId = async (id) => {
  * @returns a positive integer if successful, -1 otherwise.
  */
 const getFacilityByStateId = async (id) => {
-  let resValue = 0;
+  
 
-  let facilityCount = await knex(constants.TABLE_FACILITY)
-    .count(constants.COLUMN_FACILITY_ID + " AS count")
-    .leftJoin(
-      constants.TABLE_REGION,
-      constants.TABLE_FACILITY + "." + constants.COLUMN_REGION_ID,
-      constants.TABLE_REGION + "." + constants.COLUMN_REGION_ID
-    )
-    .where(constants.COLUMN_STATE_ID, id)
-    .andWhere(constants.COLUMN_IS_FUNCTIONAL, 1)
-    .catch((e) => {
-      console.error(e);
-      resValue = -1;
-    });
+  let facilityList = await knex(constants.TABLE_FACILITY)
+  .select(constants.TABLE_REGION + '.' + constants.COLUMN_NAME + ' AS regionName', constants.TABLE_FACILITY + '.' + constants.COLUMN_NAME + ' AS facilityName', constants.COLUMN_IS_FUNCTIONAL)
+  .leftJoin(
+    constants.TABLE_REGION,
+    constants.TABLE_FACILITY + "." + constants.COLUMN_REGION_ID,
+    constants.TABLE_REGION + "." + constants.COLUMN_REGION_ID
+  )
+  .where(constants.COLUMN_STATE_ID, id)
+  .catch((e) => {
+    console.error(e);
+    resValue = -1;
+  });
 
-  resValue = facilityCount[0].count;
+  resValue = facilityList;
 
   return resValue;
 };

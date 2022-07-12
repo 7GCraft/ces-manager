@@ -3,7 +3,7 @@ const facility = require("../../services/facilityServices");
 
 const handle = () => {
   ipcMain.on("Facility:getFacilitiesByRegion", getFacilitiesByRegion);
-  ipcMain.on("Facility:getFacilitiesByState", getFacilitiesByState);
+  ipcMain.on("Facility:getFacilitiesByState", getFacilitiesByState)
   ipcMain.on("Facility:addFacility", addFacility);
   ipcMain.on("Facility:updateFacility", updateFacility);
   ipcMain.on("Facility:deleteFacility", deleteFacility);
@@ -21,6 +21,16 @@ const getFacilitiesByRegion = (e, arg) => {
     e.sender.send("Facility:getFacilitiesByRegionOK", result);
   });
 };
+
+
+const getFacilitiesByState = (e,arg) => {
+  
+    let response = facility.getFacilityByStateId(arg);
+    response.then((result) => {
+      e.sender.send("Facility:getFacilitiesByStateOK", result);
+    });
+}
+
 
 /**
  * Insert Facility
