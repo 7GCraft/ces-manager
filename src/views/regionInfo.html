@@ -1,109 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
     <link rel="stylesheet" href="../css/region.css" />
     <script>
-        const { ipcRenderer } = require('electron');
-        require('bootstrap');
-        const $ = require('jquery');
+      const { ipcRenderer } = require("electron");
+      require("bootstrap");
+      const $ = require("jquery");
     </script>
-</head>
+  </head>
 
-<body>
-    <div id="regionMessage">
-
-    </div>
+  <body>
+    <div id="regionMessage"></div>
     <nav>
-        <div class="jumbotron" style="text-align: center;">
-            <h1><label id="lblRegionName"></label></h1>
-            <h5><span id="lblDescription"></span></h5>
-        </div>
-        <div id="regionMessage"></div>
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <a class="nav-item nav-link active" id="nav-general-tab" data-toggle="tab" href="#nav-general" role="tab"
-                aria-controls="nav-general" aria-selected="true">General Info</a>
-            <a class="nav-item nav-link" id="nav-development-tab" data-toggle="tab" href="#nav-development" role="tab"
-                aria-controls="nav-development" aria-selected="false">Development Info</a>
-            <a class="nav-item nav-link" id="nav-corruption-tab" data-toggle="tab" href="#nav-corruption" role="tab"
-                aria-controls="nav-corruption" aria-selected="false">Corruption Info</a>
-            <a class="nav-item nav-link" id="nav-facilities-tab" data-toggle="tab" href="#nav-facilities" role="tab"
-                aria-controls="nav-facilities" aria-selected="false">Facilities</a>
-            <a class="nav-item nav-link" id="nav-components-tab" data-toggle="tab" href="#nav-components" role="tab"
-                aria-controls="nav-components" aria-selected="false">Components</a>
-        </div>
+      <div class="jumbotron" style="text-align: center">
+        <h1><label id="lblRegionName"></label></h1>
+        <h5><span id="lblDescription"></span></h5>
+      </div>
+      <div id="regionMessage"></div>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a
+          class="nav-item nav-link active"
+          id="nav-general-tab"
+          data-toggle="tab"
+          href="#nav-general"
+          role="tab"
+          aria-controls="nav-general"
+          aria-selected="true"
+          >General Info</a
+        >
+        <a
+          class="nav-item nav-link"
+          id="nav-development-tab"
+          data-toggle="tab"
+          href="#nav-development"
+          role="tab"
+          aria-controls="nav-development"
+          aria-selected="false"
+          >Development Info</a
+        >
+        <a
+          class="nav-item nav-link"
+          id="nav-corruption-tab"
+          data-toggle="tab"
+          href="#nav-corruption"
+          role="tab"
+          aria-controls="nav-corruption"
+          aria-selected="false"
+          >Corruption Info</a
+        >
+        <a
+          class="nav-item nav-link"
+          id="nav-facilities-tab"
+          data-toggle="tab"
+          href="#nav-facilities"
+          role="tab"
+          aria-controls="nav-facilities"
+          aria-selected="false"
+          >Facilities</a
+        >
+        <a
+          class="nav-item nav-link"
+          id="nav-components-tab"
+          data-toggle="tab"
+          href="#nav-components"
+          role="tab"
+          aria-controls="nav-components"
+          aria-selected="false"
+          >Components</a
+        >
+      </div>
     </nav>
     <div class="tab-content regionContent" id="nav-tabContent">
-        <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab"></div>
+      <div
+        class="tab-pane fade show active"
+        id="nav-general"
+        role="tabpanel"
+        aria-labelledby="nav-general-tab"
+      ></div>
 
-        <div class="tab-pane fade" id="nav-development" role="tabpanel" aria-labelledby="nav-development-tab">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        Development Level : <span id="lblDevelopmentLevel"></span>
-                    </div>
-                    <div class="col-12">
-                        Population Cap : <span id="lblPopulationCap"></span>
-                    </div>
-                    <div class="col-12">
-                        Military Tier : <span id="lblMilitaryTier"></span>
-                    </div>
-                    <div class="col-12">
-                        Growth Modifier : <span id="lblGrowthModifier"></span>
-                    </div>
-                    <div class="col-12">
-                        Shrinkage Modifier : <span id="lblShrinkageModifier"></span>
-                    </div>
-                </div>
+      <div
+        class="tab-pane fade"
+        id="nav-development"
+        role="tabpanel"
+        aria-labelledby="nav-development-tab"
+      >
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              Development Level : <span id="lblDevelopmentLevel"></span>
             </div>
-        </div>
-        <div class="tab-pane fade" id="nav-corruption" role="tabpanel" aria-labelledby="nav-corruption-tab">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        Corruption Level : <span id="lblCorruptionName"></span>
-                    </div>
-                    <div class="col-12">
-                        Corruption Rate : <span id="lblCorruptionRate"></span>
-                    </div>
-                </div>
+            <div class="col-12">
+              Population Cap : <span id="lblPopulationCap"></span>
             </div>
+            <div class="col-12">
+              Military Tier : <span id="lblMilitaryTier"></span>
+            </div>
+            <div class="col-12">
+              Growth Modifier : <span id="lblGrowthModifier"></span>
+            </div>
+            <div class="col-12">
+              Shrinkage Modifier : <span id="lblShrinkageModifier"></span>
+            </div>
+          </div>
         </div>
-        <div class="tab-pane fade" id="nav-facilities" role="tabpanel" aria-labelledby="nav-facilities-tab"></div>
-        <div class="tab-pane fade" id="nav-components" role="tabpanel" aria-labelledby="nav-components-tab"></div>
+      </div>
+      <div
+        class="tab-pane fade"
+        id="nav-corruption"
+        role="tabpanel"
+        aria-labelledby="nav-corruption-tab"
+      >
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              Corruption Level : <span id="lblCorruptionName"></span>
+            </div>
+            <div class="col-12">
+              Corruption Rate : <span id="lblCorruptionRate"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="tab-pane fade"
+        id="nav-facilities"
+        role="tabpanel"
+        aria-labelledby="nav-facilities-tab"
+      ></div>
+      <div
+        class="tab-pane fade"
+        id="nav-components"
+        role="tabpanel"
+        aria-labelledby="nav-components-tab"
+      ></div>
     </div>
 
     <script>
-        const fs = require('fs');
+      const fs = require("fs");
 
-        fs.readdir(__dirname + '/region', function (err, files) {
-            if (err)
-                console.log(err);
-            else {
-                files.forEach(file => {
-                    fetch(__dirname + '/region/' + file)
-                        .then(function (response) {
-                            return response.text();
-                        })
-                        .then(function (html) {
-                            let parser = new DOMParser();
-                            let doc = parser.parseFromString(html, 'text/html');
-                            let template = doc.getElementsByTagName("template");
-                            let clone = template[0].content.cloneNode(true);
-                            let target = clone.querySelector(".template").dataset.tab;
-                            document.getElementById(target).appendChild(clone);
-                        })
-                        .catch(function (err) {
-                            throw err;
-                        });
-                })
-            }
-        });
+      fs.readdir(__dirname + "/region", function (err, files) {
+        if (err) console.log(err);
+        else {
+          files.forEach((file) => {
+            fetch(__dirname + "/region/" + file)
+              .then(function (response) {
+                return response.text();
+              })
+              .then(function (html) {
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(html, "text/html");
+                let template = doc.getElementsByTagName("template");
+                let clone = template[0].content.cloneNode(true);
+                let target = clone.querySelector(".template").dataset.tab;
+                document.getElementById(target).appendChild(clone);
+              })
+              .catch(function (err) {
+                throw err;
+              });
+          });
+        }
+      });
     </script>
-</body>
-
+  </body>
 </html>

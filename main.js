@@ -1,40 +1,43 @@
-const { app, BrowserWindow, Menu } = require('electron');
-const path = require('path');
-const ipcs = require(path.join(__dirname, 'src', 'handlers', 'ipcEventHandler'));
+const { app, BrowserWindow, Menu } = require("electron");
+const path = require("path");
+const ipcs = require(path.join(
+  __dirname,
+  "src",
+  "handlers",
+  "ipcEventHandler"
+));
 
 let win;
 
 function createWindow() {
-    win = new BrowserWindow({
-        width: 1280,
-        height: 720,
-        webPreferences: {
-            nodeIntegration: true
-        }
-    });
+  win = new BrowserWindow({
+    width: 1280,
+    height: 720,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
 
-    win.on('closed', () => app.quit());
-    win.loadFile(path.join(__dirname, 'src', 'index.html'));
+  win.on("closed", () => app.quit());
+  win.loadFile(path.join(__dirname, "src", "index.html"));
 }
 
+app.on("ready", () => {
+  createWindow();
+  ipcs.initializeIpcMains();
+});
 
-app.on('ready', () => {
-    createWindow()
-    ipcs.initializeIpcMains();
-})
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-})
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
 
 // app.on('activate', () => {
 //     if (BrowserWindow.getAllWindows().length === 0) {
 //         createWindow();
 //     }
 // });
-
 
 //Make navbar instead of adding new windows -- DONE. KEEPING THE CODE BELOW JUST IN CASE
 

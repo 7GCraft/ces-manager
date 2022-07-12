@@ -1,45 +1,46 @@
-#componentsList > li{
-    margin: 10px 0;
+#componentsList > li {
+  margin: 10px 0;
 }
 
-#componentTemplateRow, #childComponentTemplateRow {
-    display: none;
+#componentTemplateRow,
+#childComponentTemplateRow {
+  display: none;
 }
 
 /* Create two equal columns that floats next to each other */
 .column {
-    float: left;
-    width: 50%;
-    padding: 10px;
-  }
-  
-  /* Clear floats after the columns */
-  .row:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
-
-.valueFood{
-    color: green;
+  float: left;
+  width: 50%;
+  padding: 10px;
 }
 
-.valueMoney{
-    color: #d1b422;
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
-.valueResource{
-    color: purple;
+.valueFood {
+  color: green;
 }
 
-.valuePopulation{
-    color: #e68a2e;
+.valueMoney {
+  color: #d1b422;
 }
 
-.valueBuilding{
-    color: brown;
+.valueResource {
+  color: purple;
 }
 
-.valueSpecial{
-    color: #23b8cc;
+.valuePopulation {
+  color: #e68a2e;
+}
+
+.valueBuilding {
+  color: brown;
+}
+
+.valueSpecial {
+  color: #23b8cc;
 }

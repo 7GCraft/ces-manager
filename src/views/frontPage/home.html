@@ -1,58 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <template>
-        <div class="container template" id="home-template" data-tab="home">
-            <div class="jumbotron text-center">
-                <h1>Welcome to the CES App</h1>
-                <br>
-                <button type="button" class="btn btn-success" data-toggle="modal"
-                    data-target="#mdlAdvanceSeason">Advance To Next Season</button>
-            </div>
-            <div id="nextSeasonMessage"></div>
-            <div class="row" id="currentSeasonWrapper">
-                <div class="col-12">
-                    <h2>Current Season</h2>
-                </div>
-                <div class="col-12">
-                    Season: <span id="lblCurrentSeason"></span>
-                </div>
-                <div class="col-12">
-                    Year: <span id="lblCurrentYear"></span>
-                </div>
-            </div>
-            <script src="renderers/PartialViewRenderers/frontPage/homeRenderer.js" defer></script>
+      <div class="container template" id="home-template" data-tab="home">
+        <div class="jumbotron text-center">
+          <h1>Welcome to the CES App</h1>
+          <br />
+          <button
+            type="button"
+            class="btn btn-success"
+            data-toggle="modal"
+            data-target="#mdlAdvanceSeason"
+          >
+            Advance To Next Season
+          </button>
         </div>
+        <div id="nextSeasonMessage"></div>
+        <div class="row" id="currentSeasonWrapper">
+          <div class="col-12">
+            <h2>Current Season</h2>
+          </div>
+          <div class="col-12">Season: <span id="lblCurrentSeason"></span></div>
+          <div class="col-12">Year: <span id="lblCurrentYear"></span></div>
+        </div>
+        <script
+          src="renderers/PartialViewRenderers/frontPage/homeRenderer.js"
+          defer
+        ></script>
+      </div>
 
-        <div class="modal fade" id="mdlAdvanceSeason" tabindex="-1" role="dialog"
-            aria-labelledby="mdlAdvanceSeasonLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="mdlAdvanceSeasonLabel">Advance Season</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Advance to next season?
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" id="btnNextSeason">Yes</button>
-                        <button class="btn btn-primary" data-dismiss="modal" aria-label="Close">No</button>
-                    </div>
-                </div>
+      <div
+        class="modal fade"
+        id="mdlAdvanceSeason"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="mdlAdvanceSeasonLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="mdlAdvanceSeasonLabel">
+                Advance Season
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
+            <div class="modal-body">Advance to next season?</div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" id="btnNextSeason">Yes</button>
+              <button
+                class="btn btn-primary"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                No
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
     </template>
-
-</body>
-
+  </body>
 </html>

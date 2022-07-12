@@ -1,32 +1,32 @@
-.totalIncome{
-    position: absolute;
-    color: #d1b422;
-    left: 25%;
-}
-
-.totalFood{
-    position: absolute;
-    left : 35%;
-    color: green;
-}
-
-.population{
+.totalIncome {
   position: absolute;
-  left : 45%;
+  color: #d1b422;
+  left: 25%;
+}
+
+.totalFood {
+  position: absolute;
+  left: 35%;
+  color: green;
+}
+
+.population {
+  position: absolute;
+  left: 45%;
   color: #e68a2e;
 }
 
-.usedPopulation{
+.usedPopulation {
   position: absolute;
-  left : 55%;
+  left: 55%;
   color: #e68a2e;
 }
 
-.resourceContainer{
-    text-align: center;
-    float: left;
-    margin-right: 10px;
-    margin-bottom: 20px;
+.resourceContainer {
+  text-align: center;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 20px;
 }
 .resourceSortable {
   border: 1px solid #eee;
@@ -46,29 +46,29 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background:black; 
-    border-radius: 10px;
+  background: black;
+  border-radius: 10px;
 }
 
-.individualResource{
-    border: 1px solid black;
+.individualResource {
+  border: 1px solid black;
 }
 
 /* Create two equal columns that floats next to each other */
 .column {
-    float: left;
-    width: 50%;
-    padding: 10px;
-  }
-  
-  /* Clear floats after the columns */
-  .row:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
 
-  #listOfRegionsByState{
-    min-width: 550px;
-    position: relative;
-  }
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+#listOfRegionsByState {
+  min-width: 550px;
+  position: relative;
+}

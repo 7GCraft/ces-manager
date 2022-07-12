@@ -1,80 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CES Application</title>
+    <link
+      rel="stylesheet"
+      href="../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="../src/css/frontPage.css" />
+    <script>
+      const { ipcRenderer } = require("electron");
+      require("bootstrap");
+      const $ = require("jquery");
+    </script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CES Application</title>
-  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="../src/css/frontPage.css" />
-  <script>
-    const { ipcRenderer } = require('electron');
-    require('bootstrap');
-    const $ = require('jquery');
-  </script>
-</head>
-
-<body>
-
-  <div class="container my-5">
-    <div class="row">
-      <div class="col-md-2 col-sm-12">
-        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-          <a class="nav-link active" id="home-tab" data-toggle="pill" href="#home" role="tab" aria-controls="home"
-            aria-selected="true">Home</a>
-          <a class="nav-link" id="stateList-tab" data-toggle="pill" href="#stateList" role="tab"
-            aria-controls="stateList" aria-selected="false">State List</a>
-          <a class="nav-link" id="regionList-tab" data-toggle="pill" href="#regionList" role="tab"
-            aria-controls="regionList" aria-selected="false">Region List</a>
-          <a class="nav-link" id="tradeAgreementList-tab" data-toggle="pill" href="#tradeAgreementList" role="tab"
-            aria-controls="tradeAgreementList" aria-selected="false">Trade Agreements</a>
-          <a class="nav-link" id="resources-tab" data-toggle="pill" href="#resources" role="tab"
-            aria-controls="resources" aria-selected="false">Resource Tiers</a>
-        </div>
-      </div>
-
-      <div class="col-md-10 col-sm-12">
-        <div class="tab-content" id="v-pills-tabContent">
-          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"></div>
-          <div class="tab-pane fade" id="stateList" role="tabpanel" aria-labelledby="stateList-tab"></div>
-          <div class="tab-pane fade" id="regionList" role="tabpanel" aria-labelledby="regionList-tab"></div>
-          <div class="tab-pane fade" id="tradeAgreementList" role="tabpanel" aria-labelledby="tradeAgreementList-tab">
+  <body>
+    <div class="container my-5">
+      <div class="row">
+        <div class="col-md-2 col-sm-12">
+          <div
+            class="nav flex-column nav-pills"
+            id="v-pills-tab"
+            role="tablist"
+            aria-orientation="vertical"
+          >
+            <a
+              class="nav-link active"
+              id="home-tab"
+              data-toggle="pill"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              >Home</a
+            >
+            <a
+              class="nav-link"
+              id="stateList-tab"
+              data-toggle="pill"
+              href="#stateList"
+              role="tab"
+              aria-controls="stateList"
+              aria-selected="false"
+              >State List</a
+            >
+            <a
+              class="nav-link"
+              id="regionList-tab"
+              data-toggle="pill"
+              href="#regionList"
+              role="tab"
+              aria-controls="regionList"
+              aria-selected="false"
+              >Region List</a
+            >
+            <a
+              class="nav-link"
+              id="tradeAgreementList-tab"
+              data-toggle="pill"
+              href="#tradeAgreementList"
+              role="tab"
+              aria-controls="tradeAgreementList"
+              aria-selected="false"
+              >Trade Agreements</a
+            >
+            <a
+              class="nav-link"
+              id="resources-tab"
+              data-toggle="pill"
+              href="#resources"
+              role="tab"
+              aria-controls="resources"
+              aria-selected="false"
+              >Resource Tiers</a
+            >
           </div>
-          <div class="tab-pane fade" id="resources" role="tabpanel" aria-labelledby="resources-tab"></div>
+        </div>
+
+        <div class="col-md-10 col-sm-12">
+          <div class="tab-content" id="v-pills-tabContent">
+            <div
+              class="tab-pane fade show active"
+              id="home"
+              role="tabpanel"
+              aria-labelledby="home-tab"
+            ></div>
+            <div
+              class="tab-pane fade"
+              id="stateList"
+              role="tabpanel"
+              aria-labelledby="stateList-tab"
+            ></div>
+            <div
+              class="tab-pane fade"
+              id="regionList"
+              role="tabpanel"
+              aria-labelledby="regionList-tab"
+            ></div>
+            <div
+              class="tab-pane fade"
+              id="tradeAgreementList"
+              role="tabpanel"
+              aria-labelledby="tradeAgreementList-tab"
+            ></div>
+            <div
+              class="tab-pane fade"
+              id="resources"
+              role="tabpanel"
+              aria-labelledby="resources-tab"
+            ></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</body>
-<script>
-  const fs = require('fs');
+  </body>
+  <script>
+    const fs = require("fs");
 
-  fs.readdir(__dirname + '/views/frontPage', function (err, files) {
-    if (err)
-      console.log(err);
-    else {
-      files.forEach(file => {
-        //console.log(file); 
-        fetch(__dirname + '/views/frontPage/' + file)
-          .then(function (response) {
-            return response.text();
-          })
-          .then(function (html) {
-            let parser = new DOMParser();
-            let doc = parser.parseFromString(html, 'text/html');
-            let template = doc.getElementsByTagName("template");
-            //console.log(template);
-            let clone = template[0].content.cloneNode(true);
-            let target = clone.querySelector(".template").dataset.tab;
-            document.getElementById(target).appendChild(clone);
-          })
-          .catch(function (err) {
-            throw err;
-          });
-      })
-    }
-  });
-
-</script>
-
+    fs.readdir(__dirname + "/views/frontPage", function (err, files) {
+      if (err) console.log(err);
+      else {
+        files.forEach((file) => {
+          //console.log(file);
+          fetch(__dirname + "/views/frontPage/" + file)
+            .then(function (response) {
+              return response.text();
+            })
+            .then(function (html) {
+              let parser = new DOMParser();
+              let doc = parser.parseFromString(html, "text/html");
+              let template = doc.getElementsByTagName("template");
+              //console.log(template);
+              let clone = template[0].content.cloneNode(true);
+              let target = clone.querySelector(".template").dataset.tab;
+              document.getElementById(target).appendChild(clone);
+            })
+            .catch(function (err) {
+              throw err;
+            });
+        });
+      }
+    });
+  </script>
 </html>

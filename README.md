@@ -19,7 +19,7 @@
    `npx electron-packager ./ CES Application alpha-x.x.x --platform=win32 --arch=x64 --app-version=x.x.x`
 
    Be sure to replace the `x` with the proper version numbers. Here's an example for version alpha-0.1.3:
-   
+
    `npx electron-packager ./ CES Application alpha-0.1.3 --platform=win32 --arch=x64 --app-version=0.1.3`
 3. Run `CES.exe`
 
