@@ -25,7 +25,7 @@ const getFacilitiesByRegion = (e, arg) => {
 const getFacilitiesByState = (e,arg) => {
     let response = facility.getFacilityByStateId(1);
     response.then((result) => {
-      console.log(result)
+        //TODO: FE Implementation of state facility.
     });
 }
 
@@ -82,4 +82,3 @@ const deleteFacility = (e, args) => {
         });
     }
 }
-
