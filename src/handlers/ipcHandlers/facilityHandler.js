@@ -6,6 +6,7 @@ const handle = () => {
     ipcMain.on('Facility:addFacility', addFacility);
     ipcMain.on('Facility:updateFacility', updateFacility);
     ipcMain.on('Facility:deleteFacility', deleteFacility);
+    ipcMain.on("Facility:getFacilitiesByState", getFacilitiesByState)
 }
 module.exports = {
     handle
@@ -18,6 +19,13 @@ const getFacilitiesByRegion = (e, arg) => {
     let response = facility.getFacilityByRegionId(arg);
     response.then(result => {
         e.sender.send("Facility:getFacilitiesByRegionOK", result);
+    });
+}
+
+const getFacilitiesByState = (e,arg) => {
+    let response = facility.getFacilityByStateId(1);
+    response.then((result) => {
+        //TODO: FE Implementation of state facility.
     });
 }
 

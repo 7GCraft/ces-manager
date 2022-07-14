@@ -12,7 +12,7 @@ const RootComponentCollection = require(config.paths.rootComponentCollection);
  * @param {Number} id must be an integer.
  * @returns {Array} array of facility objects if successful, null otherwise.
  */
-const getFacilityByRegionId = async (id) => {
+const getFacilitiesByRegionId = async (id) => {
     let rawFacilities = await knex
         .select('*')
         .from(constants.TABLE_FACILITY)
@@ -58,6 +58,29 @@ const getFacilityByRegionId = async (id) => {
 
     return facilities;
 }
+
+const getFacilitiesByStateId = async (id) => {
+  let facilityList = await knex(constants.TABLE_FACILITY)
+    .select(
+      constants.TABLE_REGION + "." + constants.COLUMN_NAME + " AS regionName",
+      constants.TABLE_FACILITY +"." + constants.COLUMN_NAME + " AS facilityName",
+      constants.COLUMN_IS_FUNCTIONAL
+    )
+    .leftJoin(
+      constants.TABLE_REGION,
+      constants.TABLE_FACILITY + "." + constants.COLUMN_REGION_ID,
+      constants.TABLE_REGION + "." + constants.COLUMN_REGION_ID
+    )
+    .where(constants.COLUMN_STATE_ID, id)
+    .catch((e) => {
+      console.error(e);
+      resValue = -1;
+    });
+
+  resValue = facilityList;
+
+  return resValue;
+};
 
 /**
  * Gets the number of functional facilities that the state of the given ID has.
@@ -226,17 +249,12 @@ const assignFacilityComponents = async (facilityId, componentIds) => {
     return resStatus;
 }
 
-exports.getFacilityByRegionId = getFacilityByRegionId;
+exports.getFacilitiesByRegionId = getFacilitiesByRegionId;
 exports.getFacilityCountByStateId = getFacilityCountByStateId;
 exports.addFacility = addFacility;
 exports.updateFacility = updateFacility;
 exports.deleteFacilityById = deleteFacilityById;
 exports.destroyFacilityById = destroyFacilityById;
 exports.assignFacilityComponents = assignFacilityComponents;
+exports.getFacilitiesByStateId = getFacilitiesByStateId;
 
-// FOR DEBUGGING
-// getFacilityByRegionId(2).then(data => console.dir(data));
-// deleteFacilityById(3).then(data => console.dir(data));
-// destroyFacilityById(4).then(data => console.dir(data));
-// assignFacilityComponents(1, [3]);
- //getFacilityCountByStateId(7).then(data => console.log(data));

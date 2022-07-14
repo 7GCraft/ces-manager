@@ -196,6 +196,12 @@ function facilityBridge() {
         });
     });
 
+    ipcMain.on("Facility:getFacilitiesByState", (e, arg) => {
+        let response = facility.get(arg);
+        response.then((result) => {
+            e.sender.send("Facility:getFacilitiesByStateOK", result); 
+        });
+    });         
     
     ipcMain.on('Facility:addFacility', (e, args) => {
         console.log(args);
