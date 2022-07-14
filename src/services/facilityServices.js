@@ -59,6 +59,25 @@ const getFacilityByRegionId = async (id) => {
     return facilities;
 }
 
+const getFacilityByStateId = async (id) => {
+    let facilityList = await knex(constants.TABLE_FACILITY)
+    .select(constants.TABLE_REGION + '.' + constants.COLUMN_NAME + ' AS regionName', constants.TABLE_FACILITY + '.' + constants.COLUMN_NAME + ' AS facilityName', constants.COLUMN_IS_FUNCTIONAL)
+    .leftJoin(
+      constants.TABLE_REGION,
+      constants.TABLE_FACILITY + "." + constants.COLUMN_REGION_ID,
+      constants.TABLE_REGION + "." + constants.COLUMN_REGION_ID
+    )
+    .where(constants.COLUMN_STATE_ID, id)
+    .catch((e) => {
+      console.error(e);
+      resValue = -1;
+    });
+  
+    resValue = facilityList;
+  
+    return resValue;
+  }
+
 /**
  * Gets the number of functional facilities that the state of the given ID has.
  * @param {Number} id must be an integer. 
@@ -233,6 +252,7 @@ exports.updateFacility = updateFacility;
 exports.deleteFacilityById = deleteFacilityById;
 exports.destroyFacilityById = destroyFacilityById;
 exports.assignFacilityComponents = assignFacilityComponents;
+exports.getFacilityByStateId = getFacilityByStateId;
 
 // FOR DEBUGGING
 // getFacilityByRegionId(2).then(data => console.dir(data));
