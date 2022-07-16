@@ -5,6 +5,66 @@ const fs = require('fs');
 require('bootstrap');
 
 // START UTILITY FUNCTIONS
+
+function sortTable(n,tableId) {
+    let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById(tableId)
+    console.log(table);
+
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = "asc";
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+      // Start by saying: no switching is done:
+      switching = false;
+      rows = table.rows;
+   
+      /* Loop through all table rows (except the
+      first, which contains table headers): */
+      for (i = 1; i < (rows.length - 1); i++) {
+        // Start by saying there should be no switching:
+        shouldSwitch = false;
+        /* Get the two elements you want to compare,
+        one from current row and one from the next: */
+        x = rows[i].getElementsByTagName("TD")[n];
+        y = rows[i + 1].getElementsByTagName("TD")[n];
+        /* Check if the two rows should switch place,
+        based on the direction, asc or desc: */
+        if (dir == "asc") {
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        } else if (dir == "desc") {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+      if (shouldSwitch) {
+        /* If a switch has been marked, make the switch
+        and mark that a switch has been done: */
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+        // Each time a switch is done, increase this count by 1:
+        switchcount ++;
+      } else {
+        /* If no switching has been done AND the direction is "asc",
+        set the direction to "desc" and run the while loop again. */
+        if (switchcount == 0 && dir == "asc") {
+          dir = "desc";
+          switching = true;
+        }
+      }
+    }
+  }
+
+
 function getProcessArgObj() {
     return JSON.parse(window.process.argv.slice(-1));
 }
@@ -19,6 +79,8 @@ function getResourceTierLabel(resourceTierID) {
         case 6: return 'Tier VI';
     }
 }
+
+
 // END UTILITY FUNCTIONS
 
 $(function () {
@@ -85,6 +147,7 @@ function getStateInfo() {
     getRegions();
     getResources();
     getTradeAgreements();
+    getFacilities();
 
     let imagePath = 'src/images';
     if (!fs.existsSync(imagePath)) {
@@ -154,6 +217,65 @@ function getRegions() {
                 });
             });
         }
+    });
+}
+
+function getFacilities() {
+    
+    const FACILITY_TABLE_ID = 'state-facility'
+    const FUNCTIONAL = 'Functional'
+    const NON_FUNCTIONAL = 'Non Functional'
+
+    ipcRenderer.send("Facility:getFacilitiesByState", parseInt(getProcessArgObj()));
+    ipcRenderer.once("Facility:getFacilitiesByStateOK", (e, res) => {
+        $('#listOfFacilities').empty();
+        let table = `<table id="state-facility" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th class="th-sm" id="state-facility-regionName">Region Name
+            </th>
+            <th class="th-sm" id="state-facility-facilityName">Facility
+            </th>
+            <th class="th-sm" id="state-facility-isFunctional" >Functional
+            </th>
+          </tr>
+        </thead>
+        <tbody id="StateFacilities">
+        </tbody>
+        </table>
+        `
+
+        $('#listOfFacilities').append(table);
+
+        if (Array.isArray(res) && res.length) {
+              res.forEach(facility => {
+                let facilityStatus = facility.isFunctional;
+                if(facilityStatus){
+                    facilityStatus = FUNCTIONAL
+                }else{
+                    facilityStatus = NON_FUNCTIONAL
+                }
+                let regionTemplate = `
+                    <tr>
+                        <td scope="col">${facility.regionName}</a></td>
+                        <td scope="col" >${facility.facilityName}</td>
+                        <td scope="col" >${facilityStatus}</td>
+                    </tr>`;
+
+                $('#StateFacilities').append(regionTemplate);
+            });
+        }
+        $("#state-facility-regionName").on('click',function() {
+            sortTable(0,FACILITY_TABLE_ID);
+        });
+
+        $("#state-facility-facilityName").on('click',function() {
+            sortTable(1,FACILITY_TABLE_ID);
+        });
+
+        $("#state-facility-isFunctional").on('click',function() {
+            sortTable(2,FACILITY_TABLE_ID);
+        });
     });
 }
 

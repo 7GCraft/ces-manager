@@ -190,7 +190,7 @@ function regionBridge(){
 
 function facilityBridge() {
     ipcMain.on('Facility:getFacilitiesByRegion', (e, arg) => {
-        let response = facility.getFacilityByRegionId(arg);
+        let response = facility.getFacilitiesByRegionId(arg);
         response.then(result => {
             e.sender.send("Facility:getFacilitiesByRegionOK", result);
         });
@@ -247,7 +247,7 @@ function componentBridge() {
     });
 
     ipcMain.on('Component:getComponentByFacilityId', (e, arg) => {
-        let response = facility.getFacilityByRegionId(arg);
+        let response = facility.getFacilitiesByRegionId(arg);
         response.then(result => {
             if(result != null){
                 return Promise.all((result.map(facility => {

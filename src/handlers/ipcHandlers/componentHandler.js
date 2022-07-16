@@ -37,7 +37,7 @@ const getComponentList = (e, arg) => {
  * Get Components by Facility Id
  */
 const getComponentByFacilityId = (e, arg) => {
-    let response = facility.getFacilityByRegionId(arg);
+    let response = facility.getFacilitiesByRegionId(arg);
     response.then(result => {
         if (result != null) {
             return Promise.all((result.map(facility => {

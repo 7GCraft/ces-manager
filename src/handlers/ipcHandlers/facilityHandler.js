@@ -16,16 +16,16 @@ module.exports = {
  * Get facilities by Region Id
  */
 const getFacilitiesByRegion = (e, arg) => {
-    let response = facility.getFacilityByRegionId(arg);
+    let response = facility.getFacilitiesByRegionId(arg);
     response.then(result => {
         e.sender.send("Facility:getFacilitiesByRegionOK", result);
     });
 }
 
 const getFacilitiesByState = (e,arg) => {
-    let response = facility.getFacilityByStateId(1);
+    let response = facility.getFacilitiesByStateId(arg);
     response.then((result) => {
-        //TODO: FE Implementation of state facility.
+        e.sender.send("Facility:getFacilitiesByStateOK", result);
     });
 }
 
