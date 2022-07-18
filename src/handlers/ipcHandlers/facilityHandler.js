@@ -16,7 +16,7 @@ module.exports = {
  * Get facilities by Region Id
  */
 const getFacilitiesByRegion = (e, arg) => {
-    let response = facility.getFacilityByRegionId(arg);
+    let response = facility.getFacilitiesByRegionId(arg);
     response.then(result => {
         e.sender.send("Facility:getFacilitiesByRegionOK", result);
     });

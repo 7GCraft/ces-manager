@@ -46,7 +46,7 @@ const getRegionListAll = async () => {
     let regionList = [];
 
     for (let rawRegion of rawRegions) {
-        let facilities = await facilityServices.getFacilityByRegionId(rawRegion.regionId);
+        let facilities = await facilityServices.getFacilitiesByRegionId(rawRegion.regionId);
 
         let foodOutput = 0;
         let moneyOutput = 0;
@@ -144,7 +144,7 @@ const getRegionListByStateId = async (stateId) => {
     let regionList = [];
 
     for (let rawRegion of rawRegions) {
-        let facilities = await facilityServices.getFacilityByRegionId(rawRegion.regionId);
+        let facilities = await facilityServices.getFacilitiesByRegionId(rawRegion.regionId);
 
         let foodOutput = 0;
         let moneyOutput = 0;
@@ -279,7 +279,7 @@ const getRegionByStateId = async (id) => {
             }
         );
 
-        let facilities = await facilityServices.getFacilityByRegionId(region.regionId);
+        let facilities = await facilityServices.getFacilitiesByRegionId(region.regionId);
 
         region.summarise(facilities);
 
@@ -380,7 +380,7 @@ const getRegionById = async (id) => {
         }
     );
 
-    let facilities = await facilityServices.getFacilityByRegionId(region.regionId);
+    let facilities = await facilityServices.getFacilitiesByRegionId(region.regionId);
 
     let stateRegions = await getRegionListByStateId(region.state.stateID);
 
