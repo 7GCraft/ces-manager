@@ -191,10 +191,70 @@ const getCurrentSeason = async () => {
     return season;
 }
 
+
+const initializeExcelColumns = async () => {
+    return [
+        {key: 'stateInfoNames', width: 42.5, style: { font: { name: 'Calibri' }}},
+        {key: 'initialStateInfo', width: 10, style: { font: { name: 'Calibri' }}},
+        {key: 'to_state', width: 10, style: { font: { name: 'Calibri' }}},
+        {key: 'updatedStateInfo', width: 10, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
+        {key: 'empty_1', width: 10, style: { font: { name: 'Calibri' }}},
+        {key: 'empty_2', width: 10, style: { font: { name: 'Calibri' }}},
+        {key: 'regionName', width: 25, style: { font: { name: 'Calibri' }}},
+        {key: 'regionIncome', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
+        {key: 'foodProduced', width: 25, style: { font: { name: 'Calibri' }}},
+        {key: 'populationUsed', width: 25, style: { font: { name: 'Calibri' }}},
+        {key: 'currPopulation', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
+        {key: 'maxPopulation', width: 25, style: { font: { name: 'Calibri' }}},
+    ];
+};
+
+const populateStateInfo = async(initialState, updatedState, i) => {
+    let initialStateInfo = [];
+    let updatedStateInfo = [];
+    let facilityCount = await facility.getFacilityCountByStateId(updatedState[i].stateID)
+    let adminCost = await stateServices.getAdminCostByStateId(updatedState[i].stateID);
+    let updatedExpectedIncome = parseFloat(parseFloat(updatedState[i].TotalIncome).toFixed(2) - parseFloat(updatedState[i].expenses).toFixed(2) - parseFloat(adminCost).toFixed(2)).toFixed(2);
+
+    initialStateInfo = [
+        initialState[i].treasuryAmt,
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        initialState[i].TotalPopulation,
+        'N/A',
+        'N/A',
+        'N/A',
+    ]
+    updatedStateInfo = [
+        updatedState[i].treasuryAmt,
+        updatedState[i].TotalIncome,
+        updatedState[i].expenses,
+        adminCost,
+        updatedState[i].adminRegionModifier * 100 + '%',
+        adminCost + updatedState[i].expenses,
+        updatedState[i].TotalFoodProduced,
+        updatedState[i].TotalFoodConsumed,
+        updatedState[i].TotalFoodAvailable,
+        updatedState[i].TotalPopulation,
+        updatedState[i].AvgDevLevel,
+        facilityCount,
+        updatedExpectedIncome,
+    ]
+
+    return [initialStateInfo, updatedStateInfo];
+}
+
 /**
  * Exports seasonal report to excel. Called from advanceSeason()
  * @returns {Boolean} true if successful, false otherwise.
  */
+
 const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSeasonYear) => {
     let resStatus = true;
     const workbook = new excel.Workbook();
@@ -220,54 +280,12 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
         const tradeAgreements = await tradeAgreementServices.getTradeAgreementAll();
         for(let i = 0; i < initialState.length; i++){
             let sheet = workbook.addWorksheet(initialState[i].stateName);
-            sheet.columns = [
-                {key: 'stateInfoNames', width: 42.5, style: { font: { name: 'Calibri' }}},
-                {key: 'initialStateInfo', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'to_state', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'updatedStateInfo', width: 10, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
-                {key: 'empty_1', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'empty_2', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'regionName', width: 25, style: { font: { name: 'Calibri' }}},
-                {key: 'regionIncome', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
-                {key: 'foodProduced', width: 25, style: { font: { name: 'Calibri' }}},
-                {key: 'populationUsed', width: 25, style: { font: { name: 'Calibri' }}},
-                {key: 'currPopulation', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
-                {key: 'maxPopulation', width: 25, style: { font: { name: 'Calibri' }}},
-            ]
-            let facilityCount = await facility.getFacilityCountByStateId(updatedState[i].stateID)
-            let adminCost = await stateServices.getAdminCostByStateId(updatedState[i].stateID);
-            let updatedExpectedIncome = parseFloat(parseFloat(updatedState[i].TotalIncome).toFixed(2) - parseFloat(updatedState[i].expenses).toFixed(2) - parseFloat(adminCost).toFixed(2)).toFixed(2);
+            sheet.columns = await initializeExcelColumns();
 
-            initialStateInfo = [
-                initialState[i].treasuryAmt,
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                initialState[i].TotalPopulation,
-                'N/A',
-                'N/A',
-                'N/A',
-            ]
-            updatedStateInfo = [
-                updatedState[i].treasuryAmt,
-                updatedState[i].TotalIncome,
-                updatedState[i].expenses,
-                adminCost,
-                updatedState[i].adminRegionModifier * 100 + '%',
-                adminCost + updatedState[i].expenses,
-                updatedState[i].TotalFoodProduced,
-                updatedState[i].TotalFoodConsumed,
-                updatedState[i].TotalFoodAvailable,
-                updatedState[i].TotalPopulation,
-                updatedState[i].AvgDevLevel,
-                facilityCount,
-                updatedExpectedIncome,
-            ]
+            let stateInfos = await populateStateInfo(initialState, updatedState, i)
+            initialStateInfo = stateInfos[0];
+            updatedStateInfo = stateInfos[1];
+
             //Make title for each sheet with stylings
             sheet.mergeCells('A1:L3');
             sheet.getCell('A1').value = initialState[i].stateName;
