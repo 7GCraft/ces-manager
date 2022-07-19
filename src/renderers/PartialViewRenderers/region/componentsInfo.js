@@ -1,10 +1,10 @@
 //START CONST LIST
 
-let USED = 'used'
-let UNUSED = 'unused'
-let ACTIVATED = 'activated'
-let UNACTIVATED = 'unactivated'
-let COMPONENT_LIST = 'componentList'
+const USED = 'used'
+const UNUSED = 'unused'
+const ACTIVATED = 'activated'
+const UNACTIVATED = 'unactivated'
+const COMPONENT_LIST = 'componentList'
 
 //END COSNT LIST
 
