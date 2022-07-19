@@ -1,3 +1,13 @@
+//START CONST LIST
+
+let USED = 'used'
+let UNUSED = 'unused'
+let ACTIVATED = 'activated'
+let UNACTIVATED = 'unactivated'
+let COMPONENT_LIST = 'componentList'
+
+//END COSNT LIST
+
 // START UTILITY FUNCTIONS
 function getProcessArgObj() {
     return JSON.parse(window.process.argv.slice(-1));
@@ -74,6 +84,9 @@ $(function () {
 function getComponentsInfo() {
     ipcRenderer.send('Component:getComponentList', parseInt(getProcessArgObj()));
     ipcRenderer.once('Component:getComponentListOK', (e, res) => {
+        localStorage.setItem(COMPONENT_LIST, JSON.stringify(res));
+
+        
         let childComponents = []
         res.forEach((component, i) => {
             if (component.isChild) {
@@ -170,59 +183,36 @@ function getFacilitiesList() {
 function rbsComponentsDisplay_onChange() {
     $('input[type=radio][name=usedComponentDisplay]').on('change', e => {
         e.preventDefault();
-        rbsComponentsDisplayer();
+        filterComponents()
     });
 
     $('input[type=radio][name=activatedComponentDisplay]').on('change', e => {
         e.preventDefault();
-        rbsComponentsDisplayer();
+        filterComponents()
     });
 }
 
-/**
- * Display component's rows based on radio button filter:
- * Used/Unused, Activated/Unactivated Components
- */
-function rbsComponentsDisplayer() {
-    let usedComponent = $('input[name=usedComponentDisplay]:checked').val();
-
-    let componentGetterEvent = 'Component:getComponentList';
-    let componentReceiverEvent = 'Component:getComponentListOK';
-   
-
-    ipcRenderer.send(componentGetterEvent, parseInt(getProcessArgObj()));
-    ipcRenderer.once(componentReceiverEvent, (e, res) => {
-        setComponentList(res);
-        filterComponents();
-    });
-}
-
-/**
- * Filter component's table list based on search string filter 
- * and whether the component is activated or not
- */
 function filterComponents() {
-    let searchString = $('#txtComponentSearch').val().toLowerCase();
-    let activatedComponent = $('input[name=activatedComponentDisplay]:checked').val();
-    let showActivated = (activatedComponent === 'activated');
-    let hiddenRowIds = [];
+    let usedComponentInput = $('input[name=usedComponentDisplay]:checked').val();
+    let activatedComponentInput = $('input[name=activatedComponentDisplay]:checked').val();  
+    let componentList = JSON.parse(localStorage.getItem(COMPONENT_LIST))
 
-    $('#componentsList tr').not('#componentTemplateRow').each(function (i, row) {
-        const componentData = $(this).data('componentData');
-        let doShowActivated = (activatedComponent === 'all') ||
-                              (showActivated && componentData.activationTime <= 0) ||
-                              (!showActivated && componentData.activationTime > 0);
-        let doShow = ($(this).text().toLowerCase().indexOf(searchString) > -1) && doShowActivated;
-        if (doShow) {
-            $(this).show();
-        } else {
-            hiddenRowIds.push(`#${row.id}`);
-            $(this).hide();
-        }
-    });
+    if(usedComponentInput === USED){
+        componentList = componentList.filter(component=> component.facilityId !== null)
+    }else
+    if(usedComponentInput === UNUSED){
+        componentList = componentList.filter(component=> component.facilityId === null)
+    }
 
-    hiddenRowIds.push('#componentTemplateRow');
-    indexComponentTable('componentsList', 'numberCell', hiddenRowIds);
+    if(activatedComponentInput === ACTIVATED){
+        componentList = componentList.filter(component => component.activationTime === 0)
+    }else
+    if(activatedComponentInput === UNACTIVATED){
+       
+        componentList = componentList.filter(component => component.activationTime !== 0)
+    }
+
+    setComponentList(componentList);
 }
 
 function addUpdateComponent_handler() {
