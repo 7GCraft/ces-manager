@@ -209,6 +209,7 @@ const initializeExcelColumns = async () => {
     ];
 };
 
+
 const populateStateInfo = async(initialState, updatedState, i) => {
     let initialStateInfo = [];
     let updatedStateInfo = [];
@@ -248,6 +249,38 @@ const populateStateInfo = async(initialState, updatedState, i) => {
     ]
 
     return [initialStateInfo, updatedStateInfo];
+}
+
+const reformatStateResources = async (updatedState, i) => {
+    let stateResources = [];
+    updatedState[i].ProductiveResources.map(resource => {
+        resourceIdx = stateResources.findIndex(obj => obj.name == resource.ResourceName);
+        if(resourceIdx >= 0){
+            stateResources[resourceIdx].count += 1;
+        }
+        else{
+            stateResources.push({'name': resource.ResourceName, 'tier': resource.ResourceTierID, 'count' : 1})
+        }
+    });
+
+    stateResources.sort((a, b) => {
+        return a.tier - b.tier || a.name.localeCompare(b.name)
+    });
+
+    return stateResources;
+}
+
+const reformatTradeAgreements = async(tradeAgreements, initialState, i) => {
+    let stateTradeAgreements = [];
+
+    tradeAgreements.map(agreement => {
+        let traderIdx = agreement.traders.findIndex(obj => obj.state.stateID == initialState[i].stateID);
+        if (traderIdx > -1){
+            stateTradeAgreements.push({'partnerState':(traderIdx == 0) ? agreement.traders[1].state.stateName : agreement.traders[0].state.stateName, 'tradePower': parseFloat(agreement.traders[traderIdx].tradePower * 100).toFixed(2) + '%', 'tradeValue': agreement.traders[traderIdx].tradeValue })
+        }
+    });
+
+    return stateTradeAgreements;
 }
 
 /**
@@ -435,20 +468,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             lastRowNum += 2;
 
             //Reformat state resources by name, tier, and count
-            let stateResources = [];
-            updatedState[i].ProductiveResources.map(resource => {
-                resourceIdx = stateResources.findIndex(obj => obj.name == resource.ResourceName);
-                if(resourceIdx >= 0){
-                    stateResources[resourceIdx].count += 1;
-                }
-                else{
-                    stateResources.push({'name': resource.ResourceName, 'tier': resource.ResourceTierID, 'count' : 1})
-                }
-            });
-
-            stateResources.sort((a, b) => {
-                return a.tier - b.tier || a.name.localeCompare(b.name)
-            });
+            let stateResources = await reformatStateResources(updatedState, i);
 
             if(Array.isArray(stateResources) && stateResources.length){
                 sheet.mergeCells('A'+lastRowNum + ':C' + lastRowNum);
@@ -515,14 +535,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             }
 
             //Reformat trade agreements to Partner State, Our Trade Power, and Income From Trade
-            let stateTradeAgreements = [];
-
-            tradeAgreements.map(agreement => {
-                let traderIdx = agreement.traders.findIndex(obj => obj.state.stateID == initialState[i].stateID);
-                if (traderIdx > -1){
-                    stateTradeAgreements.push({'partnerState':(traderIdx == 0) ? agreement.traders[1].state.stateName : agreement.traders[0].state.stateName, 'tradePower': parseFloat(agreement.traders[traderIdx].tradePower * 100).toFixed(2) + '%', 'tradeValue': agreement.traders[traderIdx].tradeValue })
-                }
-            });
+            let stateTradeAgreements = await reformatTradeAgreements(tradeAgreements, initialState, i);
 
             if(Array.isArray(stateTradeAgreements) && stateTradeAgreements.length){
                 sheet.mergeCells('G'+lastRowNum + ':I' + lastRowNum);
