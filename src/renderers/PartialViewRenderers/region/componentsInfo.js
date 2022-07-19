@@ -1,12 +1,8 @@
-//START CONST LIST
-
 const USED = 'used'
 const UNUSED = 'unused'
 const ACTIVATED = 'activated'
 const UNACTIVATED = 'unactivated'
 const COMPONENT_LIST = 'componentList'
-
-//END COSNT LIST
 
 // START UTILITY FUNCTIONS
 function getProcessArgObj() {
@@ -85,7 +81,6 @@ function getComponentsInfo() {
     ipcRenderer.send('Component:getComponentList', parseInt(getProcessArgObj()));
     ipcRenderer.once('Component:getComponentListOK', (e, res) => {
         localStorage.setItem(COMPONENT_LIST, JSON.stringify(res));
-
         
         let childComponents = []
         res.forEach((component, i) => {
@@ -193,21 +188,21 @@ function rbsComponentsDisplay_onChange() {
 }
 
 function filterComponents() {
-    let usedComponentInput = $('input[name=usedComponentDisplay]:checked').val();
-    let activatedComponentInput = $('input[name=activatedComponentDisplay]:checked').val();  
+    let componentUsabilityFilterMode = $('input[name=usedComponentDisplay]:checked').val();
+    let componentActivationFilterMode = $('input[name=activatedComponentDisplay]:checked').val();  
     let componentList = JSON.parse(localStorage.getItem(COMPONENT_LIST))
 
-    if(usedComponentInput === USED){
+    if(componentUsabilityFilterMode === USED){
         componentList = componentList.filter(component=> component.facilityId !== null)
     }else
-    if(usedComponentInput === UNUSED){
+    if(componentUsabilityFilterMode === UNUSED){
         componentList = componentList.filter(component=> component.facilityId === null)
     }
 
-    if(activatedComponentInput === ACTIVATED){
+    if(componentActivationFilterMode === ACTIVATED){
         componentList = componentList.filter(component => component.activationTime === 0)
     }else
-    if(activatedComponentInput === UNACTIVATED){
+    if(componentActivationFilterMode === UNACTIVATED){
        
         componentList = componentList.filter(component => component.activationTime !== 0)
     }
