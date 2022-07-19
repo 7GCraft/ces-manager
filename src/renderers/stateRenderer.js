@@ -2,62 +2,57 @@ const electron = require('electron');
 const { ipcRenderer } = electron;
 const $ = require('jquery');
 const fs = require('fs');
-require('bootstrap');
+require('bFootstrap');
+
+const ASCENDING = 'asc'
+const DESCENDING = 'desc'
 
 // START UTILITY FUNCTIONS
 
 function sortTable(n,tableId) {
-    let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    let table, rows, switching, i, x, y, shouldSwitch, sortingDirection, switchcount = 0;
     table = document.getElementById(tableId)
-    console.log(table);
 
     switching = true;
-    // Set the sorting direction to ascending:
-    dir = "asc";
-    /* Make a loop that will continue until
-    no switching has been done: */
+ 
+    sortingDirection = ASCENDING;
+
     while (switching) {
-      // Start by saying: no switching is done:
       switching = false;
       rows = table.rows;
    
-      /* Loop through all table rows (except the
-      first, which contains table headers): */
+    
       for (i = 1; i < (rows.length - 1); i++) {
-        // Start by saying there should be no switching:
+       
         shouldSwitch = false;
-        /* Get the two elements you want to compare,
-        one from current row and one from the next: */
+       
         x = rows[i].getElementsByTagName("TD")[n];
         y = rows[i + 1].getElementsByTagName("TD")[n];
-        /* Check if the two rows should switch place,
-        based on the direction, asc or desc: */
-        if (dir == "asc") {
+       
+        if (sortingDirection == ASCENDING) {
           if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-            // If so, mark as a switch and break the loop:
+          
             shouldSwitch = true;
             break;
           }
-        } else if (dir == "desc") {
+        } else if (sortingDirection == DESCENDING) {
           if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-            // If so, mark as a switch and break the loop:
+         
             shouldSwitch = true;
             break;
           }
         }
       }
       if (shouldSwitch) {
-        /* If a switch has been marked, make the switch
-        and mark that a switch has been done: */
+      
         rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
         switching = true;
-        // Each time a switch is done, increase this count by 1:
+       
         switchcount ++;
       } else {
-        /* If no switching has been done AND the direction is "asc",
-        set the direction to "desc" and run the while loop again. */
-        if (switchcount == 0 && dir == "asc") {
-          dir = "desc";
+        
+        if (switchcount == 0 && sortingDirection == ASCENDING) {
+          sortingDirection = DESCENDING;
           switching = true;
         }
       }
@@ -422,7 +417,7 @@ function frmUpdateState_onSubmit() {
         stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
         stateObj["adminRegionModifier"] = ($('#nmbAdminRegionModifier').val() == "") ? 0 : parseFloat($('#nmbAdminRegionModifier').val() / 100);
         stateObj["expenses"] = ($('#nmbExpenses').val() == "") ? 0 : parseInt($('#nmbExpenses').val());
-        stateObj["desc"] = $('#txtDescription').val();
+        stateObj[DESCENDING] = $('#txtDescription').val();
 
         console.log(stateObj);
 
