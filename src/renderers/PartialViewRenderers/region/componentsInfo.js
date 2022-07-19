@@ -188,13 +188,7 @@ function rbsComponentsDisplayer() {
 
     let componentGetterEvent = 'Component:getComponentList';
     let componentReceiverEvent = 'Component:getComponentListOK';
-    if (usedComponent === 'used') {
-        componentGetterEvent = 'Component:getUsedComponentList';
-        componentReceiverEvent = 'Component:getUsedComponentListOK';
-    } else if (usedComponent === 'unused') {
-        componentGetterEvent = 'Component:getUnusedComponentList';
-        componentReceiverEvent = 'Component:getUnusedComponentListOK';
-    }
+   
 
     ipcRenderer.send(componentGetterEvent, parseInt(getProcessArgObj()));
     ipcRenderer.once(componentReceiverEvent, (e, res) => {
