@@ -2,10 +2,13 @@ const electron = require('electron');
 const { ipcRenderer } = electron;
 const $ = require('jquery');
 const fs = require('fs');
-require('bFootstrap');
+require('bootstrap');
 
 const ASCENDING = 'asc'
 const DESCENDING = 'desc'
+const FUNCTIONAL = 'Functional'
+const NON_FUNCTIONAL = 'Non Functional'
+const FACILITY_TABLE_ID = 'state-facility'
 
 // START UTILITY FUNCTIONS
 
@@ -14,14 +17,12 @@ function sortTable(n,tableId) {
     table = document.getElementById(tableId)
 
     switching = true;
- 
     sortingDirection = ASCENDING;
 
     while (switching) {
       switching = false;
       rows = table.rows;
    
-    
       for (i = 1; i < (rows.length - 1); i++) {
        
         shouldSwitch = false;
@@ -75,6 +76,25 @@ function getResourceTierLabel(resourceTierID) {
     }
 }
 
+function appendEmptyFacilityTable(tableBody,facility){
+    let facilityStatus = facility.isFunctional;
+    console.log(tableBody)
+
+    if(facilityStatus){
+        facilityStatus = FUNCTIONAL
+    }else{
+        facilityStatus = NON_FUNCTIONAL
+    }
+
+    let regionTemplate = `
+        <tr>
+            <td scope="col">${facility.regionName}</a></td>
+            <td scope="col" >${facility.facilityName}</td>
+            <td scope="col" >${facilityStatus}</td>
+        </tr>`;
+
+    tableBody.append(regionTemplate);
+}
 
 // END UTILITY FUNCTIONS
 
@@ -216,11 +236,6 @@ function getRegions() {
 }
 
 function getFacilities() {
-    
-    const FACILITY_TABLE_ID = 'state-facility'
-    const FUNCTIONAL = 'Functional'
-    const NON_FUNCTIONAL = 'Non Functional'
-
     ipcRenderer.send("Facility:getFacilitiesByState", parseInt(getProcessArgObj()));
     ipcRenderer.once("Facility:getFacilitiesByStateOK", (e, res) => {
         $('#listOfFacilities').empty();
@@ -244,20 +259,8 @@ function getFacilities() {
 
         if (Array.isArray(res) && res.length) {
               res.forEach(facility => {
-                let facilityStatus = facility.isFunctional;
-                if(facilityStatus){
-                    facilityStatus = FUNCTIONAL
-                }else{
-                    facilityStatus = NON_FUNCTIONAL
-                }
-                let regionTemplate = `
-                    <tr>
-                        <td scope="col">${facility.regionName}</a></td>
-                        <td scope="col" >${facility.facilityName}</td>
-                        <td scope="col" >${facilityStatus}</td>
-                    </tr>`;
-
-                $('#StateFacilities').append(regionTemplate);
+                let tableBody = $("#StateFacilities");
+                appendEmptyFacilityTable(tableBody,facility)
             });
         }
         $("#state-facility-regionName").on('click',function() {
