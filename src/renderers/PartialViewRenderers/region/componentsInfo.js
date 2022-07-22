@@ -289,19 +289,6 @@ function addUpdateComponent_handler() {
     }
   });
 
-  // $('#nmbActivation').on('change', () => {
-  //     const activationTime = parseInt($('#nmbActivation').val());
-  //     if (!isNaN(activationTime)) {
-  //         if (activationTime > 0) {
-  //             $('#selFacility').prop('disabled', 'disabled');
-  //             $('#selFacility').val('');
-  //         }
-  //         else {
-  //             $('#selFacility').prop('disabled', false);
-  //         }
-  //     }
-  // })
-
   $("#frmAddUpdateComponent").on("submit", (e) => {
     e.preventDefault();
 
