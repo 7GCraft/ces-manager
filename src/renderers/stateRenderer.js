@@ -76,7 +76,7 @@ function getResourceTierLabel(resourceTierID) {
     }
 }
 
-function appendEmptyFacilityTable(tableBody,facility){
+function appendDataToEmptyFacilityTable(tableBody,facility){
     let facilityStatus = facility.isFunctional;
     console.log(tableBody)
 
@@ -94,6 +94,40 @@ function appendEmptyFacilityTable(tableBody,facility){
         </tr>`;
 
     tableBody.append(regionTemplate);
+}
+
+function appendFacilityTable(targetElement){
+    let table = `<table id="state-facility" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th class="th-sm" id="state-facility-regionName">Region Name
+        </th>
+        <th class="th-sm" id="state-facility-facilityName">Facility
+        </th>
+        <th class="th-sm" id="state-facility-isFunctional" >Functional
+        </th>
+      </tr>
+    </thead>
+    <tbody id="StateFacilities">
+    </tbody>
+    </table>
+    `
+
+    targetElement.append(table);
+}
+
+function addSortingListenerToFacilityTable(){
+    $("#state-facility-regionName").on('click',function() {
+        sortTable(0,FACILITY_TABLE_ID);
+    });
+
+    $("#state-facility-facilityName").on('click',function() {
+        sortTable(1,FACILITY_TABLE_ID);
+    });
+
+    $("#state-facility-isFunctional").on('click',function() {
+        sortTable(2,FACILITY_TABLE_ID);
+    });
 }
 
 // END UTILITY FUNCTIONS
@@ -238,42 +272,18 @@ function getRegions() {
 function getFacilities() {
     ipcRenderer.send("Facility:getFacilitiesByState", parseInt(getProcessArgObj()));
     ipcRenderer.once("Facility:getFacilitiesByStateOK", (e, res) => {
-        $('#listOfFacilities').empty();
-        let table = `<table id="state-facility" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th class="th-sm" id="state-facility-regionName">Region Name
-            </th>
-            <th class="th-sm" id="state-facility-facilityName">Facility
-            </th>
-            <th class="th-sm" id="state-facility-isFunctional" >Functional
-            </th>
-          </tr>
-        </thead>
-        <tbody id="StateFacilities">
-        </tbody>
-        </table>
-        `
-
-        $('#listOfFacilities').append(table);
+        let listOfFacilities =  $('#listOfFacilities');
+        listOfFacilities.empty();
+        appendFacilityTable(listOfFacilities);
 
         if (Array.isArray(res) && res.length) {
               res.forEach(facility => {
                 let tableBody = $("#StateFacilities");
-                appendEmptyFacilityTable(tableBody,facility)
+                appendDataToEmptyFacilityTable(tableBody,facility)
             });
         }
-        $("#state-facility-regionName").on('click',function() {
-            sortTable(0,FACILITY_TABLE_ID);
-        });
 
-        $("#state-facility-facilityName").on('click',function() {
-            sortTable(1,FACILITY_TABLE_ID);
-        });
-
-        $("#state-facility-isFunctional").on('click',function() {
-            sortTable(2,FACILITY_TABLE_ID);
-        });
+        addSortingListenerToFacilityTable()
     });
 }
 
