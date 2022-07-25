@@ -65,23 +65,23 @@ function replaceElementAttributeContent(
 // END UTILITY FUNCTIONS
 
 $(function () {
-  //Get all component related info
+  
   getComponentsInfo();
-  //Get all facilities for facility ddl
+
   getFacilitiesList();
-  //event handler for component display change
+
   rbsComponentsDisplay_onChange();
-  //handles events for addUpdateComponent
+
   addUpdateComponent_handler();
-  //handle delete component events
+ 
   deleteComponent_handler();
-  //handle events from main page
+
   pageMain_eventHandler();
-  //handle events from child component modal
+  
   mdlChildComponents_eventHandler();
-  //handle events from btnOpenBulkInsertComponents
+
   btnOpenBulkInsertComponents_eventHandler();
-  //handle events from bulk insert page
+
   bulkInsertPage_eventHandler();
 });
 
