@@ -23,9 +23,9 @@ const getFacilitiesByRegion = (e, arg) => {
 }
 
 const getFacilitiesByState = (e,arg) => {
-    let response = facility.getFacilityByStateId(1);
+    let response = facility.getFacilitiesByStateId(arg);
     response.then((result) => {
-        //TODO: FE Implementation of state facility.
+        e.sender.send("Facility:getFacilitiesByStateOK", result);
     });
 }
 

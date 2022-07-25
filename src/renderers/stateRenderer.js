@@ -4,7 +4,63 @@ const $ = require('jquery');
 const fs = require('fs');
 require('bootstrap');
 
+const ASCENDING = 'asc'
+const DESCENDING = 'desc'
+const FUNCTIONAL = 'Functional'
+const NON_FUNCTIONAL = 'Non Functional'
+const FACILITY_TABLE_ID = 'state-facility'
+
 // START UTILITY FUNCTIONS
+
+function sortTable(n,tableId) {
+    let table, rows, switching, i, x, y, shouldSwitch, sortingDirection, switchcount = 0;
+    table = document.getElementById(tableId)
+
+    switching = true;
+    sortingDirection = ASCENDING;
+
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+   
+      for (i = 1; i < (rows.length - 1); i++) {
+       
+        shouldSwitch = false;
+       
+        x = rows[i].getElementsByTagName("TD")[n];
+        y = rows[i + 1].getElementsByTagName("TD")[n];
+       
+        if (sortingDirection == ASCENDING) {
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          
+            shouldSwitch = true;
+            break;
+          }
+        } else if (sortingDirection == DESCENDING) {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+         
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+      if (shouldSwitch) {
+      
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+       
+        switchcount ++;
+      } else {
+        
+        if (switchcount == 0 && sortingDirection == ASCENDING) {
+          sortingDirection = DESCENDING;
+          switching = true;
+        }
+      }
+    }
+  }
+
+
 function getProcessArgObj() {
     return JSON.parse(window.process.argv.slice(-1));
 }
@@ -19,6 +75,61 @@ function getResourceTierLabel(resourceTierID) {
         case 6: return 'Tier VI';
     }
 }
+
+function appendDataToEmptyFacilityTable(tableBody,facility){
+    let facilityStatus = facility.isFunctional;
+    console.log(tableBody)
+
+    if(facilityStatus){
+        facilityStatus = FUNCTIONAL
+    }else{
+        facilityStatus = NON_FUNCTIONAL
+    }
+
+    let regionTemplate = `
+        <tr>
+            <td scope="col">${facility.regionName}</a></td>
+            <td scope="col" >${facility.facilityName}</td>
+            <td scope="col" >${facilityStatus}</td>
+        </tr>`;
+
+    tableBody.append(regionTemplate);
+}
+
+function appendFacilityTable(targetElement){
+    let table = `<table id="state-facility" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th class="th-sm" id="state-facility-regionName">Region Name
+        </th>
+        <th class="th-sm" id="state-facility-facilityName">Facility
+        </th>
+        <th class="th-sm" id="state-facility-isFunctional" >Functional
+        </th>
+      </tr>
+    </thead>
+    <tbody id="StateFacilities">
+    </tbody>
+    </table>
+    `
+
+    targetElement.append(table);
+}
+
+function addSortingListenerToFacilityTable(){
+    $("#state-facility-regionName").on('click',function() {
+        sortTable(0,FACILITY_TABLE_ID);
+    });
+
+    $("#state-facility-facilityName").on('click',function() {
+        sortTable(1,FACILITY_TABLE_ID);
+    });
+
+    $("#state-facility-isFunctional").on('click',function() {
+        sortTable(2,FACILITY_TABLE_ID);
+    });
+}
+
 // END UTILITY FUNCTIONS
 
 $(function () {
@@ -85,6 +196,7 @@ function getStateInfo() {
     getRegions();
     getResources();
     getTradeAgreements();
+    getFacilities();
 
     let imagePath = 'src/images';
     if (!fs.existsSync(imagePath)) {
@@ -154,6 +266,24 @@ function getRegions() {
                 });
             });
         }
+    });
+}
+
+function getFacilities() {
+    ipcRenderer.send("Facility:getFacilitiesByState", parseInt(getProcessArgObj()));
+    ipcRenderer.once("Facility:getFacilitiesByStateOK", (e, res) => {
+        let listOfFacilities =  $('#listOfFacilities');
+        listOfFacilities.empty();
+        appendFacilityTable(listOfFacilities);
+
+        if (Array.isArray(res) && res.length) {
+              res.forEach(facility => {
+                let tableBody = $("#StateFacilities");
+                appendDataToEmptyFacilityTable(tableBody,facility)
+            });
+        }
+
+        addSortingListenerToFacilityTable()
     });
 }
 
@@ -300,7 +430,7 @@ function frmUpdateState_onSubmit() {
         stateObj["treasuryAmt"] = ($('#nmbTreasury').val() == "") ? 0 : parseInt($('#nmbTreasury').val());
         stateObj["adminRegionModifier"] = ($('#nmbAdminRegionModifier').val() == "") ? 0 : parseFloat($('#nmbAdminRegionModifier').val() / 100);
         stateObj["expenses"] = ($('#nmbExpenses').val() == "") ? 0 : parseInt($('#nmbExpenses').val());
-        stateObj["desc"] = $('#txtDescription').val();
+        stateObj[DESCENDING] = $('#txtDescription').val();
 
         console.log(stateObj);
 
