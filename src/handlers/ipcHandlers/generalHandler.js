@@ -4,6 +4,7 @@ const general = require('../../services/generalServices');
 const handle = () => {
     ipcMain.on('General:advancingSeason', advanceSeason);
     ipcMain.on('General:getCurrentSeason', getCurrentSeason);
+    ipcMain.on('General:getFormula', getFormula);
 }
 module.exports = {
     handle
@@ -28,5 +29,17 @@ const getCurrentSeason = (e) => {
     .catch(error => {
         console.error(error);
         e.sender.send("General:getCurrentSeasonOK", null);
+    })
+}
+
+const getFormula = (e, formulaName) => {
+    let response = general.getFormula(formulaName);
+    console.log(response);
+    response.then(result => {
+        e.sender.send("General:getFormulaOK", result);
+    })
+    .catch(error => {
+        console.error(error);
+        e.sender.send("General:getFormulaOK", null);
     })
 }

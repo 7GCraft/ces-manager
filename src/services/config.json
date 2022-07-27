@@ -77,6 +77,7 @@
         "regionServices": "./regionServices",
         "resourceServices": "./resourceServices",
         "stateServices": "./stateServices",
-        "tradeAgreementServices": "./tradeAgreementServices"
+        "tradeAgreementServices": "./tradeAgreementServices",
+        "formulaHelper": "../helpers/formulaHelper"
     }
 }

@@ -8,7 +8,9 @@ const Season = require(config.paths.seasonModel);
 const stateServices = require(config.paths.stateServices);
 const regionServices = require(config.paths.regionServices);
 const tradeAgreementServices = require(config.paths.tradeAgreementServices);
-const facility = require('./facilityServices'); 
+const facility = require('./facilityServices');
+
+const formulaHelper = require(config.paths.formulaHelper);
 
 const excel = require('exceljs')
 
@@ -582,5 +584,11 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
     }
 }
 
+const getFormula = async (formulaName) => {
+    const formulaObj = formulaHelper.getFormulaByKey(formulaName);
+    return formulaHelper.parse(formulaObj);
+}
+
 exports.advanceSeason = advanceSeason;
 exports.getCurrentSeason = getCurrentSeason;
+exports.getFormula = getFormula;

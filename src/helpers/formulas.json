@@ -1,0 +1,28 @@
+{
+    "PopulationTime":
+    {
+        "formula": "ROUND((Education+Skill+Training)/3)+Modifier",
+        "constants": {}
+    },
+    "PopulationCost":
+    {
+        "formula": "(Education+Skill+Training)*BASE_COST*Development+Modifier",
+        "constants":
+        {
+            "BASE_COST": 50
+        }
+    },
+    "BuildingTime":
+    {
+        "formula": "ROUND((Material+Skill+Complexity)/3)+Modifier",
+        "constants": {}
+    },
+    "BuildingCost":
+    {
+        "formula": "(Material+Skill+Complexity)*BASE_COST*Development+Modifier",
+        "constants":
+        {
+            "BASE_COST": 75
+        }
+    }
+}
