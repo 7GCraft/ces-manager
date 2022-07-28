@@ -13,72 +13,25 @@ const FUNCTION_TOKENS = [
     "ROUND"
 ];
 
+const TOKEN = {
+    SPACE: ' ',
+    OPEN_PARENTHESIS: '(',
+    CLOSE_PARENTHESIS: ')',
+    COMMA: ',',
+    MIN: "MIN",
+    MAX: "MAX",
+    ROUND: "ROUND"
+};
+
+const INVALID_FORMULA_FORMAT_ERR = "Invalid Formula Format";
+
 function getFormulaByKey(key) {
     return formulas[key];
 }
 
 function parse(formulaObj) {
-    const constants = formulaObj.constants;
-    let tokens = formulaObj.formula.split('');
-
-    let resultStack = [];
     let parseStack = [];
-
-    for (let i = 0; i < tokens.length; i++) {
-        if (tokens[i] == ' ')
-            continue;
-        
-        if (tokens[i] >= '0' && tokens[i] <= '9') {
-            let number = "";
-            while (i < tokens.length && tokens[i] >= '0' && tokens[i] <= '9') {
-                number += tokens[i];
-                i++;
-            }
-            resultStack.push({ token: parseInt(number), type: TOKEN_TYPE.Number });
-            i--;
-        }
-
-        else if (isValidNonNumberToken(tokens[i])) {
-            let tempToken = "";
-            while (i < tokens.length &&
-                (isValidNonNumberToken(tokens[i]) || (tokens[i] >= '0' && tokens[i] <= '9'))) 
-            {
-                tempToken += tokens[i];
-                i++;
-            }
-            if (constants.hasOwnProperty(tempToken)) {
-                resultStack.push({ token: constants[tempToken], type: TOKEN_TYPE.Number });
-            } else if (FUNCTION_TOKENS.includes(tempToken.toUpperCase())) {
-                parseStack.push(tempToken.toUpperCase());
-            } else {
-                resultStack.push({ token: tempToken, type: TOKEN_TYPE.Variable });
-            }
-
-            i--;
-        }
-
-        else if (tokens[i] == '(' || tokens[i] == ',') {
-            parseStack.push(tokens[i]);
-        }
-
-        else if (tokens[i] == ')') {
-            for (let char = parseStack.pop(); char != '('; char = parseStack.pop()) {
-                pushOperator(resultStack, char);
-            }
-            if (FUNCTION_TOKENS.includes(parseStack[parseStack.length - 1])) {
-                pushOperator(resultStack, parseStack.pop());
-            }
-        }
-
-        else {
-            while (parseStack.length > 0 &&
-                precedence(tokens[i]) <= precedence(parseStack[parseStack.length - 1])
-            ) {
-                pushOperator(resultStack, parseStack.pop());
-            }
-            parseStack.push(tokens[i]);
-        }
-    }
+    let resultStack = iterateFormula(formulaObj, parseStack);
 
     while (parseStack.length > 0) {
         let operator = parseStack.pop();
@@ -86,6 +39,100 @@ function parse(formulaObj) {
     }
 
     return resultStack;
+}
+
+function iterateFormula(formulaObj, parseStack) {
+    const constants = formulaObj.constants;
+    let tokens = formulaObj.formula.split('');
+
+    let resultStack = [];
+
+    for (let i = 0; i < tokens.length; i++) {
+        if (isRedundantToken(tokens[i]))
+            continue;
+        
+        if (isNumberToken(tokens[i])) {
+            i += parseNumberToken(tokens.slice(i), resultStack);
+        }
+
+        else if (isValidNonNumberToken(tokens[i])) {
+            i += parseVariableToken(tokens.slice(i), constants, parseStack, resultStack);
+        }
+
+        else if (isParenthesisToken(tokens[i])) {
+            parseGroupExpression(tokens[i], parseStack, resultStack);
+        }
+
+        else {
+            parseOperatorTokens(tokens[i], parseStack, resultStack);
+        }
+    }
+
+    return resultStack;
+}
+
+function parseNumberToken(tokens, resultStack) {
+    let number = "";
+    let currIdx = 0;
+    while (currIdx < tokens.length && isNumberToken(tokens[currIdx])) {
+        number += tokens[currIdx];
+        currIdx++;
+    }
+    resultStack.push({ token: parseInt(number), type: TOKEN_TYPE.Number });
+    return currIdx - 1;
+}
+
+function parseVariableToken(tokens, constants, parseStack, resultStack) {
+    let tempToken = "";
+    let currIdx = 0;
+    while (currIdx < tokens.length &&
+        (isValidNonNumberToken(tokens[currIdx]) || isNumberToken(tokens[currIdx]))) 
+    {
+        tempToken += tokens[currIdx];
+        currIdx++;
+    }
+    if (constants.hasOwnProperty(tempToken)) {
+        resultStack.push({ token: constants[tempToken], type: TOKEN_TYPE.Number });
+    } else if (FUNCTION_TOKENS.includes(tempToken.toUpperCase())) {
+        parseStack.push(tempToken.toUpperCase());
+    } else {
+        resultStack.push({ token: tempToken, type: TOKEN_TYPE.Variable });
+    }
+    return currIdx - 1;
+}
+
+function parseGroupExpression(currentToken, parseStack, resultStack) {
+    if (currentToken == TOKEN.OPEN_PARENTHESIS) {
+        parseStack.push(currentToken);
+    }
+    else if (currentToken == TOKEN.CLOSE_PARENTHESIS) {
+        for (let char = parseStack.pop(); char != TOKEN.OPEN_PARENTHESIS; char = parseStack.pop()) {
+            if (char === undefined) {
+                throw `${INVALID_FORMULA_FORMAT_ERR}. Missing Open Parenthesis`;
+            }
+            pushOperator(resultStack, char);
+        }
+        if (FUNCTION_TOKENS.includes(parseStack[parseStack.length - 1])) {
+            pushOperator(resultStack, parseStack.pop());
+        }
+    }
+}
+
+function parseOperatorTokens(currentToken, parseStack, resultStack) {
+    while (parseStack.length > 0 &&
+        precedence(currentToken) <= precedence(parseStack[parseStack.length - 1])
+    ) {
+        pushOperator(resultStack, parseStack.pop());
+    }
+    parseStack.push(currentToken);
+}
+
+function isRedundantToken(char) {
+    const redundantTokens = [
+        TOKEN.SPACE,
+        TOKEN.COMMA
+    ];
+    return redundantTokens.includes(char);
 }
 
 function isValidNonNumberToken(char) {
@@ -96,10 +143,18 @@ function isValidNonNumberToken(char) {
     );
 }
 
+function isNumberToken(char) {
+    return (char >= '0' && char <= '9');
+}
+
+function isParenthesisToken(char) {
+    return (char == TOKEN.OPEN_PARENTHESIS || char == TOKEN.CLOSE_PARENTHESIS);
+}
+
 function precedence(operator) {
     if (operator == '^') {
         return 3;
-    } else if (operator == '*' || operator == '/' || operator == '÷') {
+    } else if (operator == '*' || operator == '/') {
         return 2;
     } else if (operator == '+' || operator == '-') {
         return 1;
@@ -123,30 +178,53 @@ function evaluate(evalStack, vars) {
 
     let resultStack = [];
     for (let i = 0; i < evalStack.length; i++) {
+        // For testing only, will be removed once PR request is accepted
         console.log(resultStack);
         const tokenObj = evalStack[i];
 
+        let processArgs = [
+            tokenObj.token,
+            resultStack
+        ];
+
         if (tokenObj.type == TOKEN_TYPE.Variable) {
-            if (!vars.hasOwnProperty(tokenObj.token)) {
-                throw `Missing variable ${tokenObj.token}`;
-            }
-            let varValue = vars[tokenObj.token];
-            resultStack.push(varValue);
+            processArgs.push(vars);
+            processVariableToken(...processArgs);
         } else if (tokenObj.type == TOKEN_TYPE.Operator) {
-            let num1 = resultStack.pop();
-            let num2 = resultStack.pop();
-            resultStack.push(applyOperator(tokenObj.token, num1, num2));
+            processOperatorToken(...processArgs);
         } else if (tokenObj.type == TOKEN_TYPE.Function) {
-            let tempArgs = [];
-            while (resultStack.length > 0) {
-                tempArgs.push(resultStack.pop());
-            }
-            resultStack.push(applyFunction(tokenObj.token, tempArgs));
+            processFunctionToken(...processArgs);
         } else {
-            resultStack.push(tokenObj.token);
+            processNumberToken(...processArgs);
         }
     }
     return resultStack.pop();
+}
+
+function processVariableToken(token, resultStack, vars) {
+    if (!vars.hasOwnProperty(token)) {
+        throw `Missing variable ${token}`;
+    }
+    let varValue = vars[token];
+    resultStack.push(varValue);
+}
+
+function processOperatorToken(token, resultStack) {
+    let num1 = resultStack.pop();
+    let num2 = resultStack.pop();
+    resultStack.push(applyOperator(token, num1, num2));
+}
+
+function processFunctionToken(token, resultStack) {
+    let tempArgs = [];
+    while (resultStack.length > 0) {
+        tempArgs.push(resultStack.pop());
+    }
+    resultStack.push(applyFunction(token, tempArgs));
+}
+
+function processNumberToken(token, resultStack) {
+    resultStack.push(token);
 }
 
 function applyOperator(operator, num1, num2) {
@@ -170,11 +248,11 @@ function applyFunction(funcName, args) {
         throw "Function does not exist";
     }
 
-    if (funcName == "MIN") {
+    if (funcName == TOKEN.MIN) {
         return Math.min(...args);
-    } else if (funcName == "MAX") {
+    } else if (funcName == TOKEN.MAX) {
         return Math.max(...args);
-    } else if (funcName == "ROUND") {
+    } else if (funcName == TOKEN.ROUND) {
         return Math.round(...args);
     }
     return 0;

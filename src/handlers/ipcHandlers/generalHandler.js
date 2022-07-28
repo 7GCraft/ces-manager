@@ -34,12 +34,11 @@ const getCurrentSeason = (e) => {
 
 const getFormula = (e, formulaName) => {
     let response = general.getFormula(formulaName);
-    console.log(response);
     response.then(result => {
         e.sender.send("General:getFormulaOK", result);
     })
     .catch(error => {
         console.error(error);
-        e.sender.send("General:getFormulaOK", null);
+        e.sender.send("General:getFormulaError", null);
     })
 }
