@@ -178,8 +178,6 @@ function evaluate(evalStack, vars) {
 
     let resultStack = [];
     for (let i = 0; i < evalStack.length; i++) {
-        // For testing only, will be removed once PR request is accepted
-        console.log(resultStack);
         const tokenObj = evalStack[i];
 
         let processArgs = [
