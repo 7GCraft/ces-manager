@@ -1,0 +1,124 @@
+.to-top {
+    padding: 0.25rem;
+    width: 2rem;
+    height: 2rem;
+    background: #000;
+    color: #fff;
+    position: fixed;
+    bottom: 7px;
+    right: 7px;
+    cursor: pointer;
+    text-align: center;
+    display: none;
+}
+
+.to-top i {
+    border-color: white;
+    border-width: 0 4px 4px 0;
+}
+
+.options-wrapper {
+    border: 1.1px solid black;
+}
+
+#componentTemplateRow, #emptyTableTemplateAlert {
+    display: none;
+}
+
+.childComponentRow {
+    display: none;
+    background-color: #EEEEEE;
+}
+
+.childComponentRow.show {
+    display: table-row;
+}
+
+#numberCell { 
+    height: 100%;
+}
+
+.childComponentRow > #numberCell {
+    background-image: url('../../images/icons/down_right_corner.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 35%;
+}
+
+.valueFood {
+    color: green;
+}
+
+.valueMoney {
+    color: #d1b422;
+}
+
+.valueResource {
+    color: purple;
+}
+
+.valuePopulation {
+    color: #e68a2e;
+}
+
+.valueBuilding {
+    color: brown;
+}
+
+.valueSpecial {
+    color: #23b8cc;
+}
+
+.action-img {
+    height: 15px;
+    width:15px;
+}
+
+.action-img:focus {
+    outline: none;
+}
+
+.alert-wrapper {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+#insertResultTemplateAlert > .success-message, #insertResultTemplateAlert > .fail-message {
+    display: none;
+}
+
+.alert-success#insertResultTemplateAlert > .success-message {
+    display: block;
+}
+
+.alert-danger#insertResultTemplateAlert > .fail-message {
+    display: block;
+}
+
+.card-header > .btn {
+    display: flex;
+    align-items: center;
+    box-shadow: none;
+    text-decoration: none;
+}
+
+.card-header i {
+    margin-left: 10px;
+}
+
+i.simple-arrow.down {
+    transition: transform 0.25s ease-in;
+}
+
+i.simple-arrow.up {
+    transition: transform 0.25s ease-in;
+}
+
+.card-body {
+    padding-left: 0;
+}
+
+#mdlConfirmInsert .modal-footer > button {
+    min-width: 70px;
+}

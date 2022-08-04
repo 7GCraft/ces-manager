@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <template>
+        <div class="container template" id="tradeAgreementList-template" data-tab="tradeAgreementList">
+            <div id="tradeAgreementMessage">
+
+            </div>
+
+            <h1>Trade Agreements List</h1>
+            <br>
+
+            <button class="btn btn-success" id="btnAddAgreement" data-toggle="modal"
+                data-target="#mdlAddUpdateAgreement">Add New Trade Agreement</button>
+
+            <button class="btn btn-primary" id="btnUpdateAgreement" data-toggle="modal"
+                data-target="#mdlAddUpdateAgreement">Update Existing Trade Agreement</button>
+
+            <button class="btn btn-danger" id="btnDeleteAgreement" data-toggle="modal"
+                data-target="#mdlDeleteAgreement">Delete Trade Agreement(s)</button>
+                <br><br>
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark" style="text-align: center;">
+                    <tr>
+                        <th rowspan="1" colspan="4">
+                            First State
+                        </th>
+                        <th rowspan="1" colspan="4">
+                            Second State
+                        </th>
+                        <th rowspan="2">Description</th>
+                    </tr>
+                    <tr>
+                        <th>State Name</th>
+                        <th>Resources Traded</th>
+                        <th>Trade Power</th>
+                        <th>Trade Value</th>
+                        <th>State Name</th>
+                        <th>Resources Traded</th>
+                        <th>Trade Power</th>
+                        <th>Trade Value</th>
+                    </tr>
+                </thead>
+                <tbody id="tradeAgreements">
+                </tbody>
+            </table>
+            <script src="renderers/PartialViewRenderers/frontPage/tradeAgreementListRenderer.js" defer></script>
+        </div>
+
+        <div class="modal fade" id="mdlAddUpdateAgreement" tabindex="-1" role="dialog"
+            aria-labelledby="mdlAddUpdateAgreementLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mdlAddUpdateAgreementLabel">Add or Update Trade Agreement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="frmAddUpdateAgreement">
+                        <div class="modal-body">
+                            <div class="form-group" id="selTradeAgreementField">
+                                <label for="selTradeAgreement">Select Trade Agreement</label>
+                                <select class="form-control" name="selTradeAgreement" id="selTradeAgreement"></select>
+                            </div>
+
+                            <div class="container-fluid" id="agreementFields">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="selFirstState">Select First State</label>
+                                        <select class="form-control" name="selFirstState" id="selFirstState"
+                                            required></select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="selSecondState">Select Second State</label>
+                                        <select class="form-control" name="selSecondState" id="selSecondState"
+                                            required></select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="selFirstResource">Select Resource(s)</label>
+                                        <select class="form-control" name="selFirstResource" id="selFirstResource"
+                                            multiple class="form-select"></select>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="selSecondResource">Select Resource(s)</label>
+                                        <select class="form-control" name="selSecondResource" id="selSecondResource"
+                                            multiple class="form-select"></select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="txtAgreementDesc">Description</label>
+                                    <textarea class="form-control" name="txtAgreementDesc" id="txtAgreementDesc"
+                                        cols="30" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-primary"></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="mdlDeleteAgreement" tabindex="-1" role="dialog"
+            aria-labelledby="mdlDeleteAgreementLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mdlDeleteAgreementLabel">Delete Trade Agreement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form id="frmDeleteAgreement">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="selAgreementDelete">Choose Agreements to Delete</label>
+                                <select name="selAgreementDelete" id="selAgreementDelete" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-primary"></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
+</body>
+
+</html>
