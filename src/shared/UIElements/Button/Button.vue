@@ -19,7 +19,6 @@ export default {
     type: String,
     state: Boolean,
     size: String,
-    name: String,
   },
 };
 </script>
