@@ -163,6 +163,28 @@ const updateFacility = async (facility) => {
     return resValue;
 }
 
+const addMultipleFacilities = async (facilities) => {
+    let resValue = true;
+
+    const knex = dbContext.getKnexObject();
+
+    const mappedFacilities = facilities.map(facility => ({
+        regionId: facility.regionId,
+        name: facility.facilityName,
+        isFunctional: facility.isFunctional ? 1 : 0
+    }));
+
+    await knex
+        .insert(mappedFacilities)
+        .into(constants.TABLE_FACILITY)
+        .catch(e => {
+            console.error(e);
+            resValue = false;
+        })
+
+    return resValue;
+}
+
 /**
  * Deletes the facility of a given ID without deleting its components.
  * @param {Number} id must be an integer.
@@ -257,4 +279,4 @@ exports.deleteFacilityById = deleteFacilityById;
 exports.destroyFacilityById = destroyFacilityById;
 exports.assignFacilityComponents = assignFacilityComponents;
 exports.getFacilitiesByStateId = getFacilitiesByStateId;
-
+exports.addMultipleFacilities = addMultipleFacilities;
