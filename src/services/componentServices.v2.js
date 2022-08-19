@@ -7,6 +7,8 @@ const facilityServices = require(config.paths.facilityServices);
 const dbContext = require('../repository/DbContext');
 const Component = require(config.paths.componentModel);
 
+const INSUFFICIENT_TREASURY_ERROR_MESSAGE = "Cost exceeding treasury amount";
+
 /**
  * Creates a new component.
  * @param {Component} component must be a component object.
@@ -29,15 +31,14 @@ const Component = require(config.paths.componentModel);
         newParentId = component.parentId;
     }
 
-    let costCalcReturn = await calculateComponentCost(component.cost, component.regionId);
+    let calculateCostStatus = await calculateComponentCost(component.cost, component.regionId);
 
-    if(costCalcReturn === "Cost exceeding treasury amount"){
-        resStatus = costCalcReturn;
-        return resStatus
+    if(!calculateCostStatus){
+        return INSUFFICIENT_TREASURY_ERROR_MESSAGE;
     }
 
     if (tempFacilityName != null) {
-        const mapKey = -1;
+        const mapKey = null;
         component.facilityId = mapKey;
         let tempFacilityMap = new Map([[mapKey, tempFacilityName]]);
         let facilityInsertStatus = await allocateTemporaryFacilitiesToComponents([component], tempFacilityMap);
@@ -90,7 +91,7 @@ const Component = require(config.paths.componentModel);
     }
 
     if (tempFacilityName != null) {
-        const mapKey = -1;
+        const mapKey = null;
         component.facilityId = mapKey;
         let tempFacilityMap = new Map([[mapKey, tempFacilityName]]);
         let facilityInsertStatus = await allocateTemporaryFacilitiesToComponents([component], tempFacilityMap);
@@ -163,11 +164,11 @@ const Component = require(config.paths.componentModel);
         totalCost += parseInt(component.cost);
     });
 
-    let costCalcReturn = await calculateComponentCost(totalCost, components[0].regionId)
+    let calculateCostStatus = await calculateComponentCost(totalCost, components[0].regionId)
 
-    if(costCalcReturn === "Cost exceeding treasury amount"){
-        resStatus = false;
-        return resStatus
+    if(!calculateCostStatus){
+        console.error("Cost exceeding treasury amount");
+        return false;
     }
 
     try {
@@ -217,7 +218,7 @@ const Component = require(config.paths.componentModel);
  * @returns {Boolean} true if successful, false otherwise.
  */
  const calculateComponentCost = async (cost, regionId) => {
-    let resStatus = "OK";
+    let resStatus = true;
     const knex = dbContext.getKnexObject();
     let stateTreasury = await knex
         .select(constants.COLUMN_TREASURY_AMT, constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID)
@@ -232,8 +233,7 @@ const Component = require(config.paths.componentModel);
     let newTreasuryAmt = stateTreasury[0].treasuryAmt - cost;
     
     if(newTreasuryAmt < 0){
-        resStatus = "Cost exceeding treasury amount";
-        return resStatus;
+        return false;
     }
 
     await knex(constants.TABLE_STATE)
@@ -241,7 +241,7 @@ const Component = require(config.paths.componentModel);
         .where(constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID, stateTreasury[0].stateId)
         .catch(e => {
             console.error(e);
-            resStatus = "SQL Error. Something went wrong when updating Treasury";
+            resStatus = false;
         });
     return resStatus;
 }
