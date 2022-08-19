@@ -283,6 +283,30 @@ const reformatTradeAgreements = async(tradeAgreements, initialState, i) => {
     return stateTradeAgreements;
 }
 
+const cellFormating = async(sheet, baseCell, targetCell, value, cellColor) => {
+    sheet.mergeCells(baseCell+':'+targetCell);
+    sheet.getCell(baseCell).value = value;
+    sheet.getCell(baseCell).font = {name: 'Calibri', size: 24, bold: true};
+    sheet.getCell(baseCell).alignment = { vertical: 'middle', horizontal: 'center' }; 
+    console.log(cellColor[0]);
+    sheet.getCell(baseCell).fill = {
+        type: 'gradient',
+        gradient: 'angle',
+        degree: 0,
+        stops: [
+            {position:0, color:{argb:cellColor[0]}},
+            {position:0.5, color:{argb:cellColor[1]}},
+            {position:1, color:{argb:cellColor[2]}}
+        ]
+    };
+    sheet.getCell(baseCell).border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+}
+
 /**
  * Exports seasonal report to excel. Called from advanceSeason()
  * @returns {Boolean} true if successful, false otherwise.
@@ -320,88 +344,10 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             updatedStateInfo = stateInfos[1];
 
             //Make title for each sheet with stylings
-            sheet.mergeCells('A1:L3');
-            sheet.getCell('A1').value = initialState[i].stateName;
-            sheet.getCell('A1').font = {name: 'Calibri', size: 24, bold: true};
-            sheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' }; sheet.getCell('A1').fill = {
-                type: 'gradient',
-                gradient: 'angle',
-                degree: 0,
-                stops: [
-                    {position:0, color:{argb:'C85C5C'}},
-                    {position:0.5, color:{argb:'F9975D'}},
-                    {position:1, color:{argb:'C85C5C'}}
-                ]
-            };
-            sheet.getCell('A1').border = {
-                top: {style:'thin'},
-                left: {style:'thin'},
-                bottom: {style:'thin'},
-                right: {style:'thin'}
-            };
-
-            sheet.mergeCells('A4:L4')
-            sheet.getCell('A4').value = prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1];
-            sheet.getCell('A4').font = {name: 'Calibri', size: 14, bold: true};
-            sheet.getCell('A4').alignment = { vertical: 'middle', horizontal: 'center' };
-            sheet.getCell('A4').fill = {
-                type: 'gradient',
-                gradient: 'angle',
-                degree: 0,
-                stops: [
-                    {position:0, color:{argb:'96C8FB'}},
-                    {position:0.5, color:{argb:'96C8FB'}},
-                    {position:1, color:{argb:'96C8FB'}}
-                ]
-            };
-            sheet.getCell('A4').border = {
-                top: {style:'thin'},
-                left: {style:'thin'},
-                bottom: {style:'thin'},
-                right: {style:'thin'}
-            };
-
-            sheet.mergeCells('A6:D6');
-            sheet.getCell('A6').value = 'General State Info';
-            sheet.getCell('A6').font = {name: 'Calibri', size: 14, bold: true};
-            sheet.getCell('A6').alignment = { vertical: 'middle', horizontal: 'center' };
-            sheet.getCell('A6').fill = {
-                type: 'gradient',
-                gradient: 'angle',
-                degree: 0,
-                stops: [
-                    {position:0, color:{argb:'C85C5C'}},
-                    {position:0.5, color:{argb:'F9975D'}},
-                    {position:1, color:{argb:'C85C5C'}}
-                ]
-            };
-            sheet.getCell('A6').border = {
-                top: {style:'thin'},
-                left: {style:'thin'},
-                bottom: {style:'thin'},
-                right: {style:'thin'}
-            };
-
-            sheet.mergeCells('G6:L6');
-            sheet.getCell('G6').value = 'Region Info';
-            sheet.getCell('G6').font = {name: 'Calibri', size: 14, bold: true};
-            sheet.getCell('G6').alignment = { vertical: 'middle', horizontal: 'center' };
-            sheet.getCell('G6').fill = {
-                type: 'gradient',
-                gradient: 'angle',
-                degree: 0,
-                stops: [
-                    {position:0, color:{argb:'C85C5C'}},
-                    {position:0.5, color:{argb:'F9975D'}},
-                    {position:1, color:{argb:'C85C5C'}}
-                ]
-            };
-            sheet.getCell('G6').border = {
-                top: {style:'thin'},
-                left: {style:'thin'},
-                bottom: {style:'thin'},
-                right: {style:'thin'}
-            };
+            await cellFormating(sheet, 'A1', 'L3', initialState[i].stateName, ['C85C5C','F9975D','C85C5C'])
+            await cellFormating(sheet, 'A4', 'L4', prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1], ['96C8FB','96C8FB','96C8FB'])
+            await cellFormating(sheet, 'A6', 'D6', 'General State Info', ['C85C5C','F9975D','C85C5C'])
+            await cellFormating(sheet, 'G6', 'L6', 'Region Info', ['C85C5C','F9975D','C85C5C'])
 
             let increment = 0;
             sheet.getCell('A'+ (7 + increment).toString()).value = stateInfoRowNames[0];
@@ -471,26 +417,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             let stateResources = await reformatStateResources(updatedState, i);
 
             if(Array.isArray(stateResources) && stateResources.length){
-                sheet.mergeCells('A'+lastRowNum + ':C' + lastRowNum);
-                sheet.getCell('A'+lastRowNum).value = 'Productive Resources';
-                sheet.getCell('A'+lastRowNum).font = {name: 'Calibri', size: 14, bold: true};
-                sheet.getCell('A'+lastRowNum).alignment = { vertical: 'middle', horizontal: 'center' };
-                sheet.getCell('A'+lastRowNum).fill = {
-                    type: 'gradient',
-                    gradient: 'angle',
-                    degree: 0,
-                    stops: [
-                        {position:0, color:{argb:'C85C5C'}},
-                        {position:0.5, color:{argb:'F9975D'}},
-                        {position:1, color:{argb:'C85C5C'}}
-                    ]
-                };
-                sheet.getCell('A'+lastRowNum).border = {
-                    top: {style:'thin'},
-                    left: {style:'thin'},
-                    bottom: {style:'thin'},
-                    right: {style:'thin'}
-                };
+                await cellFormating(sheet, 'A'+lastRowNum, 'C' + lastRowNum, 'Productive Resources', ['C85C5C','F9975D','C85C5C'])
 
                 increment = 1;
                 
@@ -538,26 +465,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             let stateTradeAgreements = await reformatTradeAgreements(tradeAgreements, initialState, i);
 
             if(Array.isArray(stateTradeAgreements) && stateTradeAgreements.length){
-                sheet.mergeCells('G'+lastRowNum + ':I' + lastRowNum);
-                sheet.getCell('G'+lastRowNum).value = 'Trade Agreements';
-                sheet.getCell('G'+lastRowNum).font = {name: 'Calibri', size: 14, bold: true};
-                sheet.getCell('G'+lastRowNum).alignment = { vertical: 'middle', horizontal: 'center' };
-                sheet.getCell('G'+lastRowNum).fill = {
-                    type: 'gradient',
-                    gradient: 'angle',
-                    degree: 0,
-                    stops: [
-                        {position:0, color:{argb:'C85C5C'}},
-                        {position:0.5, color:{argb:'F9975D'}},
-                        {position:1, color:{argb:'C85C5C'}}
-                    ]
-                };
-                sheet.getCell('G'+lastRowNum).border = {
-                    top: {style:'thin'},
-                    left: {style:'thin'},
-                    bottom: {style:'thin'},
-                    right: {style:'thin'}
-                };
+                await cellFormating(sheet, 'G'+lastRowNum, 'I' + lastRowNum, 'Trade Agreements', ['C85C5C','F9975D','C85C5C'])
 
                 increment = 1;
                 
