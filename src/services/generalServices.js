@@ -283,7 +283,7 @@ const reformatTradeAgreements = async(tradeAgreements, initialState, i) => {
     return stateTradeAgreements;
 }
 
-const cellFormating = async(sheet, baseCell, targetCell, value, cellColor) => {
+const formatCell = async(sheet, baseCell, targetCell, value, cellColor) => {
     sheet.mergeCells(baseCell+':'+targetCell);
     sheet.getCell(baseCell).value = value;
     sheet.getCell(baseCell).font = {name: 'Calibri', size: 24, bold: true};
@@ -306,6 +306,7 @@ const cellFormating = async(sheet, baseCell, targetCell, value, cellColor) => {
         right: {style:'thin'}
     };
 }
+
 
 /**
  * Exports seasonal report to excel. Called from advanceSeason()
@@ -344,10 +345,10 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             updatedStateInfo = stateInfos[1];
 
             //Make title for each sheet with stylings
-            await cellFormating(sheet, 'A1', 'L3', initialState[i].stateName, ['C85C5C','F9975D','C85C5C'])
-            await cellFormating(sheet, 'A4', 'L4', prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1], ['96C8FB','96C8FB','96C8FB'])
-            await cellFormating(sheet, 'A6', 'D6', 'General State Info', ['C85C5C','F9975D','C85C5C'])
-            await cellFormating(sheet, 'G6', 'L6', 'Region Info', ['C85C5C','F9975D','C85C5C'])
+            await formatCell(sheet, 'A1', 'L3', initialState[i].stateName, ['C85C5C','F9975D','C85C5C'])
+            await formatCell(sheet, 'A4', 'L4', prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1], ['96C8FB','96C8FB','96C8FB'])
+            await formatCell(sheet, 'A6', 'D6', 'General State Info', ['C85C5C','F9975D','C85C5C'])
+            await formatCell(sheet, 'G6', 'L6', 'Region Info', ['C85C5C','F9975D','C85C5C'])
 
             let increment = 0;
             sheet.getCell('A'+ (7 + increment).toString()).value = stateInfoRowNames[0];
@@ -413,11 +414,10 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             let lastRowNum = sheet.lastRow.number;
             lastRowNum += 2;
 
-            //Reformat state resources by name, tier, and count
             let stateResources = await reformatStateResources(updatedState, i);
 
             if(Array.isArray(stateResources) && stateResources.length){
-                await cellFormating(sheet, 'A'+lastRowNum, 'C' + lastRowNum, 'Productive Resources', ['C85C5C','F9975D','C85C5C'])
+                await formatCell(sheet, 'A'+lastRowNum, 'C' + lastRowNum, 'Productive Resources', ['C85C5C','F9975D','C85C5C'])
 
                 increment = 1;
                 
@@ -461,11 +461,10 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 });
             }
 
-            //Reformat trade agreements to Partner State, Our Trade Power, and Income From Trade
             let stateTradeAgreements = await reformatTradeAgreements(tradeAgreements, initialState, i);
 
             if(Array.isArray(stateTradeAgreements) && stateTradeAgreements.length){
-                await cellFormating(sheet, 'G'+lastRowNum, 'I' + lastRowNum, 'Trade Agreements', ['C85C5C','F9975D','C85C5C'])
+                await formatCell(sheet, 'G'+lastRowNum, 'I' + lastRowNum, 'Trade Agreements', ['C85C5C','F9975D','C85C5C'])
 
                 increment = 1;
                 
