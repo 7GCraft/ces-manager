@@ -288,7 +288,6 @@ const formatCell = async(sheet, baseCell, targetCell, value, cellColor) => {
     sheet.getCell(baseCell).value = value;
     sheet.getCell(baseCell).font = {name: 'Calibri', size: 24, bold: true};
     sheet.getCell(baseCell).alignment = { vertical: 'middle', horizontal: 'center' }; 
-    console.log(cellColor[0]);
     sheet.getCell(baseCell).fill = {
         type: 'gradient',
         gradient: 'angle',
@@ -335,6 +334,9 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
     let initialStateInfo = [];
     let updatedStateInfo = [];
     try{
+        const RED = 'C85C5C';
+        const ORANGE = 'F9975D'
+        const LIGHT_BLUE = '96C8FB'
         const tradeAgreements = await tradeAgreementServices.getTradeAgreementAll();
         for(let i = 0; i < initialState.length; i++){
             let sheet = workbook.addWorksheet(initialState[i].stateName);
@@ -345,10 +347,10 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             updatedStateInfo = stateInfos[1];
 
             //Make title for each sheet with stylings
-            await formatCell(sheet, 'A1', 'L3', initialState[i].stateName, ['C85C5C','F9975D','C85C5C'])
-            await formatCell(sheet, 'A4', 'L4', prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1], ['96C8FB','96C8FB','96C8FB'])
-            await formatCell(sheet, 'A6', 'D6', 'General State Info', ['C85C5C','F9975D','C85C5C'])
-            await formatCell(sheet, 'G6', 'L6', 'Region Info', ['C85C5C','F9975D','C85C5C'])
+            await formatCell(sheet, 'A1', 'L3', initialState[i].stateName, [RED,ORANGE,RED])
+            await formatCell(sheet, 'A4', 'L4', prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1], [LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE])
+            await formatCell(sheet, 'A6', 'D6', 'General State Info', [RED,ORANGE,RED])
+            await formatCell(sheet, 'G6', 'L6', 'Region Info', [RED,ORANGE,RED])
 
             let increment = 0;
             sheet.getCell('A'+ (7 + increment).toString()).value = stateInfoRowNames[0];
@@ -383,8 +385,8 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 sheet.getCell(key).fill ={
                     type: 'pattern',
                     pattern: 'lightVertical',
-                    fgColor: { argb: '96C8FB' },
-                    bgColor: { argb: '96C8FB' }
+                    fgColor: { argb: LIGHT_BLUE },
+                    bgColor: { argb: LIGHT_BLUE }
                 }
                 sheet.getCell(key).font ={
                     name: 'Calibri',
@@ -417,7 +419,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             let stateResources = await reformatStateResources(updatedState, i);
 
             if(Array.isArray(stateResources) && stateResources.length){
-                await formatCell(sheet, 'A'+lastRowNum, 'C' + lastRowNum, 'Productive Resources', ['C85C5C','F9975D','C85C5C'])
+                await formatCell(sheet, 'A'+lastRowNum, 'C' + lastRowNum, 'Productive Resources', [RED,ORANGE,RED])
 
                 increment = 1;
                 
@@ -432,8 +434,8 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     sheet.getCell(key).fill ={
                         type: 'pattern',
                         pattern: 'lightVertical',
-                        fgColor: { argb: '96C8FB' },
-                        bgColor: { argb: '96C8FB' }
+                        fgColor: { argb: LIGHT_BLUE },
+                        bgColor: { argb: LIGHT_BLUE }
                     }
                     sheet.getCell(key).font ={
                         name: 'Calibri',
@@ -464,7 +466,7 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             let stateTradeAgreements = await reformatTradeAgreements(tradeAgreements, initialState, i);
 
             if(Array.isArray(stateTradeAgreements) && stateTradeAgreements.length){
-                await formatCell(sheet, 'G'+lastRowNum, 'I' + lastRowNum, 'Trade Agreements', ['C85C5C','F9975D','C85C5C'])
+                await formatCell(sheet, 'G'+lastRowNum, 'I' + lastRowNum, 'Trade Agreements', [RED,ORANGE,RED])
 
                 increment = 1;
                 
@@ -479,8 +481,8 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     sheet.getCell(key).fill ={
                         type: 'pattern',
                         pattern: 'lightVertical',
-                        fgColor: { argb: '96C8FB' },
-                        bgColor: { argb: '96C8FB' }
+                        fgColor: { argb: LIGHT_BLUE },
+                        bgColor: { argb: LIGHT_BLUE }
                     }
                     sheet.getCell(key).font ={
                         name: 'Calibri',
