@@ -1,37 +1,42 @@
 <template>
     <b-input
-        :id="inputId"
         v-if="type == InputType.Text || type == InputType.Number"
+        :id="inputId"
         v-model="inputValue"
         :type="(type == InputType.Number) ? 'number' : 'text'"
         :class="inputClass"
         v-bind="inputAttributes"
     ></b-input>
     <b-textarea
-        :id="inputId"
         v-else-if="type == InputType.Textarea"
+        :id="inputId"
         v-model="inputValue"
         :class="inputClass"
         v-bind="inputAttributes"
     ></b-textarea>
-    <b-checkbox
-        :id="inputId"
+    <b-checkbox-group
         v-else-if="type == InputType.Checkbox"
-        v-model="inputValue"
-        :class="inputClass"
-        v-bind="inputAttributes"
-    >
-        <slot />
-    </b-checkbox>
-    <b-radio
         :id="inputId"
+        v-model="inputValue"
+        :class="inputClass"
+        v-bind="inputAttributes"
+    ></b-checkbox-group>
+    <b-radio-group
         v-else-if="type == InputType.Radio"
+        :id="inputId"
         v-model="inputValue"
         :class="inputClass"
         v-bind="inputAttributes"
     >
-        <slot />
-    </b-radio>
+    </b-radio-group>
+    <b-form-select
+        v-else-if="type == InputType.Dropdown"
+        :id="inputId"
+        v-model="inputValue"
+        :class="inputClass"
+        v-bind="inputAttributes"
+    >
+    </b-form-select>
 </template>
 
 <script>
@@ -71,7 +76,7 @@ export default {
             }
         },
         inputId: function () {
-            return `${id}-input`;
+            return `${this.id}-input`;
         },
         InputType: function() {
             return InputType;
@@ -103,15 +108,19 @@ export default {
                 case InputType.Checkbox:
                     allowedAttributes = [
                         "options",
-                        "inline"
+                        "stacked"
                     ];
                     break;
                 case InputType.Radio:
-                    allowedAttributes = [];
+                    allowedAttributes = [
+                        "options",
+                        "stacked"
+                    ];
                     break;
                 case InputType.Dropdown:
                     allowedAttributes = [
-                        'items'
+                        "options",
+                        "multiple"
                     ];
                     break;
                 default:
