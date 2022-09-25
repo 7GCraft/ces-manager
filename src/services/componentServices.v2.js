@@ -31,9 +31,9 @@ const INSUFFICIENT_TREASURY_ERROR_MESSAGE = "Cost exceeding treasury amount";
         newParentId = component.parentId;
     }
 
-    let calculateCostStatus = await calculateComponentCost(component.cost, component.regionId);
+    let isTreasurySufficient = await calculateComponentCost(component.cost, component.regionId);
 
-    if(!calculateCostStatus){
+    if(!isTreasurySufficient){
         return INSUFFICIENT_TREASURY_ERROR_MESSAGE;
     }
 
@@ -164,10 +164,9 @@ const INSUFFICIENT_TREASURY_ERROR_MESSAGE = "Cost exceeding treasury amount";
         totalCost += parseInt(component.cost);
     });
 
-    let calculateCostStatus = await calculateComponentCost(totalCost, components[0].regionId)
+    let isTreasurySufficient = await calculateComponentCost(totalCost, components[0].regionId)
 
-    if(!calculateCostStatus){
-        console.error("Cost exceeding treasury amount");
+    if(!isTreasurySufficient){
         return false;
     }
 
