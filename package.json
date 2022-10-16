@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron .",
     "test": "jest --runInBand",
-    "rebuild": "electron-rebuild -f -w sqlite3"
+    "rebuild": "electron-rebuild -f -w sqlite3",
     "lint": "./node_modules/.bin/eslint"
   },
   "repository": {
