@@ -7,6 +7,7 @@
         :class="inputClass"
         v-bind="inputAttributes"
     ></b-input>
+
     <b-textarea
         v-else-if="type == InputType.Textarea"
         :id="inputId"
@@ -14,6 +15,7 @@
         :class="inputClass"
         v-bind="inputAttributes"
     ></b-textarea>
+
     <b-checkbox-group
         v-else-if="type == InputType.Checkbox"
         :id="inputId"
@@ -21,6 +23,7 @@
         :class="inputClass"
         v-bind="inputAttributes"
     ></b-checkbox-group>
+
     <b-radio-group
         v-else-if="type == InputType.Radio"
         :id="inputId"
@@ -29,6 +32,7 @@
         v-bind="inputAttributes"
     >
     </b-radio-group>
+    
     <b-form-select
         v-else-if="type == InputType.Dropdown"
         :id="inputId"
