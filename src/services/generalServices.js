@@ -193,10 +193,127 @@ const getCurrentSeason = async () => {
     return season;
 }
 
+
+const initializeExcelColumns = async () => {
+    return [
+        {key: 'stateInfoNames', width: 42.5, style: { font: { name: 'Calibri' }}},
+        {key: 'initialStateInfo', width: 10, style: { font: { name: 'Calibri' }}},
+        {key: 'to_state', width: 10, style: { font: { name: 'Calibri' }}},
+        {key: 'updatedStateInfo', width: 10, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
+        {key: 'empty_1', width: 10, style: { font: { name: 'Calibri' }}},
+        {key: 'empty_2', width: 10, style: { font: { name: 'Calibri' }}},
+        {key: 'regionName', width: 25, style: { font: { name: 'Calibri' }}},
+        {key: 'regionIncome', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
+        {key: 'foodProduced', width: 25, style: { font: { name: 'Calibri' }}},
+        {key: 'populationUsed', width: 25, style: { font: { name: 'Calibri' }}},
+        {key: 'currPopulation', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
+        {key: 'maxPopulation', width: 25, style: { font: { name: 'Calibri' }}},
+    ];
+};
+
+
+const populateStateInfo = async(initialState, updatedState, i) => {
+    let initialStateInfo = [];
+    let updatedStateInfo = [];
+    let facilityCount = await facility.getFacilityCountByStateId(updatedState[i].stateID)
+    let adminCost = await stateServices.getAdminCostByStateId(updatedState[i].stateID);
+    let updatedExpectedIncome = parseFloat(parseFloat(updatedState[i].TotalIncome).toFixed(2) - parseFloat(updatedState[i].expenses).toFixed(2) - parseFloat(adminCost).toFixed(2)).toFixed(2);
+
+    initialStateInfo = [
+        initialState[i].treasuryAmt,
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        'N/A',
+        initialState[i].TotalPopulation,
+        'N/A',
+        'N/A',
+        'N/A',
+    ]
+    updatedStateInfo = [
+        updatedState[i].treasuryAmt,
+        updatedState[i].TotalIncome,
+        updatedState[i].expenses,
+        adminCost,
+        updatedState[i].adminRegionModifier * 100 + '%',
+        adminCost + updatedState[i].expenses,
+        updatedState[i].TotalFoodProduced,
+        updatedState[i].TotalFoodConsumed,
+        updatedState[i].TotalFoodAvailable,
+        updatedState[i].TotalPopulation,
+        updatedState[i].AvgDevLevel,
+        facilityCount,
+        updatedExpectedIncome,
+    ]
+
+    return [initialStateInfo, updatedStateInfo];
+}
+
+const reformatStateResources = async (updatedState, i) => {
+    let stateResources = [];
+    updatedState[i].ProductiveResources.map(resource => {
+        resourceIdx = stateResources.findIndex(obj => obj.name == resource.ResourceName);
+        if(resourceIdx >= 0){
+            stateResources[resourceIdx].count += 1;
+        }
+        else{
+            stateResources.push({'name': resource.ResourceName, 'tier': resource.ResourceTierID, 'count' : 1})
+        }
+    });
+
+    stateResources.sort((a, b) => {
+        return a.tier - b.tier || a.name.localeCompare(b.name)
+    });
+
+    return stateResources;
+}
+
+const reformatTradeAgreements = async(tradeAgreements, initialState, i) => {
+    let stateTradeAgreements = [];
+
+    tradeAgreements.map(agreement => {
+        let traderIdx = agreement.traders.findIndex(obj => obj.state.stateID == initialState[i].stateID);
+        if (traderIdx > -1){
+            stateTradeAgreements.push({'partnerState':(traderIdx == 0) ? agreement.traders[1].state.stateName : agreement.traders[0].state.stateName, 'tradePower': parseFloat(agreement.traders[traderIdx].tradePower * 100).toFixed(2) + '%', 'tradeValue': agreement.traders[traderIdx].tradeValue })
+        }
+    });
+
+    return stateTradeAgreements;
+}
+
+const formatCell = async(sheet, baseCell, targetCell, value, cellColor) => {
+    sheet.mergeCells(baseCell+':'+targetCell);
+    sheet.getCell(baseCell).value = value;
+    sheet.getCell(baseCell).font = {name: 'Calibri', size: 24, bold: true};
+    sheet.getCell(baseCell).alignment = { vertical: 'middle', horizontal: 'center' }; 
+    sheet.getCell(baseCell).fill = {
+        type: 'gradient',
+        gradient: 'angle',
+        degree: 0,
+        stops: [
+            {position:0, color:{argb:cellColor[0]}},
+            {position:0.5, color:{argb:cellColor[1]}},
+            {position:1, color:{argb:cellColor[2]}}
+        ]
+    };
+    sheet.getCell(baseCell).border = {
+        top: {style:'thin'},
+        left: {style:'thin'},
+        bottom: {style:'thin'},
+        right: {style:'thin'}
+    };
+}
+
+
 /**
  * Exports seasonal report to excel. Called from advanceSeason()
  * @returns {Boolean} true if successful, false otherwise.
  */
+
 const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSeasonYear) => {
     let resStatus = true;
     const workbook = new excel.Workbook();
@@ -219,140 +336,23 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
     let initialStateInfo = [];
     let updatedStateInfo = [];
     try{
+        const RED = 'C85C5C';
+        const ORANGE = 'F9975D'
+        const LIGHT_BLUE = '96C8FB'
         const tradeAgreements = await tradeAgreementServices.getTradeAgreementAll();
         for(let i = 0; i < initialState.length; i++){
             let sheet = workbook.addWorksheet(initialState[i].stateName);
-            sheet.columns = [
-                {key: 'stateInfoNames', width: 42.5, style: { font: { name: 'Calibri' }}},
-                {key: 'initialStateInfo', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'to_state', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'updatedStateInfo', width: 10, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
-                {key: 'empty_1', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'empty_2', width: 10, style: { font: { name: 'Calibri' }}},
-                {key: 'regionName', width: 25, style: { font: { name: 'Calibri' }}},
-                {key: 'regionIncome', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
-                {key: 'foodProduced', width: 25, style: { font: { name: 'Calibri' }}},
-                {key: 'populationUsed', width: 25, style: { font: { name: 'Calibri' }}},
-                {key: 'currPopulation', width: 25, style: { font: { name: 'Calibri' }, alignment: {vertical: 'bottom', horizontal: 'right'}}},
-                {key: 'maxPopulation', width: 25, style: { font: { name: 'Calibri' }}},
-            ]
-            let facilityCount = await facility.getFacilityCountByStateId(updatedState[i].stateID)
-            let adminCost = await stateServices.getAdminCostByStateId(updatedState[i].stateID);
-            let updatedExpectedIncome = parseFloat(parseFloat(updatedState[i].TotalIncome).toFixed(2) - parseFloat(updatedState[i].expenses).toFixed(2) - parseFloat(adminCost).toFixed(2)).toFixed(2);
+            sheet.columns = await initializeExcelColumns();
 
-            initialStateInfo = [
-                initialState[i].treasuryAmt,
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                'N/A',
-                initialState[i].TotalPopulation,
-                'N/A',
-                'N/A',
-                'N/A',
-            ]
-            updatedStateInfo = [
-                updatedState[i].treasuryAmt,
-                updatedState[i].TotalIncome,
-                updatedState[i].expenses,
-                adminCost,
-                updatedState[i].adminRegionModifier * 100 + '%',
-                adminCost + updatedState[i].expenses,
-                updatedState[i].TotalFoodProduced,
-                updatedState[i].TotalFoodConsumed,
-                updatedState[i].TotalFoodAvailable,
-                updatedState[i].TotalPopulation,
-                updatedState[i].AvgDevLevel,
-                facilityCount,
-                updatedExpectedIncome,
-            ]
+            let stateInfos = await populateStateInfo(initialState, updatedState, i)
+            initialStateInfo = stateInfos[0];
+            updatedStateInfo = stateInfos[1];
+
             //Make title for each sheet with stylings
-            sheet.mergeCells('A1:L3');
-            sheet.getCell('A1').value = initialState[i].stateName;
-            sheet.getCell('A1').font = {name: 'Calibri', size: 24, bold: true};
-            sheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' }; sheet.getCell('A1').fill = {
-                type: 'gradient',
-                gradient: 'angle',
-                degree: 0,
-                stops: [
-                    {position:0, color:{argb:'C85C5C'}},
-                    {position:0.5, color:{argb:'F9975D'}},
-                    {position:1, color:{argb:'C85C5C'}}
-                ]
-            };
-            sheet.getCell('A1').border = {
-                top: {style:'thin'},
-                left: {style:'thin'},
-                bottom: {style:'thin'},
-                right: {style:'thin'}
-            };
-
-            sheet.mergeCells('A4:L4')
-            sheet.getCell('A4').value = prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1];
-            sheet.getCell('A4').font = {name: 'Calibri', size: 14, bold: true};
-            sheet.getCell('A4').alignment = { vertical: 'middle', horizontal: 'center' };
-            sheet.getCell('A4').fill = {
-                type: 'gradient',
-                gradient: 'angle',
-                degree: 0,
-                stops: [
-                    {position:0, color:{argb:'96C8FB'}},
-                    {position:0.5, color:{argb:'96C8FB'}},
-                    {position:1, color:{argb:'96C8FB'}}
-                ]
-            };
-            sheet.getCell('A4').border = {
-                top: {style:'thin'},
-                left: {style:'thin'},
-                bottom: {style:'thin'},
-                right: {style:'thin'}
-            };
-
-            sheet.mergeCells('A6:D6');
-            sheet.getCell('A6').value = 'General State Info';
-            sheet.getCell('A6').font = {name: 'Calibri', size: 14, bold: true};
-            sheet.getCell('A6').alignment = { vertical: 'middle', horizontal: 'center' };
-            sheet.getCell('A6').fill = {
-                type: 'gradient',
-                gradient: 'angle',
-                degree: 0,
-                stops: [
-                    {position:0, color:{argb:'C85C5C'}},
-                    {position:0.5, color:{argb:'F9975D'}},
-                    {position:1, color:{argb:'C85C5C'}}
-                ]
-            };
-            sheet.getCell('A6').border = {
-                top: {style:'thin'},
-                left: {style:'thin'},
-                bottom: {style:'thin'},
-                right: {style:'thin'}
-            };
-
-            sheet.mergeCells('G6:L6');
-            sheet.getCell('G6').value = 'Region Info';
-            sheet.getCell('G6').font = {name: 'Calibri', size: 14, bold: true};
-            sheet.getCell('G6').alignment = { vertical: 'middle', horizontal: 'center' };
-            sheet.getCell('G6').fill = {
-                type: 'gradient',
-                gradient: 'angle',
-                degree: 0,
-                stops: [
-                    {position:0, color:{argb:'C85C5C'}},
-                    {position:0.5, color:{argb:'F9975D'}},
-                    {position:1, color:{argb:'C85C5C'}}
-                ]
-            };
-            sheet.getCell('G6').border = {
-                top: {style:'thin'},
-                left: {style:'thin'},
-                bottom: {style:'thin'},
-                right: {style:'thin'}
-            };
+            await formatCell(sheet, 'A1', 'L3', initialState[i].stateName, [RED,ORANGE,RED])
+            await formatCell(sheet, 'A4', 'L4', prevSeasonYear[0] + ' ' + prevSeasonYear[1] + ' to ' + currSeasonYear[0] + ' '  + currSeasonYear[1], [LIGHT_BLUE,LIGHT_BLUE,LIGHT_BLUE])
+            await formatCell(sheet, 'A6', 'D6', 'General State Info', [RED,ORANGE,RED])
+            await formatCell(sheet, 'G6', 'L6', 'Region Info', [RED,ORANGE,RED])
 
             let increment = 0;
             sheet.getCell('A'+ (7 + increment).toString()).value = stateInfoRowNames[0];
@@ -387,8 +387,8 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 sheet.getCell(key).fill ={
                     type: 'pattern',
                     pattern: 'lightVertical',
-                    fgColor: { argb: '96C8FB' },
-                    bgColor: { argb: '96C8FB' }
+                    fgColor: { argb: LIGHT_BLUE },
+                    bgColor: { argb: LIGHT_BLUE }
                 }
                 sheet.getCell(key).font ={
                     name: 'Calibri',
@@ -418,43 +418,10 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
             let lastRowNum = sheet.lastRow.number;
             lastRowNum += 2;
 
-            //Reformat state resources by name, tier, and count
-            let stateResources = [];
-            updatedState[i].ProductiveResources.map(resource => {
-                resourceIdx = stateResources.findIndex(obj => obj.name == resource.ResourceName);
-                if(resourceIdx >= 0){
-                    stateResources[resourceIdx].count += 1;
-                }
-                else{
-                    stateResources.push({'name': resource.ResourceName, 'tier': resource.ResourceTierID, 'count' : 1})
-                }
-            });
-
-            stateResources.sort((a, b) => {
-                return a.tier - b.tier || a.name.localeCompare(b.name)
-            });
+            let stateResources = await reformatStateResources(updatedState, i);
 
             if(Array.isArray(stateResources) && stateResources.length){
-                sheet.mergeCells('A'+lastRowNum + ':C' + lastRowNum);
-                sheet.getCell('A'+lastRowNum).value = 'Productive Resources';
-                sheet.getCell('A'+lastRowNum).font = {name: 'Calibri', size: 14, bold: true};
-                sheet.getCell('A'+lastRowNum).alignment = { vertical: 'middle', horizontal: 'center' };
-                sheet.getCell('A'+lastRowNum).fill = {
-                    type: 'gradient',
-                    gradient: 'angle',
-                    degree: 0,
-                    stops: [
-                        {position:0, color:{argb:'C85C5C'}},
-                        {position:0.5, color:{argb:'F9975D'}},
-                        {position:1, color:{argb:'C85C5C'}}
-                    ]
-                };
-                sheet.getCell('A'+lastRowNum).border = {
-                    top: {style:'thin'},
-                    left: {style:'thin'},
-                    bottom: {style:'thin'},
-                    right: {style:'thin'}
-                };
+                await formatCell(sheet, 'A'+lastRowNum, 'C' + lastRowNum, 'Productive Resources', [RED,ORANGE,RED])
 
                 increment = 1;
                 
@@ -469,8 +436,8 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     sheet.getCell(key).fill ={
                         type: 'pattern',
                         pattern: 'lightVertical',
-                        fgColor: { argb: '96C8FB' },
-                        bgColor: { argb: '96C8FB' }
+                        fgColor: { argb: LIGHT_BLUE },
+                        bgColor: { argb: LIGHT_BLUE }
                     }
                     sheet.getCell(key).font ={
                         name: 'Calibri',
@@ -498,37 +465,10 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                 });
             }
 
-            //Reformat trade agreements to Partner State, Our Trade Power, and Income From Trade
-            let stateTradeAgreements = [];
-
-            tradeAgreements.map(agreement => {
-                let traderIdx = agreement.traders.findIndex(obj => obj.state.stateID == initialState[i].stateID);
-                if (traderIdx > -1){
-                    stateTradeAgreements.push({'partnerState':(traderIdx == 0) ? agreement.traders[1].state.stateName : agreement.traders[0].state.stateName, 'tradePower': parseFloat(agreement.traders[traderIdx].tradePower * 100).toFixed(2) + '%', 'tradeValue': agreement.traders[traderIdx].tradeValue })
-                }
-            });
+            let stateTradeAgreements = await reformatTradeAgreements(tradeAgreements, initialState, i);
 
             if(Array.isArray(stateTradeAgreements) && stateTradeAgreements.length){
-                sheet.mergeCells('G'+lastRowNum + ':I' + lastRowNum);
-                sheet.getCell('G'+lastRowNum).value = 'Trade Agreements';
-                sheet.getCell('G'+lastRowNum).font = {name: 'Calibri', size: 14, bold: true};
-                sheet.getCell('G'+lastRowNum).alignment = { vertical: 'middle', horizontal: 'center' };
-                sheet.getCell('G'+lastRowNum).fill = {
-                    type: 'gradient',
-                    gradient: 'angle',
-                    degree: 0,
-                    stops: [
-                        {position:0, color:{argb:'C85C5C'}},
-                        {position:0.5, color:{argb:'F9975D'}},
-                        {position:1, color:{argb:'C85C5C'}}
-                    ]
-                };
-                sheet.getCell('G'+lastRowNum).border = {
-                    top: {style:'thin'},
-                    left: {style:'thin'},
-                    bottom: {style:'thin'},
-                    right: {style:'thin'}
-                };
+                await formatCell(sheet, 'G'+lastRowNum, 'I' + lastRowNum, 'Trade Agreements', [RED,ORANGE,RED])
 
                 increment = 1;
                 
@@ -543,8 +483,8 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
                     sheet.getCell(key).fill ={
                         type: 'pattern',
                         pattern: 'lightVertical',
-                        fgColor: { argb: '96C8FB' },
-                        bgColor: { argb: '96C8FB' }
+                        fgColor: { argb: LIGHT_BLUE },
+                        bgColor: { argb: LIGHT_BLUE }
                     }
                     sheet.getCell(key).font ={
                         name: 'Calibri',
