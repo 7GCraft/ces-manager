@@ -1,0 +1,111 @@
+export default facilityTemplate = [
+    {
+        "name": "Wart Farm",
+        "population": 3,
+        "money": 30,
+        "food":15
+    },
+    {
+        "name": "Agricultural Farm",
+        "population": 5,
+        "money": 50,
+        "food":30
+    },
+    {
+        "name": "Sheep Farm",
+        "population": 3,
+        "money": 300,
+        "food":7
+    },
+    {
+        "name": "Chicken Farm",
+        "population": 2,
+        "money": 150,
+        "food":8
+    },
+    {
+        "name": "Cow Farm",
+        "population": 3,
+        "money": 200,
+        "food":15
+    },
+    {
+        "name": "Sheep Farm",
+        "population": 3,
+        "money": 300,
+        "food":7
+    },
+    {
+        "name": "Camel Farm",
+        "population": 5,
+        "money": 150,
+        "food": 20
+    },
+    {
+        "name": "Trade Port",
+        "population": 5,
+        "money": 500,
+    },
+    {
+        "name": "Fishing Port",
+        "population": 4,
+        "money": 200,
+        "food": 15
+    },
+    {
+        "name": "Military Port",
+        "population": 5,
+    },
+    {
+        "name": "Barracks",
+        "population": 2,
+        "food":-10
+    },
+    {
+        "name": "Stables",
+        "population": 3,
+        "food":-15
+    },
+    {
+        "name": "Archery Grounds",
+        "population": 2,
+        "food":-10
+    },
+    {
+        "name": "Auxillary Barracks",
+        "population": 2,
+        "food":-10
+    },
+    {
+        "name": "Siege Workshop",
+        "population": 3,
+        "food":-15
+    },
+    {
+        "name": "Drill Square",
+        "population": 1,
+        "food":-10
+    },
+    {
+        "name": "Blacksmith",
+        "population": 2,
+        "money": 150
+    },
+    {
+        "name": "Arena",
+        "population": 3,
+        "money": 600
+    },
+    {
+        "name": "Theatre",
+        "population": 3,
+        "money": 200
+    },
+    {
+        "name": "Arena",
+        "population": 3,
+        "money": 600
+    },
+    
+    
+]
