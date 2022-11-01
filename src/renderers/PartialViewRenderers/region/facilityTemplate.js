@@ -3,37 +3,37 @@ const facilityTemplates = [
         "name": "Wart Farm",
         "population": 3,
         "money": 30,
-        "food":15
+        "food": 15
     },
     {
         "name": "Agricultural Farm",
         "population": 5,
         "money": 50,
-        "food":30
+        "food": 30
     },
     {
         "name": "Sheep Farm",
         "population": 3,
         "money": 300,
-        "food":7
+        "food": 7
     },
     {
         "name": "Chicken Farm",
         "population": 2,
         "money": 150,
-        "food":8
+        "food": 8
     },
     {
         "name": "Cow Farm",
         "population": 3,
         "money": 200,
-        "food":15
+        "food": 15
     },
     {
         "name": "Sheep Farm",
         "population": 3,
         "money": 300,
-        "food":7
+        "food": 7
     },
     {
         "name": "Camel Farm",
@@ -59,32 +59,32 @@ const facilityTemplates = [
     {
         "name": "Barracks",
         "population": 2,
-        "food":-10
+        "food": -10
     },
     {
         "name": "Stables",
         "population": 3,
-        "food":-15
+        "food": -15
     },
     {
         "name": "Archery Grounds",
         "population": 2,
-        "food":-10
+        "food": -10
     },
     {
         "name": "Auxillary Barracks",
         "population": 2,
-        "food":-10
+        "food": -10
     },
     {
         "name": "Siege Workshop",
         "population": 3,
-        "food":-15
+        "food": -15
     },
     {
         "name": "Drill Square",
         "population": 1,
-        "food":-10
+        "food": -10
     },
     {
         "name": "Blacksmith",
@@ -149,45 +149,45 @@ const facilityTemplates = [
     {
         "name": "Library",
         "population": 1,
-      
+
     },
     {
         "name": "University",
         "population": 3,
-      
+
     },
     {
         "name": "School",
         "population": 5,
-      
+
     },
     {
         "name": "Granary",
         "population": 2,
         "food": 5
-      
+
     },
     {
         "name": "Canal",
         "population": 1,
-      
+
     },
     {
         "name": "Goldsmith",
         "population": 2,
-        "money":600
-      
+        "money": 600
+
     },
     {
         "name": "Silversmith",
         "population": 2,
-        "money":500
-      
+        "money": 500
+
     },
     {
         "name": "Quartzsmith",
         "population": 2,
-        "money":400
+        "money": 400
     },
     {
         "name": "Diamond Mine",
@@ -285,7 +285,4 @@ const facilityTemplates = [
         "name": "Coal Mine",
         "population": 5,
     },
-    
-    
-    
 ]
