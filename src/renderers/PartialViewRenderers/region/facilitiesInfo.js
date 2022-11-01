@@ -1,9 +1,13 @@
 const FUNCTIONAL = 'functional';
 const NON_FUNCTIONAL = 'non-functional';
 
+
+
 $(function () {
 
     getFacilitiesInfo();
+
+    getFacilityTemplate();
 
     addOpenCloseListListener();
 
@@ -99,6 +103,21 @@ function getFacilitiesInfo() {
         }
     })
     $("#btnCloseAllFacilities").hide();
+}
+
+function getFacilityTemplate() {
+    console.log(facilityTemplates)
+    for (let template of facilityTemplates) {
+        let templateOption = `
+            <a class="dropdown-item" onclick="addTemplateToForm()" type="button" id="template-${template.name}">${template.name}</a>
+            `
+        $('#facility-template-dropdown').append(templateOption)
+
+    }
+    $("#facility-template-dropdown a").on('click', function (e) {
+        e.preventDefault();
+        $('#txtFacilityName').val($(this).text());
+    });
 }
 
 function addOpenCloseListListener() {
