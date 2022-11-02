@@ -179,6 +179,7 @@ function frmAddComponent_eventHandler() {
         }
 
         if ($('#selComponentType').val() == 2) {
+            
             $('#txtValue').prop('disabled', 'disabled');
             $('#txtValue').attr('required', false);
         }

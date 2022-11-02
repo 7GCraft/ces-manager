@@ -75,7 +75,7 @@
                 <div class="form-group row">
                     <label class="col-sm-5 col-form-label" for="nmbCost">Cost</label>
                     <div class="col-sm-7">
-                        <input class="form-control" type="number" id="nmbCost" min="0" required>
+                        <input class="form-control" type="number" id="nmbCost" min="0" >
                     </div>
                 </div>
 
@@ -89,9 +89,11 @@
                 <div class="form-group row">
                     <div class="col-sm-12">
                         <button type="submit" id="btnFormSubmit" class="btn btn-success">Add</button>
-                        <button type="reset" id="btnFormReset" class="btn btn-danger">Reset</button>
+                        <button type="reset" id="btnFormReset" class="btn btn-danger">Reset</button> 
                     </div>
                 </div>
+                <button class="btn btn-success" id="btnAddTemplateCost" data-toggle="modal"
+                data-target="#mdlAddTemplateCost">Add Template Cost</button>
             </form>
             <div class="col-lg-4 p-2 options-wrapper">
                 <h5>Options</h5>
@@ -248,6 +250,100 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="mdlAddTemplateCost" tabindex="-1" role="dialog"
+    aria-labelledby="mdlAddTemplateCost" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mdlAddFacilityLabel">Add Facility</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="frmAddFacility">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="mdlAddFacilityLabel">Building Cost</h5>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Building Name</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Material Availability</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Artisan, Craftsman, Worker Skill</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Building Complexity</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Building Cost</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Activation Time</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <h5 class="modal-title" id="mdlAddFacilityLabel">Population Cost</h5>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Population Name</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Education Level</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Skill Required</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Training Support</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Population Cost</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Activation Time</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="txtFacilityName" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary"></input>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
     <script src="../../../renderers/PartialViewRenderers/region/component/bulkInsert.js"></script>
 </body>
 
