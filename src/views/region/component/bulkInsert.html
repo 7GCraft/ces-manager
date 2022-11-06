@@ -21,85 +21,99 @@
             <div class="col-lg-12 mb-2">
                 <h4>Components Form</h4>
             </div>
-            <form class="col-lg-8" id="frmAddComponent">
-                <input type="hidden" id="hdnUnusedPopulation">
-                <input type="hidden" id="hdnUniqueID" value="1">
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label" for="txtComponentName">Component Name</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="txtComponentName" required>
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col-lg-12 mb-2" id="frmAddByTemplate" style="display: none;">
+                        <button class="btn btn-secondary mb-2" type="button" data-toggle="collapse" data-target="#componentTemplateList">
+                            Choose Template
+                        </button>
+                        <div class="collapse border" id="componentTemplateList"></div>
                     </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label" for="selComponentType">Component
-                        Type</label>
-                    <div class="col-sm-7">
-                        <select class="form-control" name="selComponentType" id="selComponentType" required></select>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label" for="selFacility">Facility</label>
-                    <div class="col-sm-7">
-                        <select class="form-control" name="selFacility" id="selFacility"></select>
-                    </div>
-                </div>
-
-                <div class="form-group form-check">
-                    <input class="form-check-input" type="checkbox" id="chkChild" name="chkChild">
-                    <label class="form-check-label" for="chkChild">IsChild</label>
-                </div>
-
-                <div class="form-group row" id="componentParentField" style="display: none;">
-                    <label class="col-sm-5 col-form-label" for="selParent">Parent
-                        Component</label>
-                    <div class="col-sm-7">
-                        <select class="form-control" name="selParent" id="selParent"
-                            aria-describedby="selParentWarn"></select>
-                        <small id="selParentWarn" class="form-text text-danger">
-                            You can only select a parent component from the current bulk insert table.
-                        </small>
-                    </div>
-                </div>
-
-                <div class="form-group row" id="numTextValue">
-                    <label class="col-sm-5 col-form-label" for="txtValue">Value</label>
-                    <div class="col-sm-7">
-                        <input class="form-control" type="text" id="txtValue" name="value">
-                        <select class="form-control" name="value" id="selResource"></select>
-                        <span class="invalid-feedback" id="lblValueErrMessage"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label" for="nmbCost">Cost</label>
-                    <div class="col-sm-7">
-                        <input class="form-control" type="number" id="nmbCost" min="0" >
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label" for="nmbActivation">Activation Time</label>
-                    <div class="col-sm-7">
-                        <input class="form-control" type="number" id="nmbActivation" min="0" required>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-sm-12">
-                        <button type="submit" id="btnFormSubmit" class="btn btn-success">Add</button>
-                        <button type="reset" id="btnFormReset" class="btn btn-danger">Reset</button> 
-                    </div>
+                    <form class="col-lg-12" id="frmAddComponent">
+                        <input type="hidden" id="hdnUnusedPopulation">
+                        <input type="hidden" id="hdnUniqueID" value="1">
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtComponentName">Component Name</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtComponentName" required>
+                            </div>
+                        </div>
+        
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="selComponentType">Component
+                                Type</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" name="selComponentType" id="selComponentType" required></select>
+                            </div>
+                        </div>
+        
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="selFacility">Facility</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" name="selFacility" id="selFacility"></select>
+                            </div>
+                        </div>
+        
+                        <div class="form-group form-check">
+                            <input class="form-check-input" type="checkbox" id="chkChild" name="chkChild">
+                            <label class="form-check-label" for="chkChild">IsChild</label>
+                        </div>
+        
+                        <div class="form-group row" id="componentParentField" style="display: none;">
+                            <label class="col-sm-5 col-form-label" for="selParent">Parent
+                                Component</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" name="selParent" id="selParent"
+                                    aria-describedby="selParentWarn"></select>
+                                <small id="selParentWarn" class="form-text text-danger">
+                                    You can only select a parent component from the current bulk insert table.
+                                </small>
+                            </div>
+                        </div>
+        
+                        <div class="form-group row" id="numTextValue">
+                            <label class="col-sm-5 col-form-label" for="txtValue">Value</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="text" id="txtValue" name="value">
+                                <select class="form-control" name="value" id="selResource"></select>
+                                <span class="invalid-feedback" id="lblValueErrMessage"></span>
+                            </div>
+                        </div>
+        
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="nmbCost">Cost</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="number" id="nmbCost" min="0" required>
+                            </div>
+                        </div>
+        
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="nmbActivation">Activation Time</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="number" id="nmbActivation" min="0" required>
+                            </div>
+                        </div>
+        
+                        <div class="form-group row">
+                            <div class="col-sm-12">
+                                <button type="submit" id="btnFormSubmit" class="btn btn-success">Add</button>
+                                <button type="reset" id="btnFormReset" class="btn btn-danger">Reset</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <button class="btn btn-success" id="btnAddTemplateCost" data-toggle="modal"
                 data-target="#mdlAddTemplateCost">Add Template Cost</button>
-            </form>
+            </div>
             <div class="col-lg-4 p-2 options-wrapper">
                 <h5>Options</h5>
                 <div class="form-group form-check" id="fastDeleteWrapper" style="width: fit-content;">
                     <input class="form-check-input" type="checkbox" id="chkFastDelete">
                     <label class="form-check-label" for="chkFastDelete">Fast Delete</label>
+                </div>
+                <div class="form-group form-check" id="toggleAddByTemplateWrapper" style="width: fit-content;">
+                    <input class="form-check-input" type="checkbox" id="chkToggleAddByTemplate">
+                    <label class="form-check-label" for="chkToggleAddByTemplate">Toggle Add by Template</label>
                 </div>
             </div>
         </div>
@@ -344,6 +358,7 @@
         </div>
     </div>
 </div>
+    <script src="../../../renderers/PartialViewRenderers/region/facilityTemplate.js"></script>
     <script src="../../../renderers/PartialViewRenderers/region/component/bulkInsert.js"></script>
 </body>
 

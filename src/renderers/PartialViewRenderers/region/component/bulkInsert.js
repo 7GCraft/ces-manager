@@ -76,21 +76,25 @@ function getProcessArgObj() {
 // END UTILITY FUNCTIONS
 
 $(function () {
-    //Get all component related info
+    
     getComponentsInfo();
-    //Get all facilities for facility ddl
+    
     getFacilitiesList();
-    //Handles events from add component form
+
+    initComponentTemplatesDropdown();
+    
     frmAddComponent_eventHandler();
-    //handle events from main page
+
+    frmAddByTemplate_eventHandler();
+    
     pageMain_eventHandler();
-    //Handles events from region page
+    
     pageRegion_eventHandler();
-    //Handles events from confirm insert modal
+    
     mdlConfirmInsert_eventHandler();
-    //Initializes back to top functionality
+    
     initBackToTop();
-    //Initializes additional options menu
+    
     initAdditionalOptions();
 });
 
@@ -156,6 +160,16 @@ function getFacilitiesList() {
     });
 }
 
+function initComponentTemplatesDropdown() {
+    facilityTemplates.forEach((template) => {
+        $('<button>')
+            .text(template.name)
+            .addClass('dropdown-item component-template-item')
+            .prop('type', 'button')
+            .appendTo('#componentTemplateList');
+    });
+}
+
 function frmAddComponent_eventHandler() {
     $('#chkChild').on('click', () => {
         $('#componentParentField').toggle(this.checked);
@@ -213,34 +227,53 @@ function frmAddComponent_eventHandler() {
     });
 }
 
+function frmAddByTemplate_eventHandler() {
+    $('.component-template-item').on('click', function (e) {
+        try {
+            const components = getComponentsFromTemplateByKey(e.target.textContent);
+            components.forEach((component) => {
+                doInsertComponent(component);
+            });
+        } catch (error) {
+            alert(error);
+        }
+    });
+}
+
+function doInsertComponent(data) {
+    let rowTemplate = createRowFromData(data);
+    if (data.isChild) {
+        let parentRowId = `component-${data.parentId}`;
+        rowTemplate = createChildrenRow(rowTemplate, parentRowId);
+        $(`#${parentRowId}`).after(rowTemplate);
+
+        const showChildrenbtn = $(`#${parentRowId}`).find('.btnShowChildren');
+        let showChildren = parseInt($(showChildrenbtn).attr('data-show-children'));
+        if (showChildren === 0) {
+            let childrenRowCount = $(`.${parentRowId}-child`).length;
+            updateShowChildrenButtonTooltip(showChildrenbtn, `Show Children (${childrenRowCount})`);
+        }
+    }
+    else {
+        $('#componentTableContent').append(rowTemplate);
+        updateSelParent(data, false);
+    }
+    indexComponentTable();
+    updateUnusedPopulation(data, false);
+}
+
+function updateUniqueID() {
+    let currUniqueID = parseInt($('#hdnUniqueID').val());
+    $('#hdnUniqueID').val(currUniqueID + 1);
+}
+
 function frmAddComponent_SubmitHandler(e) {
     e.preventDefault();
     let data = getDataFromForm();
     if (validateAddComponent(data)) {
-        let rowTemplate = createRowFromData(data);
-        if (data.isChild) {
-            let parentRowId = `component-${data.parentId}`;
-            rowTemplate = createChildrenRow(rowTemplate, parentRowId);
-            $(`#${parentRowId}`).after(rowTemplate);
-
-            const showChildrenbtn = $(`#${parentRowId}`).find('.btnShowChildren');
-            let showChildren = parseInt($(showChildrenbtn).attr('data-show-children'));
-            if (showChildren === 0) {
-                let childrenRowCount = $(`.${parentRowId}-child`).length;
-                updateShowChildrenButtonTooltip(showChildrenbtn, `Show Children (${childrenRowCount})`);
-            }
-        }
-        else {
-            $('#componentTableContent').append(rowTemplate);
-            updateSelParent(data, false);
-        }
-
+        updateUniqueID();
+        doInsertComponent(data);
         $('#frmAddComponent').trigger('reset');
-        indexComponentTable();
-        updateUnusedPopulation(data, false);
-
-        let currUniqueID = parseInt($('#hdnUniqueID').val());
-        $('#hdnUniqueID').val(currUniqueID + 1);
     }
 }
 
@@ -274,6 +307,47 @@ function getDataFromForm() {
 
     componentObj['cost'] = $('#nmbCost').val();
     componentObj['activationTime'] = $('#nmbActivation').val();
+    return componentObj;
+}
+
+function getComponentsFromTemplateByKey(key) {
+    try {
+        const template = facilityTemplates.find((temp) => temp.name === key);
+        if (template === undefined) {
+            throw "Template Not Found";
+        } else if (template.population > parseInt($('#hdnUnusedPopulation').val())) {
+            throw "Required population is bigger than unused population";
+        }
+
+        let components = [];
+        components.push(createComponentFromTemplateAndUpdateUniqueID(1, template.population, template.popName));
+        components.push(createComponentFromTemplateAndUpdateUniqueID(2, null, template.name));
+        if (template.hasOwnProperty("food")) {
+            components.push(createComponentFromTemplateAndUpdateUniqueID(4, template.food, "Food"));
+        }
+        if (template.hasOwnProperty("money")) {
+            components.push(createComponentFromTemplateAndUpdateUniqueID(5, template.money, "Money"));
+        }
+        return components;
+    } catch (error) {
+        throw error;
+    }
+}
+
+function createComponentFromTemplateAndUpdateUniqueID(componentTypeId, value, name) {
+    let componentObj = {};
+
+    componentObj['uniqueID'] = $('#hdnUniqueID').val();
+    componentObj['componentName'] = name;
+    componentObj['componentType'] = { 'componentTypeId': componentTypeId };
+    componentObj['regionId'] = parseInt(getProcessArgObj().RegionID);
+    componentObj['facilityId'] = null;
+    componentObj['isChild'] = false;
+    componentObj['value'] = value;
+    componentObj['cost'] = 0;
+    componentObj['activationTime'] = 0;
+    
+    updateUniqueID();
     return componentObj;
 }
 
@@ -663,6 +737,21 @@ function initAdditionalOptions() {
     $('#fastDeleteWrapper').tooltip({
         title: "Deleting a row won't show confirmation popup"
     });
+
+    $('#toggleAddByTemplateWrapper').tooltip({
+        title: "If this option is checked, you can add components by template instead of using form"
+    });
+    $('#chkToggleAddByTemplate').on('change', chkToggleAddByTemplate_ChangeHandler);
+}
+
+function chkToggleAddByTemplate_ChangeHandler(e) {
+    if (e.target.checked) {
+        $('#frmAddByTemplate').show();
+        $('#frmAddComponent').hide();
+    } else {
+        $('#frmAddByTemplate').hide();
+        $('#frmAddComponent').show();
+    }
 }
 
 function getOptions() {

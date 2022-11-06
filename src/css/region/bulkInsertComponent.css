@@ -122,3 +122,12 @@ i.simple-arrow.up {
 #mdlConfirmInsert .modal-footer > button {
     min-width: 70px;
 }
+
+#frmAddByTemplate {
+    height: 400px;
+}
+
+#componentTemplateList {
+    overflow: auto;
+    max-height: 350px;
+}
