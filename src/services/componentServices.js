@@ -1,14 +1,41 @@
 const config = require('./config.json');
 
 const { constants } = config;
-const resourceServices = require(config.paths.resourceServices);
-const facilityServices = require(config.paths.facilityServices);
+const resourceServices = require('./resourceServices');
 const dbContext = require('../repository/DbContext');
 
 const knex = dbContext.getKnexObject();
 
-const Component = require(config.paths.componentModel);
-const ComponentType = require(config.paths.componentTypeModel);
+const Component = require('../models/componentModel');
+const ComponentType = require('../models/componentTypeModel');
+
+/**
+ * Gets all component types.
+ * @returns {Array} array of component type objects if successful, null otherwise.
+ */
+const getComponentTypeAll = async () => {
+  const rawComponentTypes = await knex
+    .select('*')
+    .from(constants.TABLE_COMPONENT_TYPE)
+    .catch((e) => {
+      console.error(e);
+    });
+
+  if (rawComponentTypes.length === 0) return null;
+
+  const componentTypes = [];
+
+  rawComponentTypes.forEach((rawComponentType) => {
+    const componentType = new ComponentType(
+      rawComponentType.componentTypeId,
+      rawComponentType.name,
+    );
+
+    componentTypes.push(componentType);
+  });
+
+  return componentTypes;
+};
 
 /**
  * Gets all components of a given region.
@@ -557,31 +584,6 @@ const deleteComponentById = async (id) => {
   }
 
   return resStatus;
-};
-
-/**
- * Gets all component types.
- * @returns {Array} array of component type objects if successful, null otherwise.
- */
-const getComponentTypeAll = async () => {
-  const rawComponentTypes = await knex
-    .select('*')
-    .from(constants.TABLE_COMPONENT_TYPE)
-    .catch((e) => {
-      console.error(e);
-    });
-
-  if (rawComponentTypes.length === 0) return null;
-
-  const componentTypes = [];
-
-  for (const rawComponentType of rawComponentTypes) {
-    const componentType = new ComponentType(rawComponentType.componentTypeId, rawComponentType.name);
-
-    componentTypes.push(componentType);
-  }
-
-  return componentTypes;
 };
 
 /**
