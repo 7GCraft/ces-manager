@@ -110,6 +110,7 @@
                         </div>
                     </form>
                 </div>
+            </div>
             <div class="col-lg-4 p-2 options-wrapper mx-0 mt-0 mb-2">
                 <h5>Options</h5>
                 <div class="form-group form-check" id="fastDeleteWrapper" style="width: fit-content;">
@@ -165,7 +166,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Edit Component</h5>
-                            <button type="button" class="close" data-dismiss="editComponentModal" aria-label="Close">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -213,7 +214,7 @@
                     </div>
                     <input type="hidden" id="editFormRow" name="editFormRow" value="">
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="editComponentModal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="button" id='editFormSaveButton' onclick="btnEditComponent_SaveHandler(this);"
                             class="btn btn-primary" onclick="btnEditComponent_SaveHandler">Save changes</button>
                     </div>
