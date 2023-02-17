@@ -85,6 +85,8 @@ $(function () {
     
     frmAddComponent_eventHandler();
 
+
+
     frmAddByTemplate_eventHandler();
     
     pageMain_eventHandler();
@@ -170,6 +172,7 @@ function initComponentTemplatesDropdown() {
     });
 }
 
+
 function frmAddComponent_eventHandler() {
     $('#chkChild').on('click', () => {
         $('#componentParentField').toggle(this.checked);
@@ -227,6 +230,7 @@ function frmAddComponent_eventHandler() {
     });
 }
 
+
 function frmAddByTemplate_eventHandler() {
     $('.component-template-item').on('click', function (e) {
         try {
@@ -266,6 +270,7 @@ function updateUniqueID() {
     let currUniqueID = parseInt($('#hdnUniqueID').val());
     $('#hdnUniqueID').val(currUniqueID + 1);
 }
+
 
 function frmAddComponent_SubmitHandler(e) {
     e.preventDefault();
@@ -441,6 +446,10 @@ function addTooltipToActionCellButton(actionCell) {
         title: 'Copy to form',
         trigger: 'hover click'
     });
+    actionCell.find('.btnEditComponent').tooltip({
+        title: 'Edit Component',
+        trigger: 'hover click'
+    });
 
     actionCell.find('.btnDeleteComponent').tooltip({
         title: 'Delete',
@@ -481,6 +490,74 @@ function btnCopyComponent_ClickHandler(btn) {
         .attr('data-original-title', 'Copied!')
         .tooltip('update')
         .tooltip('show');
+}
+
+function btnEditComponent_ClickHandler(btn) {
+  
+
+    let data = $(btn).parents('tr').data('componentData');
+    var rowId = $(btn).closest('tr').attr('id');
+
+    $('#editComponentModal').modal('show');
+
+    $('#editFormRow').val(rowId)
+
+    fillEditFormWithData(data)
+
+ 
+  
+}
+
+function btnEditComponent_SaveHandler(){
+    let rowId = $('#editFormRow').val();
+    let targetRow = $('#' + rowId)
+
+
+
+    let data = targetRow.data('componentData')
+
+    let newData = {...data};
+
+    let componentNameCell = $(targetRow.find('td:eq(1)')[0])
+    let componentValueCell = $(targetRow.find('td:eq(3)')[0])
+    let componentCostCell = $(targetRow.find('td:eq(4)')[0])
+    let componentActivationTimeCell = $(targetRow.find('td:eq(5)')[0])
+
+    let newComponentName = $('#editFormComponentName').val();
+    let newComponentValue = $('#editFormComponentValue').val();
+    let newComponentCost = $('#editFormComponentCost').val();
+    let newComponentActivationTime = $('#editFormComponentActivation').val();
+
+    data.componentName = newComponentName
+    data.value = newComponentValue;
+    data.cost = newComponentCost;
+    data.activationTime = parseInt(newComponentActivationTime)
+  
+    $(componentNameCell).text(newComponentName)
+    $(componentValueCell).text(newComponentValue)
+    $(componentCostCell).text(newComponentCost)
+    if(newComponentActivationTime == 0){
+        console.log('does it went here')
+        $(componentActivationTimeCell).text('Activated')
+    }else{
+        $(componentActivationTimeCell).text(newComponentActivationTime)
+    }
+
+
+    $('#editComponentModal').modal('hide');
+
+
+    
+
+  
+}
+
+function fillEditFormWithData(data){
+    $('#editFormComponentName').val(data.componentName)
+    $('#editFormComponentCost').val(data.cost)
+    $('#editFormComponentValue').val(data.value)
+    console.log(data.activationTime);
+    $('#editFormComponentActivation').val(parseInt(data.activationTime))
 }
 
 function fillFormWithData(data) {
@@ -528,6 +605,12 @@ function fillFormWithData(data) {
     $('#nmbActivation').val(parseInt(data.activationTime));
 }
 
+function btnEditComponent_BlurHandler(btn) {
+    $(btn).attr('title', 'Edit component')
+        .attr('data-original-title', 'Edit Component')
+        .tooltip('update')
+        .tooltip('hide');
+}
 function btnCopyComponent_BlurHandler(btn) {
     $(btn).attr('title', 'Copy to form')
         .attr('data-original-title', 'Copy to form')

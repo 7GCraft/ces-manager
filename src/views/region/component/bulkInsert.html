@@ -102,9 +102,6 @@
                         </div>
                     </form>
                 </div>
-                <button class="btn btn-success" id="btnAddTemplateCost" data-toggle="modal"
-                data-target="#mdlAddTemplateCost">Add Template Cost</button>
-            </div>
             <div class="col-lg-4 p-2 options-wrapper">
                 <h5>Options</h5>
                 <div class="form-group form-check" id="fastDeleteWrapper" style="width: fit-content;">
@@ -143,16 +140,77 @@
                                 <input type="image" src="../../../images/icons/copy.png"
                                     class="action-img btnCopyComponent" onclick="btnCopyComponent_ClickHandler(this);"
                                     onblur="btnCopyComponent_BlurHandler(this);" alt="">
+                                    <input type="image" src="../../../images/icons/edit.png"
+                                    class="action-img btnEditComponent" onclick="btnEditComponent_ClickHandler(this);"
+                                    onblur="btnEditComponent_BlurHandler(this);" alt="Edit">
                                 <input type="image" src="../../../images/icons/delete.png"
                                     class="action-img btnDeleteComponent"
                                     onclick="btnDeleteComponent_ClickHandler(this);" alt="">
-                                <input type="image" src="../../../images/icons/hierarchy.png"
-                                    class="action-img btnShowChildren" onclick="btnShowChildren_ClickHandler(this);"
-                                    onmouseleave="$(this).tooltip('hide');" data-show-children="1" alt="">
                             </td>
                         </tr>
                     </tbody>
                 </table>
+              
+<div class="modal fade" id="editComponentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Component</h5>
+        <button type="button" class="close" data-dismiss="editComponentModal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="col-lg-12" id="frmEditComponent">
+            <input type="hidden" id="hdnUnusedPopulation">
+            <input type="hidden" id="hdnUniqueID" value="1">
+            <div class="form-group row">
+                <label class="col-sm-5 col-form-label" for="editFormComponentName">Component Name</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" id="editFormComponentName" required>
+                </div>
+            </div>
+
+        
+            <div class="form-group row" id="numTextValue">
+                <label class="col-sm-5 col-form-label" for="editFormComponentValue"">Value</label>
+                <div class="col-sm-7">
+                    <input class="form-control" type="text" id="editFormComponentValue" name="value">
+                    <span class="invalid-feedback" id="lblValueErrMessage"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-5 col-form-label" for="editFormComponentCost">Cost</label>
+                <div class="col-sm-7">
+                    <input class="form-control" type="number" id="editFormComponentCost" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-5 col-form-label" for="editFormComponentActivation">Activation Time</label>
+                <div class="col-sm-7">
+                    <input class="form-control" type="number" id="editFormComponentActivation" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <button type="submit" id="btnFormSubmit" class="btn btn-success">Add</button>
+                    <button type="reset" id="btnFormReset" class="btn btn-danger">Reset</button>
+                </div>
+            </div>
+        </form>
+      </div>
+      <input type="hidden" id="editFormRow" name="editFormRow" value="">
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="editComponentModal">Close</button>
+        <button type="button" id='editFormSaveButton'onclick="btnEditComponent_SaveHandler(this);"  class="btn btn-primary" onclick="btnEditComponent_SaveHandler">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
                 <div class="alert-wrapper">
                     <div role="alert" id="emptyTableTemplateAlert"
                         class="alert alert-danger alert-dismissible fade show col-sm-6">
