@@ -236,6 +236,7 @@ function frmAddByTemplate_eventHandler() {
         try {
             const components = getComponentsFromTemplateByKey(e.target.textContent);
             components.forEach((component) => {
+                component.facilityId = $('#selFacility').val();
                 doInsertComponent(component);
             });
         } catch (error) {
@@ -536,6 +537,7 @@ function btnEditComponent_SaveHandler(){
     $(componentNameCell).text(newComponentName)
     $(componentValueCell).text(newComponentValue)
     $(componentCostCell).text(newComponentCost)
+
     if(newComponentActivationTime == 0){
         console.log('does it went here')
         $(componentActivationTimeCell).text('Activated')
