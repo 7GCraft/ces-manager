@@ -1,4 +1,4 @@
-export default [
+const facilityTemplates = [
   {
     name: 'Wart Farm',
     population: 3,

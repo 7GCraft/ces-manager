@@ -106,7 +106,7 @@ function getFacilitiesInfo() {
 }
 
 function getFacilityTemplate() {
-    console.log(facilityTemplates)
+    
     for (let template of facilityTemplates) {
         let templateOption = `
             <a class="dropdown-item" onclick="addTemplateToForm()" type="button" id="template-${template.name}">${template.name}</a>
@@ -117,6 +117,7 @@ function getFacilityTemplate() {
     $("#facility-template-dropdown a").on('click', function (e) {
         e.preventDefault();
         $('#txtFacilityName').val($(this).text());
+        $('#chkFunctional').prop('checked',true)
     });
 }
 

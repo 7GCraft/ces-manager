@@ -505,11 +505,19 @@ function btnEditComponent_ClickHandler(btn) {
 
     fillEditFormWithData(data)
 
+    $('frmEditComponent').on('keydown', function(event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          return false;
+        }
+      });
+
  
   
 }
 
-function btnEditComponent_SaveHandler(){
+function btnEditComponent_SaveHandler(event){
+
     let rowId = $('#editFormRow').val();
     let targetRow = $('#' + rowId)
 
