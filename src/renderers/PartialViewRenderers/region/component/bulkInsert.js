@@ -327,7 +327,7 @@ function getComponentsFromTemplateByKey(key) {
 
         let components = [];
         components.push(createComponentFromTemplateAndUpdateUniqueID(1, template.population, template.popName));
-        components.push(createComponentFromTemplateAndUpdateUniqueID(2, null, template.name));
+        components.push(createComponentFromTemplateAndUpdateUniqueID(2, null, template.componentBuildingName));
         if (template.hasOwnProperty("food")) {
             components.push(createComponentFromTemplateAndUpdateUniqueID(4, template.food, "Food"));
         }
