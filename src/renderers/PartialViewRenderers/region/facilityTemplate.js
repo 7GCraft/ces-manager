@@ -1,7 +1,7 @@
 const facilityTemplates = [
   {
     name: 'Wart Farm',
-    componentBuildingName:'Wart Farm',
+    componentBuildingName: 'Wart Farm',
     population: 3,
     popName: 'Farmer',
     money: 30,
@@ -9,7 +9,7 @@ const facilityTemplates = [
   },
   {
     name: 'Agricultural Farm',
-    componentBuildingName:'Agricultural Farm',
+    componentBuildingName: 'Agricultural Farm',
     population: 5,
     popName: 'Farmer',
     money: 50,
@@ -17,7 +17,7 @@ const facilityTemplates = [
   },
   {
     name: 'Sheep Farm',
-    componentBuildingName:'Sheep Farm',
+    componentBuildingName: 'Sheep Farm',
     population: 3,
     popName: 'Farmer',
     money: 300,
