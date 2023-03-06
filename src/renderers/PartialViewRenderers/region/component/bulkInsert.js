@@ -228,7 +228,7 @@ function frmAddByTemplate_eventHandler() {
     try {
       $('#addTemplateCostModal').modal('show');
       $('#hdnTemplateInput').val(e.target.textContent);
-      $('#btnTemplateList').click()
+      $('#btnTemplateList').click();
     } catch (error) {
       alert(error);
     }
