@@ -228,6 +228,7 @@ function frmAddByTemplate_eventHandler() {
     try {
       $('#addTemplateCostModal').modal('show');
       $('#hdnTemplateInput').val(e.target.textContent);
+      $('#btnTemplateList').click()
     } catch (error) {
       alert(error);
     }
@@ -265,6 +266,7 @@ function addTemplateWithCost(components) {
     component.facilityId = $('#selFacility').val();
     doInsertComponent(component);
   });
+  $('#addTemplateCostModal').find(':input').val(null);
   $('#addTemplateCostModal').modal('hide');
 }
 
