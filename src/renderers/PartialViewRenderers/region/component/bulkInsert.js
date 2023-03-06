@@ -227,48 +227,45 @@ function frmAddByTemplate_eventHandler() {
   $('.component-template-item').on('click', (e) => {
     try {
       $('#addTemplateCostModal').modal('show');
-      $('#hdnTemplateInput').val(e.target.textContent)
+      $('#hdnTemplateInput').val(e.target.textContent);
     } catch (error) {
       alert(error);
     }
   });
 }
 
-
-
-function btnTemplateCostComponent_SaveHandler(){
-
-  let templateChoice = $('#hdnTemplateInput').val()
+function btnTemplateCostComponent_SaveHandler() {
+  const templateChoice = $('#hdnTemplateInput').val();
   const components = getComponentsFromTemplateByKey(templateChoice);
-  let newComponents = addComponentCost(components)
+  const newComponents = addComponentCost(components);
   addTemplateWithCost(newComponents);
 }
 
-function addComponentCost(components){
-  let buildingCost = $('#costFormBuildingCost').val();
-  let buildingActivationTime = $('#costFormBuildingActivationTime').val();
-  let populationCost =  $('#costFormPopulationCost').val();
-  let populationActivationTime =  $('#costFormPopulationActivationTime').val();
-  let newComponents = [...components]
-  newComponents.forEach(component=>{
-    if(component.componentType.componentTypeId == 1){
+function addComponentCost(components) {
+  const buildingCost = $('#costFormBuildingCost').val();
+  const buildingActivationTime = $('#costFormBuildingActivationTime').val();
+  const populationCost = $('#costFormPopulationCost').val();
+  const populationActivationTime = $('#costFormPopulationActivationTime').val();
+  const newComponents = [...components];
+  newComponents.forEach((component) => {
+    if (component.componentType.componentTypeId == 1) {
       component.cost = populationCost;
-      component.activationTime = populationActivationTime
+      component.activationTime = populationActivationTime;
     }
-    if(component.componentType.componentTypeId == 2){
+    if (component.componentType.componentTypeId == 2) {
       component.cost = buildingCost;
-      component.activationTime = buildingActivationTime
+      component.activationTime = buildingActivationTime;
     }
-  })
-  return components
+  });
+  return components;
 }
 
-function addTemplateWithCost(components){
+function addTemplateWithCost(components) {
   components.forEach((component) => {
     component.facilityId = $('#selFacility').val();
     doInsertComponent(component);
   });
-  $('#addTemplateCostModal').modal('hide')
+  $('#addTemplateCostModal').modal('hide');
 }
 
 function doInsertComponent(data) {
@@ -509,8 +506,6 @@ function btnCopyComponent_ClickHandler(btn) {
     .tooltip('update')
     .tooltip('show');
 }
-
-
 
 function btnEditComponent_ClickHandler(btn) {
   const data = $(btn).parents('tr').data('componentData');
