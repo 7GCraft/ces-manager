@@ -24,19 +24,20 @@
             <div class="col-lg-8">
                 <div class="row">
                     <div class="col-lg-12 mb-3" id="frmAddByTemplate" style="display: none;">
-                            <div class="col-lg-12 my-3 px-0">
-                                <label class="col-sm-5 col-form-label px-0" for="selFacility">Facility</label>
-                                <div class="col-sm-7 px-1">
-                                    <select required class="form-control px-2" name="selFacility" id="selFacility"></select>
-                                </div>
+                        <div class="col-lg-12 my-3 px-0">
+                            <label class="col-sm-5 col-form-label px-0" for="selFacility">Facility</label>
+                            <div class="col-sm-7 px-1">
+                                <select required class="form-control px-2" name="selFacility" id="selFacility"></select>
                             </div>
-                
-                        <button class="btn btn-secondary mb-2" type="button" data-toggle="collapse" data-target="#componentTemplateList">
+                        </div>
+
+                        <button class="btn btn-secondary mb-2" type="button" data-toggle="collapse"
+                            data-target="#componentTemplateList">
                             Choose Template
                         </button>
                         <div class="collapse border" id="componentTemplateList"></div>
                     </div>
-                  
+
                     <form class="col-lg-12" id="frmAddComponent">
                         <input type="hidden" id="hdnUnusedPopulation">
                         <input type="hidden" id="hdnUniqueID" value="1">
@@ -46,27 +47,28 @@
                                 <input type="text" class="form-control" id="txtComponentName" required>
                             </div>
                         </div>
-        
+
                         <div class="form-group row">
                             <label class="col-sm-5 col-form-label" for="selComponentType">Component
                                 Type</label>
                             <div class="col-sm-7">
-                                <select class="form-control" name="selComponentType" id="selComponentType" required></select>
+                                <select class="form-control" name="selComponentType" id="selComponentType"
+                                    required></select>
                             </div>
                         </div>
-        
+
                         <div class="form-group row">
                             <label class="col-sm-5 col-form-label" for="selFacility">Facility</label>
                             <div class="col-sm-7">
                                 <select class="form-control" name="selFacility" id="selFacility"></select>
                             </div>
                         </div>
-        
+
                         <div class="form-group form-check">
                             <input class="form-check-input" type="checkbox" id="chkChild" name="chkChild">
                             <label class="form-check-label" for="chkChild">IsChild</label>
                         </div>
-        
+
                         <div class="form-group row" id="componentParentField" style="display: none;">
                             <label class="col-sm-5 col-form-label" for="selParent">Parent
                                 Component</label>
@@ -78,7 +80,7 @@
                                 </small>
                             </div>
                         </div>
-        
+
                         <div class="form-group row" id="numTextValue">
                             <label class="col-sm-5 col-form-label" for="txtValue">Value</label>
                             <div class="col-sm-7">
@@ -87,21 +89,21 @@
                                 <span class="invalid-feedback" id="lblValueErrMessage"></span>
                             </div>
                         </div>
-        
+
                         <div class="form-group row">
                             <label class="col-sm-5 col-form-label" for="nmbCost">Cost</label>
                             <div class="col-sm-7">
                                 <input class="form-control" type="number" id="nmbCost" min="0" required>
                             </div>
                         </div>
-        
+
                         <div class="form-group row">
                             <label class="col-sm-5 col-form-label" for="nmbActivation">Activation Time</label>
                             <div class="col-sm-7">
                                 <input class="form-control" type="number" id="nmbActivation" min="0" required>
                             </div>
                         </div>
-        
+
                         <div class="form-group row">
                             <div class="col-sm-12">
                                 <button type="submit" id="btnFormSubmit" class="btn btn-success">Add</button>
@@ -149,7 +151,7 @@
                                 <input type="image" src="../../../images/icons/copy.png"
                                     class="action-img btnCopyComponent" onclick="btnCopyComponent_ClickHandler(this);"
                                     onblur="btnCopyComponent_BlurHandler(this);" alt="">
-                                    <input type="image" src="../../../images/icons/edit.png"
+                                <input type="image" src="../../../images/icons/edit.png"
                                     class="action-img btnEditComponent" onclick="btnEditComponent_ClickHandler(this);"
                                     onblur="btnEditComponent_BlurHandler(this);" alt="Edit">
                                 <input type="image" src="../../../images/icons/delete.png"
@@ -159,146 +161,159 @@
                         </tr>
                     </tbody>
                 </table>
-                
-            <div class="modal fade" id="addTemplateCostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Add Component Cost</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form class="col-lg-12" id="frmAddTemplateCostComponent">
-                            <input type="hidden" id="hdnTemplateInput">
-                            <input type="hidden" id="hdnUnusedPopulation">
-                            <input type="hidden" id="hdnUniqueID" value="1">
-                            <div class="form-group row">
-                                <label class="col-sm-5 col-form-label" for="costFormBuildingCost">Building Cost</label>
-                                <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="costFormBuildingCost" required>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-5 col-form-label" for="costFormBuildingActivationTime">Building Activation Time</label>
-                                <div class="col-sm-7">
-                                    <input type="text" class="form-control" id="costFormBuildingActivationTime" type="number" required>
-                                </div>
-                            </div>
-        
-        
-                            <div class="form-group row" id="numTextValue">
-                                <label class="col-sm-5 col-form-label" for="costFormPopulationCost">Population Cost</label>
-                        <div class=" col-sm-7">
-                                    <input class="form-control" type="text" id="costFormPopulationCost" name="value">
-                                    <span class="invalid-feedback" id="lblValueErrMessage"></span>
-                            </div>
-                    </div>
-                    <div class="form-group row" id="numTextValue">
-                        <label class="col-sm-5 col-form-label" for="costFormPopulationActivationTime">Population Activation Time</label>
-                <div class=" col-sm-7">
-                            <input class="form-control" type="text" id="costFormPopulationActivationTime" name="value" type="number">
-                            <span class="invalid-feedback" id="lblValueErrMessage"></span>
-                    </div>
-            </div>
 
-        
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id='editFormSaveButton'  class="btn btn-primary" onclick="btnTemplateCostComponent_SaveHandler()">Add Costs</button>
-                </div>
-            </div>
-        </div>
-        </div>
-
-            <div class="modal fade" id="editComponentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Edit Component</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form class="col-lg-12" id="frmEditComponent">
-                                <input type="hidden" id="hdnUnusedPopulation">
-                                <input type="hidden" id="hdnUniqueID" value="1">
-                                <div class="form-group row">
-                                    <label class="col-sm-5 col-form-label" for="editFormComponentName">Component Name</label>
-                                    <div class="col-sm-7">
-                                        <input type="text" class="form-control" id="editFormComponentName" required>
+                <div class="modal fade" id="addTemplateCostModal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add Component Cost</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form class="col-lg-12" id="frmAddTemplateCostComponent">
+                                    <input type="hidden" id="hdnTemplateInput">
+                                    <input type="hidden" id="hdnUnusedPopulation">
+                                    <input type="hidden" id="hdnUniqueID" value="1">
+                                    <div class="form-group row">
+                                        <label class="col-sm-5 col-form-label" for="costFormBuildingCost">Building
+                                            Cost</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="costFormBuildingCost" required>
+                                        </div>
                                     </div>
-                                </div>
-            
-            
-                                <div class="form-group row" id="numTextValue">
-                                    <label class="col-sm-5 col-form-label" for="editFormComponentValue"">Value</label>
-                            <div class=" col-sm-7">
-                                        <input class="form-control" type="text" id="editFormComponentValue" name="value">
-                                        <span class="invalid-feedback" id="lblValueErrMessage"></span>
-                                </div>
-                        </div>
-            
-                        <div class="form-group row">
-                            <label class="col-sm-5 col-form-label" for="editFormComponentCost">Cost</label>
-                            <div class="col-sm-7">
-                                <input class="form-control" type="number" id="editFormComponentCost" min="0" required>
+                                    <div class="form-group row">
+                                        <label class="col-sm-5 col-form-label"
+                                            for="costFormBuildingActivationTime">Building Activation Time</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="costFormBuildingActivationTime"
+                                                type="number" required>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row" id="numTextValue">
+                                        <label class="col-sm-5 col-form-label" for="costFormPopulationCost">Population
+                                            Cost</label>
+                                        <div class=" col-sm-7">
+                                            <input class="form-control" type="text" id="costFormPopulationCost"
+                                                name="value">
+                                            <span class="invalid-feedback" id="lblValueErrMessage"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" id="numTextValue">
+                                        <label class="col-sm-5 col-form-label"
+                                            for="costFormPopulationActivationTime">Population Activation Time</label>
+                                        <div class=" col-sm-7">
+                                            <input class="form-control" type="text"
+                                                id="costFormPopulationActivationTime" name="value" type="number">
+                                            <span class="invalid-feedback" id="lblValueErrMessage"></span>
+                                        </div>
+                                    </div>
+
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" id='editFormSaveButton' class="btn btn-primary"
+                                        onclick="btnTemplateCostComponent_SaveHandler()">Add Costs</button>
                             </div>
                         </div>
-            
-                        <div class="form-group row">
-                            <label class="col-sm-5 col-form-label" for="editFormComponentActivation">Activation Time</label>
-                            <div class="col-sm-7">
-                                <input class="form-control" type="number" id="editFormComponentActivation" min="0" required>
-                            </div>
-                        </div>
-            
-                        <div class="form-group row">
-                            <div class="col-sm-12">
-                                <button type="submit" id="btnFormSubmit" class="btn btn-success">Add</button>
-                                <button type="reset" id="btnFormReset" class="btn btn-danger">Reset</button>
-                            </div>
-                        </div>
-                        </form>
-                    </div>
-                    <input type="hidden" id="editFormRow" name="editFormRow" value="">
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" id='editFormSaveButton' onclick="btnEditComponent_SaveHandler(this);"
-                            class="btn btn-primary" onclick="btnEditComponent_SaveHandler">Save changes</button>
                     </div>
                 </div>
-            </div>
+
+                <div class="modal fade" id="editComponentModal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Edit Component</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form class="col-lg-12" id="frmEditComponent">
+                                    <input type="hidden" id="hdnUnusedPopulation">
+                                    <input type="hidden" id="hdnUniqueID" value="1">
+                                    <div class="form-group row">
+                                        <label class="col-sm-5 col-form-label" for="editFormComponentName">Component
+                                            Name</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="editFormComponentName" required>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row" id="numTextValue">
+                                        <label class="col-sm-5 col-form-label" for="editFormComponentValue"">Value</label>
+                            <div class=" col-sm-7">
+                                            <input class="form-control" type="text" id="editFormComponentValue"
+                                                name="value">
+                                            <span class="invalid-feedback" id="lblValueErrMessage"></span>
+                                    </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" for="editFormComponentCost">Cost</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="number" id="editFormComponentCost" min="0"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" for="editFormComponentActivation">Activation
+                                    Time</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="number" id="editFormComponentActivation" min="0"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-12">
+                                    <button type="submit" id="btnFormSubmit" class="btn btn-success">Add</button>
+                                    <button type="reset" id="btnFormReset" class="btn btn-danger">Reset</button>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                        <input type="hidden" id="editFormRow" name="editFormRow" value="">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" id='editFormSaveButton' onclick="btnEditComponent_SaveHandler(this);"
+                                class="btn btn-primary" onclick="btnEditComponent_SaveHandler">Save changes</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-                <div class="alert-wrapper">
-                    <div role="alert" id="emptyTableTemplateAlert"
-                        class="alert alert-danger alert-dismissible fade show col-sm-6">
-                        <strong>You havent't created any components yet!</strong>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div role="alert" id="insertResultTemplateAlert"
-                        class="alert alert-dismissible fade show col-sm-6 d-none">
-                        <div class="success-message">
-                            <strong>Bulk insert has succeeded!</strong>
-                            <br>
-                            Closing window in 5 seconds.
-                        </div>
-                        <div class="fail-message">
-                            <strong>An error has happened!</strong>
-                        </div>
-                    </div>
+            <div class="alert-wrapper">
+                <div role="alert" id="emptyTableTemplateAlert"
+                    class="alert alert-danger alert-dismissible fade show col-sm-6">
+                    <strong>You havent't created any components yet!</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="d-flex justify-content-center">
-                    <button id="btnInsertAll" class="btn btn-success" onclick="showSummaryModal();">Insert All</button>
+                <div role="alert" id="insertResultTemplateAlert"
+                    class="alert alert-dismissible fade show col-sm-6 d-none">
+                    <div class="success-message">
+                        <strong>Bulk insert has succeeded!</strong>
+                        <br>
+                        Closing window in 5 seconds.
+                    </div>
+                    <div class="fail-message">
+                        <strong>An error has happened!</strong>
+                    </div>
                 </div>
             </div>
+            <div class="d-flex justify-content-center">
+                <button id="btnInsertAll" class="btn btn-success" onclick="showSummaryModal();">Insert All</button>
+            </div>
         </div>
+    </div>
     </div>
 
     <div class="modal fade" id="mdlDeleteComponent" tabindex="-1" role="dialog"
@@ -385,100 +400,101 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="mdlAddTemplateCost" tabindex="-1" role="dialog"
-    aria-labelledby="mdlAddTemplateCost" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="mdlAddFacilityLabel">Add Facility</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <div class="modal fade" id="mdlAddTemplateCost" tabindex="-1" role="dialog" aria-labelledby="mdlAddTemplateCost"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mdlAddFacilityLabel">Add Facility</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="frmAddFacility">
+                    <div class="modal-body">
+                        <h5 class="modal-title" id="mdlAddFacilityLabel">Building Cost</h5>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Building Name</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Material Availability</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Artisan, Craftsman, Worker
+                                Skill</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Building Complexity</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Building Cost</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Activation Time</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <h5 class="modal-title" id="mdlAddFacilityLabel">Population Cost</h5>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Population Name</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Education Level</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Skill Required</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Training Support</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Population Cost</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label" for="txtFacilityName">Activation Time</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="txtFacilityName" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary"></input>
+                    </div>
+                </form>
             </div>
-            <form id="frmAddFacility">
-                <div class="modal-body">
-                    <h5 class="modal-title" id="mdlAddFacilityLabel">Building Cost</h5>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Building Name</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Material Availability</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Artisan, Craftsman, Worker Skill</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Building Complexity</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Building Cost</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Activation Time</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <h5 class="modal-title" id="mdlAddFacilityLabel">Population Cost</h5>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Population Name</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Education Level</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Skill Required</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Training Support</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Population Cost</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-5 col-form-label" for="txtFacilityName">Activation Time</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control" id="txtFacilityName" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-primary"></input>
-                </div>
-            </form>
         </div>
     </div>
-</div>
     <script src="../../../renderers/PartialViewRenderers/region/facilityTemplate.js"></script>
     <script src="../../../renderers/PartialViewRenderers/region/component/bulkInsert.js"></script>
 </body>
