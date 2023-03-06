@@ -159,6 +159,58 @@
                         </tr>
                     </tbody>
                 </table>
+                
+            <div class="modal fade" id="addTemplateCostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Component Cost</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="col-lg-12" id="frmAddTemplateCostComponent">
+                            <input type="hidden" id="hdnTemplateInput">
+                            <input type="hidden" id="hdnUnusedPopulation">
+                            <input type="hidden" id="hdnUniqueID" value="1">
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" for="costFormBuildingCost">Building Cost</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="costFormBuildingCost" required>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-5 col-form-label" for="costFormBuildingActivationTime">Building Activation Time</label>
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control" id="costFormBuildingActivationTime" type="number" required>
+                                </div>
+                            </div>
+        
+        
+                            <div class="form-group row" id="numTextValue">
+                                <label class="col-sm-5 col-form-label" for="costFormPopulationCost">Population Cost</label>
+                        <div class=" col-sm-7">
+                                    <input class="form-control" type="text" id="costFormPopulationCost" name="value">
+                                    <span class="invalid-feedback" id="lblValueErrMessage"></span>
+                            </div>
+                    </div>
+                    <div class="form-group row" id="numTextValue">
+                        <label class="col-sm-5 col-form-label" for="costFormPopulationActivationTime">Population Activation Time</label>
+                <div class=" col-sm-7">
+                            <input class="form-control" type="text" id="costFormPopulationActivationTime" name="value" type="number">
+                            <span class="invalid-feedback" id="lblValueErrMessage"></span>
+                    </div>
+            </div>
+
+        
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id='editFormSaveButton'  class="btn btn-primary" onclick="btnTemplateCostComponent_SaveHandler()">Add Costs</button>
+                </div>
+            </div>
+        </div>
+        </div>
 
             <div class="modal fade" id="editComponentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
