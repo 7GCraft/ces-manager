@@ -226,15 +226,49 @@ function frmAddComponent_eventHandler() {
 function frmAddByTemplate_eventHandler() {
   $('.component-template-item').on('click', (e) => {
     try {
-      const components = getComponentsFromTemplateByKey(e.target.textContent);
-      components.forEach((component) => {
-        component.facilityId = $('#selFacility').val();
-        doInsertComponent(component);
-      });
+      $('#addTemplateCostModal').modal('show');
+      $('#hdnTemplateInput').val(e.target.textContent)
     } catch (error) {
       alert(error);
     }
   });
+}
+
+
+
+function btnTemplateCostComponent_SaveHandler(){
+
+  let templateChoice = $('#hdnTemplateInput').val()
+  const components = getComponentsFromTemplateByKey(templateChoice);
+  let newComponents = addComponentCost(components)
+  addTemplateWithCost(newComponents);
+}
+
+function addComponentCost(components){
+  let buildingCost = $('#costFormBuildingCost').val();
+  let buildingActivationTime = $('#costFormBuildingActivationTime').val();
+  let populationCost =  $('#costFormPopulationCost').val();
+  let populationActivationTime =  $('#costFormPopulationActivationTime').val();
+  let newComponents = [...components]
+  newComponents.forEach(component=>{
+    if(component.componentType.componentTypeId == 1){
+      component.cost = populationCost;
+      component.activationTime = populationActivationTime
+    }
+    if(component.componentType.componentTypeId == 2){
+      component.cost = buildingCost;
+      component.activationTime = buildingActivationTime
+    }
+  })
+  return components
+}
+
+function addTemplateWithCost(components){
+  components.forEach((component) => {
+    component.facilityId = $('#selFacility').val();
+    doInsertComponent(component);
+  });
+  $('#addTemplateCostModal').modal('hide')
 }
 
 function doInsertComponent(data) {
@@ -476,6 +510,8 @@ function btnCopyComponent_ClickHandler(btn) {
     .tooltip('show');
 }
 
+
+
 function btnEditComponent_ClickHandler(btn) {
   const data = $(btn).parents('tr').data('componentData');
   const rowId = $(btn).closest('tr').attr('id');
@@ -522,7 +558,6 @@ function btnEditComponent_SaveHandler(event) {
   $(componentCostCell).text(newComponentCost);
 
   if (newComponentActivationTime == 0) {
-    console.log('does it went here');
     $(componentActivationTimeCell).text('Activated');
   } else {
     $(componentActivationTimeCell).text(newComponentActivationTime);
@@ -535,7 +570,6 @@ function fillEditFormWithData(data) {
   $('#editFormComponentName').val(data.componentName);
   $('#editFormComponentCost').val(data.cost);
   $('#editFormComponentValue').val(data.value);
-  console.log(data.activationTime);
   $('#editFormComponentActivation').val(parseInt(data.activationTime));
 }
 
