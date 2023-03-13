@@ -29,6 +29,7 @@ function getFacilitiesInfo() {
       } else if (facilityFilter === NON_FUNCTIONAL) {
         res = res.filter((facility) => !facility.isFunctional);
       }
+      res = sortFacility([...res]);
 
       res.forEach((facility) => {
         const foodOutput = (facility.foodOutput == 0) ? '' : `<span class="valueFood">Food Output: ${facility.foodOutput}</span><br/>`;
@@ -97,6 +98,20 @@ function getFacilitiesInfo() {
     }
   });
   $('#btnCloseAllFacilities').hide();
+}
+
+function sortFacility(facility) {
+  facility.sort((facilityA, facilityB) => {
+    const nameA = facilityA.facilityName.toUpperCase();
+    const nameB = facilityB.facilityName.toUpperCase();
+    if (nameA < nameB) {
+      return -1;
+    } else if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  });
+  return facility;
 }
 
 function getFacilityTemplate() {
