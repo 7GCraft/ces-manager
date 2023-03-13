@@ -8,6 +8,8 @@ $(() => {
 
   addOpenCloseListListener();
 
+  addSortListListener()
+
   addNewFacilityListener();
 
   addDeleteListener();
@@ -29,6 +31,8 @@ function getFacilitiesInfo() {
       } else if (facilityFilter === NON_FUNCTIONAL) {
         res = res.filter((facility) => !facility.isFunctional);
       }
+        res = sortFacility([...res])
+     
 
       res.forEach((facility) => {
         const foodOutput = (facility.foodOutput == 0) ? '' : `<span class="valueFood">Food Output: ${facility.foodOutput}</span><br/>`;
@@ -99,6 +103,22 @@ function getFacilitiesInfo() {
   $('#btnCloseAllFacilities').hide();
 }
 
+function sortFacility(facility){
+  facility.sort(function(facilityA,facilityB){
+    let NameA = facilityA.facilityName.toUpperCase()
+    let NameB = facilityB.facilityName.toUpperCase()
+    if(NameA  < NameB){
+      return -1
+    }else
+    if( NameA  > NameB){
+      return 1
+    }else{
+      return 0
+    }
+  })
+  return facility
+}
+
 function getFacilityTemplate() {
   for (const template of facilityTemplates) {
     const templateOption = `
@@ -129,6 +149,12 @@ function addOpenCloseListListener() {
     $('#btnOpenAllFacilities').show();
     $('.btnFacilityInfo').prop('disabled', false);
   });
+}
+
+function addSortListListener(){
+  $("#btnSortAllFacilities").on('click',(e)=>{
+    sortFacilityList()
+  })
 }
 
 function addNewFacilityListener() {
