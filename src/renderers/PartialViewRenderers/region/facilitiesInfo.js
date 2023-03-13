@@ -8,8 +8,6 @@ $(() => {
 
   addOpenCloseListListener();
 
-  addSortListListener();
-
   addNewFacilityListener();
 
   addDeleteListener();
@@ -104,11 +102,11 @@ function getFacilitiesInfo() {
 
 function sortFacility(facility) {
   facility.sort((facilityA, facilityB) => {
-    const NameA = facilityA.facilityName.toUpperCase();
-    const NameB = facilityB.facilityName.toUpperCase();
-    if (NameA < NameB) {
+    const nameA = facilityA.facilityName.toUpperCase();
+    const nameB = facilityB.facilityName.toUpperCase();
+    if (nameA < nameB) {
       return -1;
-    } if (NameA > NameB) {
+    } else if (nameA > nameB) {
       return 1;
     }
     return 0;
@@ -145,12 +143,6 @@ function addOpenCloseListListener() {
     $('#btnCloseAllFacilities').hide();
     $('#btnOpenAllFacilities').show();
     $('.btnFacilityInfo').prop('disabled', false);
-  });
-}
-
-function addSortListListener() {
-  $('#btnSortAllFacilities').on('click', (e) => {
-    sortFacilityList();
   });
 }
 
