@@ -8,7 +8,7 @@ $(() => {
 
   addOpenCloseListListener();
 
-  addSortListListener()
+  addSortListListener();
 
   addNewFacilityListener();
 
@@ -31,8 +31,7 @@ function getFacilitiesInfo() {
       } else if (facilityFilter === NON_FUNCTIONAL) {
         res = res.filter((facility) => !facility.isFunctional);
       }
-        res = sortFacility([...res])
-     
+      res = sortFacility([...res]);
 
       res.forEach((facility) => {
         const foodOutput = (facility.foodOutput == 0) ? '' : `<span class="valueFood">Food Output: ${facility.foodOutput}</span><br/>`;
@@ -103,20 +102,18 @@ function getFacilitiesInfo() {
   $('#btnCloseAllFacilities').hide();
 }
 
-function sortFacility(facility){
-  facility.sort(function(facilityA,facilityB){
-    let NameA = facilityA.facilityName.toUpperCase()
-    let NameB = facilityB.facilityName.toUpperCase()
-    if(NameA  < NameB){
-      return -1
-    }else
-    if( NameA  > NameB){
-      return 1
-    }else{
-      return 0
+function sortFacility(facility) {
+  facility.sort((facilityA, facilityB) => {
+    const NameA = facilityA.facilityName.toUpperCase();
+    const NameB = facilityB.facilityName.toUpperCase();
+    if (NameA < NameB) {
+      return -1;
+    } if (NameA > NameB) {
+      return 1;
     }
-  })
-  return facility
+    return 0;
+  });
+  return facility;
 }
 
 function getFacilityTemplate() {
@@ -151,10 +148,10 @@ function addOpenCloseListListener() {
   });
 }
 
-function addSortListListener(){
-  $("#btnSortAllFacilities").on('click',(e)=>{
-    sortFacilityList()
-  })
+function addSortListListener() {
+  $('#btnSortAllFacilities').on('click', (e) => {
+    sortFacilityList();
+  });
 }
 
 function addNewFacilityListener() {
