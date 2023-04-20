@@ -1,8 +1,8 @@
 <template>
-  <div class="h-fit w-full flex  items-center justify-center">
-    
-    <div class="flex flex-col md:flex-row px-6 py-6 space-y-4 md:space-y-0 md:space-x-0">
-      <div class="base-menu flex flex-col">
+<div class=" w-screen h-screen p-4 px-4 md:px-8 lg:px-16">
+  <!-- Content goes here -->
+  <div class="flex flex-row shadow-lg p-8 w-fit border border-4">
+  <div class="base-menu flex flex-col bg-white ">
         <div class="flex flex-col space-y-2 md:flex-row items-center md:space-y-0 md:space-x-4 border border-gray-200 p-2 px-4">
         <img src="./assets/ces_logo.png" class="rounded-full bg-transparent object-fill h-24 round-xl"/>
          
@@ -68,6 +68,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+
 }
 </style>
