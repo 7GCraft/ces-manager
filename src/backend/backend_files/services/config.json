@@ -1,0 +1,83 @@
+{
+    "knexConfig": {
+        "client": "sqlite3",
+        "connection": {
+            "filename": ""
+        }
+    },
+    "sqlite_config": {
+        "filepath": [
+            "db/ces.db",
+            "resources/app/db/ces.db"
+        ]
+    },
+    "constants": {
+        "TABLE_BIOME": "MsBiome",
+        "TABLE_COMPONENT": "MsComponent",
+        "TABLE_COMPONENT_TYPE": "MsComponentType",
+        "TABLE_CORRUPTION": "MsCorruption",
+        "TABLE_DEVELOPMENT": "MsDevelopment",
+        "TABLE_FACILITY": "MsFacility",
+        "TABLE_REGION": "MsRegion",
+        "TABLE_RESOURCE": "MsResource",
+        "TABLE_RESOURCE_TIER": "MsResourceTier",
+        "TABLE_SEASON": "MsSeason",
+        "TABLE_STATE": "MsState",
+        "TABLE_TRADE_AGREEMENT_DETAIL": "DetailTradeAgreement",
+        "TABLE_TRADE_AGREEMENT_HEADER": "HeaderTradeAgreement",
+        "COLUMN_NAME": "name",
+        "COLUMN_POPULATION": "population",
+        "COLUMN_DESC": "desc",
+        "COLUMN_RATE": "rate",
+        "COLUMN_POPULATION_CAP": "populationCap",
+        "COLUMN_MILITARY_TIER": "militaryTier",
+        "COLUMN_GROWTH_MODIFIER": "growthModifier",
+        "COLUMN_SHRINKAGE_MODIFIER": "shrinkageModifier",
+        "COLUMN_TREASURY_AMT": "treasuryAmt",
+        "COLUMN_IS_CHILD": "isChild",
+        "COLUMN_IS_FUNCTIONAL": "isFunctional",
+        "COLUMN_EXPENSES": "expenses",
+        "COLUMN_TAX_RATE": "taxRate",
+        "COLUMN_ACTIVATION_TIME": "activationTime",
+        "COLUMN_BIOME_ID": "biomeId",
+        "COLUMN_COMPONENT_ID": "componentId",
+        "COLUMN_COMPONENT_TYPE_ID": "componentTypeId",
+        "COLUMN_COMPONENT_VALUE": "value",
+        "COLUMN_CORRUPTION_ID": "corruptionId",
+        "COLUMN_DEVELOPMENT_ID": "developmentId",
+        "COLUMN_FACILITY_ID": "facilityId",
+        "COLUMN_REGION_ID": "regionId",
+        "COLUMN_RESOURCE_ID": "resourceId",
+        "COLUMN_RESOURCE_TIER_ID": "resourceTierId",
+        "COLUMN_SEASON_ID": "seasonId",
+        "COLUMN_STATE_ID": "stateId",
+        "COLUMN_TRADE_AGREEMENT_ID": "tradeAgreementId",
+        "COLUMN_ADMIN_MODIFIER": "adminRegionModifier"
+    },
+    "paths": {
+        "executeResult": "../models/base/executeResult",
+        "biomeModel": "../models/biomeModel",
+        "componentModel": "../models/componentModel",
+        "componentTypeModel": "../models/componentTypeModel",
+        "corruptionModel": "../models/corruptionModel",
+        "developmentModel": "../models/developmentModel",
+        "facilityModel": "../models/facilityModel",
+        "regionListItemModel": "../models/regionListItemModel",
+        "regionModel": "../models/regionModel",
+        "resourceModel": "../models/resourceModel",
+        "resourceTierModel": "../models/resourceTierModel",
+        "rootComponentCollection": "../models/rootComponentCollectionModel",
+        "seasonModel": "../models/seasonModel",
+        "stateListItemModel": "../models/stateListItemModel",
+        "stateModel": "../models/stateModel",
+        "tradeAgreementModel": "../models/tradeAgreementModel",
+        "traderModel": "../models/traderModel",
+        "componentServices": "./componentServices",
+        "facilityServices": "./facilityServices",
+        "regionServices": "./regionServices",
+        "resourceServices": "./resourceServices",
+        "stateServices": "./stateServices",
+        "tradeAgreementServices": "./tradeAgreementServices",
+        "formulaHelper": "../helpers/formulaHelper"
+    }
+}
