@@ -7,8 +7,7 @@
     },
     "sqlite_config": {
         "filepath": [
-            "db/ces.db",
-            "resources/app/db/ces.db"
+            "../../db/ces.db",
         ]
     },
     "constants": {
