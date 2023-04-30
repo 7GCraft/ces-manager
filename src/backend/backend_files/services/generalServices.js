@@ -2,15 +2,16 @@ const config = require('./config.json');
 const constants = config.constants;
 const dbContext = require('../repository/DbContext');
 const knex = dbContext.getKnexObject();
+const path = require('path');
 
-const Season = require(config.paths.seasonModel);
+const Season = require('../models/seasonModel');
 
-const stateServices = require(config.paths.stateServices);
-const regionServices = require(config.paths.regionServices);
-const tradeAgreementServices = require(config.paths.tradeAgreementServices);
+const stateServices = require("./stateServices");
+const regionServices = require("./regionServices");
+const tradeAgreementServices = require("./tradeAgreementServices");
 const facility = require('./facilityServices');
 
-const formulaHelper = require(config.paths.formulaHelper);
+const formulaHelper = require("../helpers/formulaHelper");
 
 const excel = require('exceljs')
 

@@ -3,12 +3,12 @@ const constants = config.constants;
 const dbContext = require('../repository/DbContext');
 const knex = dbContext.getKnexObject();
 
-const componentServices = require(config.paths.componentServices);
-const resourceServices = require(config.paths.resourceServices);
-const stateServices = require(config.paths.stateServices);
+const componentServices = require('./componentServices');
+const resourceServices = require('./resourceServices');
+const stateServices = require('./stateServices');
 
-const TradeAgreement = require(config.paths.tradeAgreementModel);
-const Trader = require(config.paths.traderModel);
+const TradeAgreement = require('../models/tradeAgreementModel');
+const Trader = require('../models/traderModel');
 
 /**
  * Gets all trade agreements.

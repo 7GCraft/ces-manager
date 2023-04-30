@@ -1,15 +1,15 @@
 const config = require('./config.json');
 const constants = config.constants;
-const facilityServices = require(config.paths.facilityServices);
+const facilityServices = require('./facilityServices');
 const dbContext = require('../repository/DbContext');
 const knex = dbContext.getKnexObject();
 
-const RegionListItem = require(config.paths.regionListItemModel);
-const Region = require(config.paths.regionModel);
-const Biome = require(config.paths.biomeModel);
-const Corruption = require(config.paths.corruptionModel);
-const Development = require(config.paths.developmentModel);
-const State = require(config.paths.stateModel);
+const RegionListItem = require('../models/regionListItemModel');
+const Region = require('../models/regionModel');
+const Biome = require('../models/biomeModel');
+const Corruption = require('../models/corruptionModel');
+const Development = require('../models/developmentModel');
+const State = require('../models/stateModel');
 
 /**
  * Gets a list of region IDs, names, total income, and total food.

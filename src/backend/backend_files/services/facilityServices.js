@@ -1,11 +1,11 @@
 const config = require('./config.json');
 const constants = config.constants;
-const componentServices = require(config.paths.componentServices);
+const componentServices = require('./componentServices');
 const dbContext = require('../repository/DbContext');
 const knex = dbContext.getKnexObject();
 
-const Facility = require(config.paths.facilityModel);
-const RootComponentCollection = require(config.paths.rootComponentCollection);
+const Facility = require('../models/facilityModel');
+const RootComponentCollection = require('../models/rootComponentCollectionModel');
 
 /**
  * Gets all facilities of a given region.

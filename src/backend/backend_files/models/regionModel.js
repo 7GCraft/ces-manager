@@ -1,6 +1,6 @@
 const config = require('../services/config.json');
-const Corruption = require(config.paths.corruptionModel);
-const Development = require(config.paths.developmentModel);
+const Corruption = require('../models/corruptionModel');
+const Development = require('../models/developmentModel');
 
 module.exports = class Region {
     /**

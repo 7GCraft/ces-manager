@@ -1,11 +1,11 @@
 const config = require('./config.json');
 const constants = config.constants;
-const resourceServices = require(config.paths.resourceServices);
+const resourceServices = require('./resourceServices');
 const dbContext = require('../repository/DbContext');
 const knex = dbContext.getKnexObject();
 
-const Component = require(config.paths.componentModel);
-const ComponentType = require(config.paths.componentTypeModel);
+const Component = require('../models/componentModel');
+const ComponentType = require('../models/componentTypeModel');
 
 /**
  * Gets all components of a given region.

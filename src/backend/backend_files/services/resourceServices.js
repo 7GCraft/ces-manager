@@ -3,8 +3,8 @@ const constants = config.constants;
 const dbContext = require('../repository/DbContext');
 const knex = dbContext.getKnexObject();
 
-const ResourceTier = require(config.paths.resourceTierModel);
-const Resource = require(config.paths.resourceModel);
+const ResourceTier = require('../models/resourceTierModel');
+const Resource = require('../models/resourceModel');
 
 /**
  * Gets a resource of a given ID.

@@ -1,13 +1,13 @@
 const config = require('./config.json');
 const constants = config.constants;
-const facilityServices = require(config.paths.facilityServices);
-const regionServices = require(config.paths.regionServices);
-const tradeAgreementServices = require(config.paths.tradeAgreementServices);
+const facilityServices = require("./facilityServices");
+const regionServices = require('./regionServices');
+const tradeAgreementServices = require('./tradeAgreementServices');
 const dbContext = require('../repository/DbContext');
 const knex = dbContext.getKnexObject();
 
-const StateListItem = require(config.paths.stateListItemModel);
-const State = require(config.paths.stateModel);
+const StateListItem = require("../models/stateListItemModel");
+const State = require("../models/stateModel");
 
 /**
  * Gets a list of state IDs and names.

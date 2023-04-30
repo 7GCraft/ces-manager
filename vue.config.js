@@ -7,7 +7,8 @@ module.exports = {
         extraResources: [
           {from: './src/backend', to:'./'}
         ]
-      }
+      },
+      externals: ['knex','sqlite3'],
     }
   }
 }
