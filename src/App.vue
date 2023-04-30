@@ -49,6 +49,7 @@
 
 <script>
 import TheHomepage from './pages/TheHomepage.vue'
+// import { ipcRenderer } from 'electron'
 
 
 export default {
@@ -56,6 +57,12 @@ export default {
   name: 'App',
   components: {
     TheHomepage
+  },
+  mounted(){
+    // ipcRenderer.send('State:getStateList');
+    // ipcRenderer.once('State:getStateListOK', function (e, res) {
+    //     console.log(res);
+    // });
   }
 }
 </script>

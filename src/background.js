@@ -5,7 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 //import path from 'path'
 // import ipcs from 'ipcEventHandler'
-const path = require('path');
+// const path = require('path');
 const ipcs = require('./backend/backend_files/handlers/ipcEventHandler');
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -67,7 +67,7 @@ app.on('ready', async () => {
     }
   }
   createWindow()
-  // ipcs.initializeIpcMains();
+  ipcs.initializeIpcMains();
 })
 
 // Exit cleanly on request from parent process in development mode.
