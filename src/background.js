@@ -3,9 +3,9 @@
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-//import path from 'path'
+import path from 'path'
 // import ipcs from 'ipcEventHandler'
-// const path = require('path');
+
 const ipcs = require('./backend/backend_files/handlers/ipcEventHandler');
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -24,7 +24,8 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false,
+      preload:path.join(__dirname,'preload.js')
     }
   })
 

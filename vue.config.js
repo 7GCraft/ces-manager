@@ -3,7 +3,9 @@
 module.exports = {
   pluginOptions:{
     electronBuilder: {
+      preload: 'src/preload.js',
       builderOptions:{
+    
         extraResources: [
           {from: './src/backend', to:'./'}
         ]
