@@ -59,10 +59,10 @@ export default {
     TheHomepage
   },
   mounted(){
-    // ipcRenderer.send('State:getStateList');
-    // ipcRenderer.once('State:getStateListOK', function (e, res) {
-    //     console.log(res);
-    // });
+    window.ipcRenderer.send('State:getStateList');
+    window.ipcRenderer.once('State:getStateListOK', function (e, res) {
+        console.log(res);
+    });
   }
 }
 </script>
