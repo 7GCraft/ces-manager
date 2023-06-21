@@ -3,7 +3,11 @@ module.exports = {
   purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   content: [],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ["Bai Jamjuree", "sans-serif"],
+      },
+    },
   },
   plugins: [],
 }
