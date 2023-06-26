@@ -1,6 +1,6 @@
 <template>
-  <the-landing v-if="!landed"></the-landing>
-  <the-homepage v-if="landed"></the-homepage>
+  <the-landing @landed="setLanding" v-if="!isLanded"></the-landing>
+  <the-homepage v-if="isLanded"></the-homepage>
 </template>
 
 <script>
@@ -18,15 +18,21 @@ export default {
       isLanded: false
     }
   },
+  methods: {
+    setLanding(){
+      this.isLanded = true
+      localStorage.setItem('landed',true)
+    }
+  },
   mounted(){
     if(localStorage.getItem('landed')){
-      this.isLanded = true
+      this.isLanded = false
     }
-  }
+  },
+
 }
 </script>
 
-    TheHomepage
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

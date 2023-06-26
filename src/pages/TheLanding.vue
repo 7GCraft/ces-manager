@@ -10,7 +10,7 @@
             </p>
             <div class="mx-auto w-full my-8 md:my-16">
           <a
-            href="#landing-features"
+            href="#landing-cta"
             class="p-4 px-10 md:px-20 md:py-8 rounded-full shadow-lg bg-emerald-500 text-white duration-200 
             hover:opacity-80 hover:bg-white hover:text-emerald-500 md:text-2xl" 
           >
@@ -20,7 +20,7 @@
         </div>
     </section>
     <section id="landing-features">
-        <div class="max-w-6xl mx-auto text-center px-16 mb-40 pt-0">
+        <div class="max-w-6xl mx-auto text-center px-16  pt-0">
             <h5 class="mb-8 text-3xl 
             text-darkGrayishBlue md:text-4xl font-bold">Keep track of your game data.</h5>
             <p class="max-w-3xl mx-auto leading-9 text-center md:text-xl">The CES manager allows you to add, modify, and delete data persistently among different sessions. This data is then saved real-time to a persistent SQL database, allowing your data to be processed and modified instantly.
@@ -69,5 +69,61 @@
         </div>
         
     </section>
+    <section id="landing-simplification">
+      <div class="max-w-6xl mx-auto text-center px-16 mb-40 pt-0">
+        <h3 class="mb-8 text-4xl font-bold text-darkGrayishBlue md:text-5xl;"> Game Mastering Made Simple</h3>
+        <p class="max-w-3xl mx-auto leading-9 text-center md:text-xl">Never again will you be feel stressed or distraught managing a multi-layered game! Our all-in-one app will allow you to manage
+          every single aspect of your game reliably and easily. Do everything with our top of the line everything-in-one application.
+        </p>
+        <img src="../assets/flag.png" class="mx-auto"/>
+       
+      </div>
+    </section>
+    <section id="landing-cta">
+      <div class="max-w-6xl mx-auto text-center px-16 mb-40 pt-0">
+        <h3 class="mb-8 text-4xl font-bold text-darkGrayishBlue md:text-5xl;"> Begin your journey with CES manager now.</h3>
+        <p class="max-w-3xl mx-auto leading-9 text-center md:text-xl pb-20">Press the button below to kick-start your journey with the CES manager. This button will instantly
+          bring you into the main CES interface.
+        </p>
+        <button
+            type="button"
+            href="#landing-cta"
+            @click="$emit('landed')"
+            class="p-4 px-10 md:px-20 md:py-8 rounded-full shadow-lg bg-cyan-500 text-white duration-200 
+            hover:opacity-80 hover:bg-white hover:text-cyan-500 md:text-2xl" 
+          >
+            Begin
+        </button>
+      </div>
+    </section>
+    <footer id="landing-footer" class="bg-gray-50">
+      <div class="max-w-6xl mx-auto text-center px-16 py-4 flex flex-col items-center justify-between md:flex-row">
+       <div class="">
+        <img src="../assets/ces_logo.png" alt="50" class="h-24"/>
+       </div>
+      
+        <div class="flex flex-col items-center justify-between  mb-10
+        space-y-6 md:flex-row md:mb-0 md:space-y-0 md:space-x-10">
+        <a href="https://github.com/7GCraft/ces-manager">Main Github Page</a>
+        <a href="https://github.com/7GCraft/ces-manager/blob/master/images/screenshot.jpg">Showcase</a>
+        <a href="https://github.com/7GCraft/ces-manager/blob/master/README.md">Readme</a>
+        </div>
+       <a class="rounded-full hover:bg-purple-400" href="https://github.com/7GCraft/ces-manager"><img src="../assets/logo-github.png" class=" h-20"/></a>
+        
+      </div>
+    </footer>
+
+
 </div>
 </template>
+
+
+<script>
+
+
+export default {
+  name: 'the-landing',
+  emits:['landed']
+
+}
+</script>
