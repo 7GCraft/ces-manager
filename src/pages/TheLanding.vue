@@ -91,8 +91,8 @@
         </button>
       </div>
     </section>
-    <footer id="landing-footer" class="bg-gray-50">
-      <div class="max-w-6xl mx-auto text-center px-16 py-4 flex flex-col items-center justify-between md:flex-row">
+    <footer id="landing-footer" class="bg-gray-50 py-7 md:py-4">
+      <div class="max-w-6xl mx-auto text-center px-16 py-4 flex flex-col items-center space-y-8 justify-between md:space-y-0 md:flex-row">
        <div class="">
         <img src="../assets/ces_logo.png" alt="50" class="h-24"/>
        </div>
