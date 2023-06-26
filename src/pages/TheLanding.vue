@@ -1,7 +1,7 @@
 <template>
     <div id="landing">
     <section id="landing-introduction">
-        <div class="max-w-6xl mx-auto text-center px-16 mb-40 pt-0">
+        <div class="max-w-6xl mx-auto text-center px-16 mb-20 pt-0">
             <img src="../assets/ces_logo.png" alt="CES" class="mx-auto my-8"/>
             <h5 class="mb-8 text-3xl 
             text-darkGrayishBlue md:text-4xl font-bold">An app that allow you to manage everything.</h5>
@@ -9,21 +9,16 @@
                 Gone are the days where every aspect of the game has to be handled manually. Manage everything in this single, multi-functional desktop application.
             </p>
             <div class="mx-auto w-full my-8 md:my-16">
-          <a
-            href="#landing-cta"
-            class="p-4 px-10 md:px-20 md:py-8 rounded-full shadow-lg bg-emerald-500 text-white duration-200 
-            hover:opacity-80 hover:bg-white hover:text-emerald-500 md:text-2xl" 
-          >
-            Continue
-          </a>
+   
         </div>
         </div>
     </section>
     <section id="landing-features">
-        <div class="max-w-6xl mx-auto text-center px-16  pt-0">
+        <div class="max-w-6xl mx-auto text-center px-16  pt-0 mb-20">
             <h5 class="mb-8 text-3xl 
             text-darkGrayishBlue md:text-4xl font-bold">Keep track of your game data.</h5>
-            <p class="max-w-3xl mx-auto leading-9 text-center md:text-xl">The CES manager allows you to add, modify, and delete data persistently among different sessions. This data is then saved real-time to a persistent SQL database, allowing your data to be processed and modified instantly.
+            <p class="max-w-3xl mx-auto 
+            leading-9 text-center md:text-xl md:mb-6">The CES manager allows you to add, modify, and delete data persistently among different sessions. This data is then saved real-time to a persistent SQL database, allowing your data to be processed and modified instantly.
             </p>
             <div class="relative flex flex-col md:flex-row md:space-x-2">
                 <div class="md:w-1/2 flex flex-col justify-evenly">
@@ -33,8 +28,8 @@
                     <img src="../assets/ces-overview2.png"/>
                 </div>
                 <div
-            class="flex flex-col mt-16 mb-24 space-y-12 
-            text-xl md:w-1/2 md:mb-60 md:text-left md:pl-16"
+            class="flex flex-col mt-16 space-y-12 
+            text-xl md:w-1/2 md:text-left md:pl-16"
           >
             <!--Item 1-->
             <div>
@@ -70,9 +65,9 @@
         
     </section>
     <section id="landing-simplification">
-      <div class="max-w-6xl mx-auto text-center px-16 mb-40 pt-0">
+      <div class="max-w-6xl mx-auto text-center px-16 mb-20 pt-0">
         <h3 class="mb-8 text-4xl font-bold text-darkGrayishBlue md:text-5xl;"> Game Mastering Made Simple</h3>
-        <p class="max-w-3xl mx-auto leading-9 text-center md:text-xl">Never again will you be feel stressed or distraught managing a multi-layered game! Our all-in-one app will allow you to manage
+        <p class="max-w-3xl mb-4 mx-auto leading-9 text-center md:text-xl">Never again will you be feel stressed or distraught managing a multi-layered game! Our all-in-one app will allow you to manage
           every single aspect of your game reliably and easily. Do everything with our top of the line everything-in-one application.
         </p>
         <img src="../assets/flag.png" class="mx-auto"/>
@@ -80,16 +75,16 @@
       </div>
     </section>
     <section id="landing-cta">
-      <div class="max-w-6xl mx-auto text-center px-16 mb-40 pt-0">
+      <div class="max-w-6xl mx-auto text-center px-16 mb-16 pt-0">
         <h3 class="mb-8 text-4xl font-bold text-darkGrayishBlue md:text-5xl;"> Begin your journey with CES manager now.</h3>
-        <p class="max-w-3xl mx-auto leading-9 text-center md:text-xl pb-20">Press the button below to kick-start your journey with the CES manager. This button will instantly
+        <p class="max-w-3xl mx-auto leading-9 text-center md:text-xl mb-10">Press the button below to kick-start your journey with the CES manager. This button will instantly
           bring you into the main CES interface.
         </p>
         <button
             type="button"
             href="#landing-cta"
             @click="$emit('landed')"
-            class="p-4 px-10 md:px-20 md:py-8 rounded-full shadow-lg bg-cyan-500 text-white duration-200 
+            class="p-4 px-10 md:px-20 md:py-5 rounded-full shadow-lg bg-cyan-500 text-white duration-200 
             hover:opacity-80 hover:bg-white hover:text-cyan-500 md:text-2xl" 
           >
             Begin
@@ -108,7 +103,7 @@
         <a href="https://github.com/7GCraft/ces-manager/blob/master/images/screenshot.jpg">Showcase</a>
         <a href="https://github.com/7GCraft/ces-manager/blob/master/README.md">Readme</a>
         </div>
-       <a class="rounded-full hover:bg-purple-400" href="https://github.com/7GCraft/ces-manager"><img src="../assets/logo-github.png" class=" h-20"/></a>
+       <a class="rounded-full hover:bg-purple-800" href="https://github.com/7GCraft/ces-manager"><img src="../assets/logo-github.png" class=" h-20"/></a>
         
       </div>
     </footer>
