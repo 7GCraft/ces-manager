@@ -4,9 +4,9 @@
   <div v-else  class="min-h-screen w-screen
   bg-gray-100 p-10 px-16">
     <!--App Container-->
-    <div class="flex flex-row text-center shadow-lg bg-white">
+    <div class="flex flex-row text-center shadow-lg bg-white h-fit">
       <!--Sidebar -->
-        <div class="w-1/6 flex flex-col bg-gray-300
+        <div class="w-1/5 flex flex-col bg-gray-300
          text-blue-400 border border-white border-x-2 ">
           <div class=" p-2 border-white border flex justify-center"><img src='./assets/ces_logo.png' class="h-24 hover:scale-110"/></div>
           <div class="p-6 border-white border hover:text-white hover:bg-blue-400"><a href="">Home</a></div>
@@ -16,9 +16,9 @@
           <div class="p-6 border-white border hover:text-white hover:bg-blue-400"><a href="">Resource Tiers</a></div>
         </div>
         <!--Content-->
-        <div class="w-5/6 flex flex-col">
+        <div class="w-4/5 flex flex-col">
           
-          <router-view></router-view>
+          <router-view :date="date"></router-view>
         </div>
     </div>
   </div>
