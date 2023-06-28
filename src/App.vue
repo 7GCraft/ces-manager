@@ -9,8 +9,8 @@
         <div class="w-1/5 flex flex-col bg-gray-300
          text-blue-400 border border-white border-x-2 ">
           <div class=" p-2 border-white border flex justify-center"><img src='./assets/ces_logo.png' class="h-24 hover:scale-110"/></div>
-          <div class="p-6 border-white border hover:text-white hover:bg-blue-400"><a href="">Home</a></div>
-          <div class="p-6 border-white border hover:text-white hover:bg-blue-400"><a href="">State List</a></div>
+          <div class="p-6 border-white border hover:text-white hover:bg-blue-400"><router-link to="/">Home</router-link></div>
+          <div class="p-6 border-white border hover:text-white hover:bg-blue-400"><router-link to="state-list">State List</router-link></div>
           <div class="p-6 border-white border hover:text-white hover:bg-blue-400"><a href="">Region List</a></div>
           <div class="p-6 border-white border hover:text-white hover:bg-blue-400"><a href="">Trade Agreement</a></div>
           <div class="p-6 border-white border hover:text-white hover:bg-blue-400"><a href="">Resource Tiers</a></div>
@@ -18,7 +18,7 @@
         <!--Content-->
         <div class="w-4/5 flex flex-col">
           
-          <router-view :date="date"></router-view>
+          <router-view :date="date" @advance-season="advanceSeason"></router-view>
         </div>
     </div>
   </div>
@@ -54,6 +54,9 @@ export default {
         this.date.season = res.season
         this.date.year = res.year
       })
+    },
+    advanceSeason(){
+  
     }
   },
   mounted(){
