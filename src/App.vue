@@ -7,9 +7,11 @@
 import TheHomepage from './pages/TheHomepage.vue'
 import TheLanding from './pages/TheLanding.vue';
 
+
 export default {
   name: 'App',
   components: {
+
     TheHomepage,
     TheLanding
   },
@@ -29,6 +31,7 @@ export default {
       this.isLanded = false
     }
   },
+
 
 }
 </script>
