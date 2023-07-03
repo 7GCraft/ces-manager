@@ -18,7 +18,7 @@
           <router-link to="state-list">State List</router-link>
         </div>
         <div class="p-6 border-white border hover:text-white hover:bg-blue-400">
-          <a href="">Region List</a>
+          <router-link to="region-list">Region List</router-link>
         </div>
         <div class="p-6 border-white border hover:text-white hover:bg-blue-400">
           <a href="">Trade Agreement</a>
@@ -31,6 +31,7 @@
       <div class="w-4/5 flex flex-col">
         <router-view
           :state-list="stateList"
+          :region-data="stateRegion"
           :date="date"
           @advance-season="advanceSeason"
         ></router-view>
@@ -54,12 +55,21 @@ export default {
         year: null,
       },
       stateList: [],
+      stateRegion: []
     };
   },
   methods: {
     setLanding() {
       this.isLanded = true;
       localStorage.setItem("landed", true);
+    },
+    getAllRegions(){
+      console.log('rossikoy')
+      window.ipcRenderer.send("Region:getAllRegionsByStateId");
+      window.ipcRenderer.once("Region:getAllRegionsByStateIdOK", (e, res) => {
+        this.stateRegion = res;
+        console.log(this.stateRegion,'look at it')
+      });
     },
     getCurrentSeason() {
       console.log("hello");
@@ -97,6 +107,7 @@ export default {
     }
     this.getCurrentSeason();
     this.getStateList();
+    this.getAllRegions();
   },
 };
 </script>
