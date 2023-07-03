@@ -93,7 +93,8 @@ export default {
       window.ipcRenderer.send("Region:getAllRegionsByStateId");
       window.ipcRenderer.once("Region:getAllRegionsByStateIdOK", (e, res) => {
         this.stateRegion = res;
-        console.log(this.stateRegion,'look at it')
+        this.descendingPropertySort(this.stateRegion,'stateName')
+        this.stateRegion.forEach(state=> this.descendingPropertySort(state.Regions,'RegionName'))
       });
     },
     getCurrentSeason() {
@@ -108,16 +109,19 @@ export default {
       window.ipcRenderer.send("State:getStateList");
       window.ipcRenderer.once("State:getStateListOK", (e, res) => {
         this.stateList = res;
-        this.stateList.sort(function (x, y) {
-          if (x.stateName > y.stateName) {
+        this.descendingPropertySort(this.stateList,'stateName')
+      });
+    },
+    descendingPropertySort(arr,propertyName){
+      arr.sort(function (x, y) {
+          if (x[propertyName] > y[propertyName]) {
             return 1;
           }
-          if (x.stateName < y.stateName) {
+          if (x[propertyName] < y[propertyName]) {
             return -1;
           }
           return 0;
         });
-      });
     },
     advanceSeason() {
       window.ipcRenderer.send("General:advancingSeason");

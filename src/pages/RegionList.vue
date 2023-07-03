@@ -1,10 +1,23 @@
 <template>
   <div
-    class="px-8 mx-auto lg:w-3/4 w-full text-center py-24 pt-16 flex flex-col space-y-5"
+    class="px-8 mx-auto lg:w-3/4 w-full text-center py-24 pt-10 flex flex-col space-y-5"
   >
   <h1 class="mb-4 text-4xl font-semibold tracking-tight leading-none ">
       Region List
     </h1>
+       <!--Add State Button Container-->
+       <div class="">
+            <button type="button" @click="$emit('advance-season')"
+             href="#" class="inline-flex justify-center 
+             items-center py-3 px-4 text-base font-medium 
+             text-center text-white rounded-lg bg-blue-700
+              hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
+               dark:focus:ring-blue-900">
+                Add Region
+                <svg class="ml-4" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+           
+        </div>
      <!--Searchbar Container-->
      <div class="relative mx-20  ">
       <div
