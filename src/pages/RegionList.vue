@@ -41,8 +41,8 @@
       </button>
     </div>
     <!-- Region Table Container-->
-    <div class="flex flex-col border-2 border-gray-50 shadow-lg p-4 bg-gray-100" v-for="state in regionData" :key="state.stateID">
-        <h1 class="mb-4 text-xl tracking-tight leading-none " >
+    <div class="flex flex-col border-2 border-gray-50 shadow-lg p-4 " v-for="state in regionData" :key="state.stateID">
+        <h1 class="mb-4 text-2xl tracking-tight leading-none " >
             {{state.stateName}}
         </h1>
         <region-table :regions="state.Regions"></region-table>
