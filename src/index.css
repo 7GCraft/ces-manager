@@ -3,4 +3,8 @@
 @tailwind utilities;
 
 
-
+@layer components{
+    .landing-section-container{
+        @apply max-w-6xl mx-auto text-center;
+    }
+}

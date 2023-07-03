@@ -6,8 +6,9 @@
     <div class="flex flex-row text-center shadow-lg bg-white h-fit">
       <!--Sidebar -->
       <div
-        class="w-1/5 flex flex-col bg-gray-300 text-blue-400 border border-white border-x-2"
+        class="hidden w-1/5 md:flex flex-col justify-between bg-gray-300 text-blue-400 border border-white border-x-2"
       >
+      <div class="sticky left-0 top-0">
         <div class="p-2 border-white border flex justify-center">
           <img src="./assets/ces_logo.png" class="h-24 hover:scale-110" />
         </div>
@@ -27,8 +28,9 @@
           <a href="">Resource Tiers</a>
         </div>
       </div>
+      </div>
       <!--Content-->
-      <div class="w-4/5 flex flex-col">
+      <div class="md:w-4/5 w-full flex flex-col">
         <router-view
           :state-list="stateList"
           :region-data="stateRegion"
@@ -37,7 +39,30 @@
         ></router-view>
       </div>
     </div>
+    
+   
   </div>
+  <!--Sidebar Menu for small screen-->
+  <div class="md:hidden flex flex-row 
+  justify-between sticky text-center bottom-0
+  bg-gray-200 mx-810 text-blue-400 border-2 border-white space-x-0">
+    
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="/">Home</router-link>
+        </div>
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="state-list">State List</router-link>
+        </div>
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="region-list">Region List</router-link>
+        </div>
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <a href="">Trade Agreement</a>
+        </div>
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <a href="">Resource Tiers</a>
+        </div>
+    </div>
 </template>
 
 <script>
