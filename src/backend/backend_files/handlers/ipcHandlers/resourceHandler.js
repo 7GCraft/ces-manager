@@ -18,7 +18,7 @@ module.exports = {
 const getAllResourceTiers = (e) => {
     let response = resource.getResourceTierAll();
     response.then(function (result) {
-        e.sender.send('Resource:getAllResourceTiersOk', result);
+        e.sender.send('Resource:getAllResourceTiersOK', result);
     });
 }
 
@@ -28,7 +28,7 @@ const getAllResourceTiers = (e) => {
 const getAllResourcesByStateId = (e, arg) => {
     let response = resource.getAllResourcesByStateId(arg);
     response.then(function (result) {
-        e.sender.send('Resource:getAllResourcesByStateIdOk', result);
+        e.sender.send('Resource:getAllResourcesByStateIdOK', result);
     });
 };
 
@@ -77,6 +77,6 @@ const deleteResourceById = (e, args) => {
     let allWindows = webContents.getAllWebContents();
     allWindows.sort((a, b) => b - a);
     allWindows.forEach(win => {
-        win.send("Resource:deleteResourceByIdOk", okDeleteResource);
+        win.send("Resource:deleteResourceByIdOK", okDeleteResource);
     });
 }
