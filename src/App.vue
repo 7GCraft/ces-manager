@@ -22,10 +22,10 @@
           <router-link to="region-list">Region List</router-link>
         </div>
         <div class="p-6 border-white border hover:text-white hover:bg-blue-400">
-          <a href="">Trade Agreement</a>
+          <router-link to="trade-agreement">Trade Agreement</router-link>
         </div>
         <div class="p-6 border-white border hover:text-white hover:bg-blue-400">
-          <a href="">Resource Tiers</a>
+          <router-link to="resource-tier">Resource Tier</router-link>
         </div>
       </div>
       </div>
@@ -34,6 +34,7 @@
         <router-view
           :state-list="stateList"
           :region-data="stateRegion"
+          :resource-list="resourceList"
           :date="date"
           @advance-season="advanceSeason"
         ></router-view>
@@ -80,7 +81,8 @@ export default {
         year: null,
       },
       stateList: [],
-      stateRegion: []
+      stateRegion: [],
+      resourceList:[]
     };
   },
   methods: {
@@ -89,7 +91,6 @@ export default {
       localStorage.setItem("landed", true);
     },
     getAllRegions(){
-      console.log('rossikoy')
       window.ipcRenderer.send("Region:getAllRegionsByStateId");
       window.ipcRenderer.once("Region:getAllRegionsByStateIdOK", (e, res) => {
         this.stateRegion = res;
@@ -98,7 +99,6 @@ export default {
       });
     },
     getCurrentSeason() {
-      console.log("hello");
       window.ipcRenderer.send("General:getCurrentSeason");
       window.ipcRenderer.once("General:getCurrentSeasonOK", (e, res) => {
         this.date.season = res.season;
@@ -111,6 +111,14 @@ export default {
         this.stateList = res;
         this.descendingPropertySort(this.stateList,'stateName')
       });
+    },
+    getAllResources(){
+      window.ipcRenderer.send("Resource:getAllResourceTiers");
+      window.ipcRenderer.once("Resource:getAllResourceTiersOK", (e,res) => {
+        this.resourceList = res;
+      });
+ 
+     
     },
     descendingPropertySort(arr,propertyName){
       arr.sort(function (x, y) {
@@ -137,6 +145,8 @@ export default {
     this.getCurrentSeason();
     this.getStateList();
     this.getAllRegions();
+   
+    this.getAllResources();
   },
 };
 </script>
