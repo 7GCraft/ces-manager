@@ -6,18 +6,7 @@
       Region List
     </h1>
        <!--Add State Button Container-->
-       <div class="">
-            <button type="button" @click="$emit('advance-season')"
-             href="#" class="inline-flex justify-center 
-             items-center py-3 px-4 text-base font-medium 
-             text-center text-white rounded-lg bg-blue-700
-              hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
-               dark:focus:ring-blue-900">
-                Add Region
-                <svg class="ml-4" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            </button>
-           
-        </div>
+      
      <!--Searchbar Container-->
      <div class="relative mx-20  ">
       <div
@@ -49,11 +38,26 @@
       
     </div>
     <!-- Region Table Container-->
-    <div class="flex flex-col border-2 border-gray-50 shadow-lg p-4 " v-for="state in availableState" :key="state.stateID">
-        <h1 class="mb-4 text-2xl tracking-tight leading-none " >
+    <div class="flex flex-col border-2 border-gray-50 shadow-lg p-4 space-y-4 " v-for="state in availableState" :key="state.stateID">
+        <button @click="toggleOpen(state.stateName)" class="bg-gray-100 flex flex-row px-4 justify-between text-center py-5 w-full mx-auto  border text-2xl  leading-5 " >
             {{state.stateName}}
-        </h1>
+            <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+        </button>
+        <div class="flex flex-col space-y-4 pt-2" :class="{'hidden' : !isOpen[state.stateName]}">
+        <div class="flex justify-end" >
+            <button type="button" 
+             href="#" class="inline-flex justify-right
+             items-center py-3 px-4 text-base font-medium 
+             text-center text-white rounded-lg bg-fernGreen
+              hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
+               dark:focus:ring-blue-900">
+                Add Region
+                <svg class="ml-1" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+           
+        </div>
         <region-table :regions="state.Regions"></region-table>
+      </div>
     </div>
   </div>
 </template>
@@ -67,10 +71,20 @@ export default {
     },
     mounted(){
         console.log(this.regionData,'region')
+        for(let state of this.regionData){
+          this.isOpen[state.stateName] = true;
+        }
+        console.log(this.isOpen)
     },
     data(){
       return{
-        stateFilter:''
+        stateFilter:'',
+        isOpen: {}
+      }
+    },
+    methods:{
+      toggleOpen(stateName){
+        this.isOpen[stateName] = !this.isOpen[stateName]
       }
     },
     computed:{
