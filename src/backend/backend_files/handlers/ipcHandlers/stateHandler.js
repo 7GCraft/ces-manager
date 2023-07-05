@@ -1,4 +1,5 @@
 const { ipcMain, BrowserWindow, webContents } = require('electron');
+const path = require('path');
 const state = require('../../services/stateServices');
 const region = require('../../services/regionServices');
 const facility = require('../../services/facilityServices'); 
@@ -45,12 +46,12 @@ const openStatePage = (e, arg) => {
         height: 720,
         webPreferences: {
             nodeIntegration: true,
-            additionalArguments: [arg]
+            additionalArguments: [arg],
+            preload:path.join(__dirname,'preload.js')
         },
         title: 'State Info'
     })
-
-    stateWindow.loadFile('src/views/stateInfo.html')
+    stateWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
 
     stateWindow.on('close', function () {
         stateWindow = null

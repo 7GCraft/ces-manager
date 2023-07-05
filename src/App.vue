@@ -37,14 +37,13 @@
           :resource-list="resourceList"
           :date="date"
           @advance-season="advanceSeason"
+          @open-state="openState()"
         ></router-view>
       </div>
     </div>
-    
-   
-  </div>
-  <!--Sidebar Menu for small screen-->
-  <div class="md:hidden flex flex-row 
+    <!--Sidebar Menu for small screen-->
+    <Teleport to="#app">
+    <div class="md:hidden flex flex-row 
   justify-between sticky text-center bottom-0
   bg-gray-200 mx-810 text-blue-400 border-2 border-white space-x-0">
     
@@ -64,6 +63,11 @@
           <a href="">Resource Tiers</a>
         </div>
     </div>
+  </Teleport>
+   
+  </div>
+  
+ 
 </template>
 
 <script>
@@ -117,9 +121,15 @@ export default {
       window.ipcRenderer.once("Resource:getAllResourceTiersOK", (e,res) => {
         this.resourceList = res;
       });
- 
-     
     },
+    openState(id){
+      window.ipcRenderer.send("State:openStatePage",id);
+      window.ipcRenderer.once("State:openStatePageOK", (e,res) => {
+        console.log(res)
+        this.$router.push('/region-list')
+      });
+    }
+    ,
     descendingPropertySort(arr,propertyName){
       arr.sort(function (x, y) {
           if (x[propertyName] > y[propertyName]) {
@@ -142,11 +152,15 @@ export default {
     if (localStorage.getItem("landed")) {
       this.isLanded = true;
     }
-    this.getCurrentSeason();
-    this.getStateList();
-    this.getAllRegions();
-   
-    this.getAllResources();
+    if(window.ipcRenderer){
+      this.getCurrentSeason();
+      this.getStateList();
+      this.getAllRegions();
+      this.getAllResources();
+    }else{
+      this.$router.push('region-list')
+    }
+ 
   },
 };
 </script>

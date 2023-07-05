@@ -38,7 +38,7 @@
 
     <!--State List Container-->
     <div class=" grid xs:grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 gap-3">
-        <div class="border-gray-50 p-4 bg-black text-white
+        <div @click="$emit('open-state',state.stateId)" class="border-gray-50 p-4 bg-black text-white
         cursor-pointer hover:bg-blue-500 " v-for="state in availableStates" :key="state.stateId">{{ state.stateName }}</div>
     </div>
       <!--Add State Button Container-->
@@ -62,6 +62,7 @@
 <script>
 export default {
   props: ["stateList"],
+  emits:['open-state'],
   mounted(){
     console.log(this.stateList,'rasukar')
   },
