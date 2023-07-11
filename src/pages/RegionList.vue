@@ -45,20 +45,59 @@
         </button>
         <div class="flex flex-col space-y-4 pt-2" :class="{'hidden' : !isOpen[state.stateName]}">
         <div class="flex justify-end" >
-            <button type="button" 
-             href="#" class="inline-flex justify-right
+            <button type="button" @click="toggleAddRegionModal(state.stateName)"
+             href="#" class="inline-flex justify-right group
              items-center py-3 px-4 text-base font-medium 
              text-center text-white rounded-lg bg-fernGreen
-              hover:bg-blue-800 focus:ring-4 focus:ring-blue-300
-               dark:focus:ring-blue-900">
+            hover:bg-white hover:text-fernGreen
+              hover:ring-4 hover:ring-green-700 focus:ring-4 focus:ring-green-300
+               dark:focus:ring-green-900">
                 Add Region
-                <svg class="ml-1" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg class="group-hover:bg-fernGreen ml-1 group-hover:rounded-full" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
            
         </div>
         <region-table :regions="state.Regions"></region-table>
       </div>
     </div>
+    <modal-dialog v-if="showAddRegionModal">
+        <template v-slot:header>
+            <div class="w-full h-full font-semibold text-xl p-5">
+                <h1>Confirmation Modal</h1>
+            </div>
+        </template>
+        <template v-slot:body>
+             <div class="w-full h-full text-lg flex flex-col space-y-4">
+                <p>Are you sure you want to advance the season?  </p>
+                <p class="text-red-600 font-bold">  Warning: this decision will be permanent and there is no way to reverse it!</p>
+            </div>
+        </template>
+        <template v-slot:footer>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:justify-between sm:space-y-0 sm:space-x-8">
+           <button
+          type="button"
+          data-modal-toggle="confirmation-modal"
+          href="#"
+          @click="advanceSeason"
+          class="inline-flex justify-center items-center py-4 px-6 text-base font-medium text-center text-white rounded-lg bg-green-700
+           hover:text-green-700 hover:ring-4 hover:ring-green-700 hover:bg-white focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
+        >
+          Confirm
+         
+        </button>
+        <button
+          type="button"
+          data-modal-toggle="confirmation-modal"
+          href="#"
+          @click="toggleConfirmationModal"
+          class="inline-flex justify-center items-center py-4 px-6 text-base font-medium text-center text-white rounded-lg bg-red-700 hover:text-red-700 hover:ring-4 hover:ring-red-700 hover:bg-white focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
+        >
+          Cancel
+         
+        </button>
+            </div>
+        </template>
+    </modal-dialog>
   </div>
 </template>
 
@@ -79,12 +118,27 @@ export default {
     data(){
       return{
         stateFilter:'',
-        isOpen: {}
+        isOpen: {},
+        showAddRegionModal: false,
+        addRegionFormData: {
+          stateName: '',
+          stateId: '',
+          corruptionId:'',
+          biomeId:'',
+          developmentId:'',
+          population: null,
+          desc:'',
+          taxRate: null
+        }
       }
     },
     methods:{
       toggleOpen(stateName){
         this.isOpen[stateName] = !this.isOpen[stateName]
+      },
+      toggleAddRegionModal(stateName){
+        this.addRegionFormData.stateName = stateName
+        this.showAddRegionModal = !this.showAddRegionModal
       }
     },
     computed:{

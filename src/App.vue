@@ -1,7 +1,7 @@
 <template>
   <the-landing @landed="setLanding" v-if="!isLanded"></the-landing>
   <!--Background Container-->
-  <div v-else class="min-h-screen w-screen bg-gray-100 p-10 px-16">
+  <div v-else class="min-h-screen w-screen bg-gray-100 p-10 px-16 z-0">
     <!--App Container-->
     <div class="flex flex-row text-center shadow-lg bg-white h-fit">
       <!--Sidebar -->
