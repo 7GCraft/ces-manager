@@ -45,7 +45,7 @@
         </button>
         <div class="flex flex-col space-y-4 pt-2" :class="{'hidden' : !isOpen[state.stateName]}">
         <div class="flex justify-end" >
-            <button type="button" @click="toggleAddRegionModal(state.stateName)"
+            <button type="button" @click="toggleAddRegionModal(state.stateName,state.stateID)"
              href="#" class="inline-flex justify-right group
              items-center py-3 px-4 text-base font-medium 
              text-center text-white rounded-lg bg-fernGreen
@@ -63,13 +63,53 @@
     <modal-dialog v-if="showAddRegionModal">
         <template v-slot:header>
             <div class="w-full h-full font-semibold text-xl p-5">
-                <h1>Confirmation Modal</h1>
+                <h1>Add Region Modal</h1>
             </div>
         </template>
         <template v-slot:body>
-             <div class="w-full h-full text-lg flex flex-col space-y-4">
-                <p>Are you sure you want to advance the season?  </p>
-                <p class="text-red-600 font-bold">  Warning: this decision will be permanent and there is no way to reverse it!</p>
+             <div class="w-full h-full text-lg flex flex-col space-y-4 max-w-xl">
+               <form class="flex flex-col space-y-5 sm:w-3/4">
+                <div class="regionList-form-control">
+                  <label for="state-name">Region Name</label>
+                   <input id="region-name" class="pl-2" v-model="addRegionFormData.regionName" placeholder="Region Name"/>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="state-name">State Name</label>
+                  <select disabled class="w-1/2" v-model="addRegionFormData.stateId" id="state-name" >
+                    <option :value="addRegionFormData.stateId">{{ stateName }}</option>   
+                  </select>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="corruption-level">Corruption Level</label>
+                   <select class="w-1/2" v-model="addRegionFormData.corruptionId" id="corruption-level" >
+                    <option v-for="corruption in corruptionList" :key="corruption.corruptionId" :value="corruption.corruptionId">{{ corruption.corruptionName }}</option>   
+                  </select>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="biome">Biome</label>
+                  <select class="w-1/2" v-model="addRegionFormData.biomeId" id="biome" >
+                    <option v-for="biome in biomeList" :key="biome.biomeId" :value="biome.biomeId">{{ biome.biomeName }}</option>   
+                  </select>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="development-level">Development Level</label>
+                  <select class="w-1/2" v-model="addRegionFormData.developmentId" id="development-level" >
+                    <option v-for="development in developmentList" :key="development.developmentId" :value="development.developmentId">{{ development.developmentName }}</option>   
+                  </select>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="state-name">Population</label>
+                   <input type="number" id="state-name" class="pl-2" v-model="addRegionFormData.population" placeholder="Population"/>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="state-name">Tax Rate</label>
+                   <input type="number" id="state-name" class="pl-2" v-model="addRegionFormData.taxRate" placeholder="Tax Rate"/>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="state-name">Description</label>
+                   <textarea id="state-name" class="w-1/2 " v-model="addRegionFormData.desc" placeholder="Description"/>
+                 </div>
+               </form>
             </div>
         </template>
         <template v-slot:footer>
@@ -78,7 +118,7 @@
           type="button"
           data-modal-toggle="confirmation-modal"
           href="#"
-          @click="advanceSeason"
+          @click="$emit('add-region',addRegionFormData)"
           class="inline-flex justify-center items-center py-4 px-6 text-base font-medium text-center text-white rounded-lg bg-green-700
            hover:text-green-700 hover:ring-4 hover:ring-green-700 hover:bg-white focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
         >
@@ -89,7 +129,7 @@
           type="button"
           data-modal-toggle="confirmation-modal"
           href="#"
-          @click="toggleConfirmationModal"
+          @click="toggleAddRegionModal"
           class="inline-flex justify-center items-center py-4 px-6 text-base font-medium text-center text-white rounded-lg bg-red-700 hover:text-red-700 hover:ring-4 hover:ring-red-700 hover:bg-white focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
         >
           Cancel
@@ -104,7 +144,8 @@
 <script>
 import regionTable from '@/components/RegionTable.vue';
 export default {
-    props:['regionData'],
+    props:['regionData','developmentList','biomeList','corruptionList'],
+    emits:['add-region'],
     components:{
         regionTable
     },
@@ -113,22 +154,23 @@ export default {
         for(let state of this.regionData){
           this.isOpen[state.stateName] = true;
         }
-        console.log(this.isOpen)
+        console.log(this.developmentList)
     },
     data(){
       return{
         stateFilter:'',
         isOpen: {},
         showAddRegionModal: false,
+        stateName:'',
         addRegionFormData: {
-          stateName: '',
-          stateId: '',
+          regionName:'',
+          stateId: null,
           corruptionId:'',
           biomeId:'',
           developmentId:'',
           population: null,
+          taxRate: null,
           desc:'',
-          taxRate: null
         }
       }
     },
@@ -136,8 +178,9 @@ export default {
       toggleOpen(stateName){
         this.isOpen[stateName] = !this.isOpen[stateName]
       },
-      toggleAddRegionModal(stateName){
-        this.addRegionFormData.stateName = stateName
+      toggleAddRegionModal(stateName,stateId){
+        this.stateName = stateName
+        this.addRegionFormData.stateId = stateId
         this.showAddRegionModal = !this.showAddRegionModal
       }
     },

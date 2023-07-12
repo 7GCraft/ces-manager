@@ -36,7 +36,11 @@
           :region-data="stateRegion"
           :resource-list="resourceList"
           :date="date"
+          :biome-list="biomeList"
+          :corruption-list="corruptionLevelList"
+          :development-list="developmentLevelList"
           @advance-season="advanceSeason"
+          @add-region="addNewRegion"
           @open-state="openState()"
         ></router-view>
       </div>
@@ -86,10 +90,20 @@ export default {
       },
       stateList: [],
       stateRegion: [],
-      resourceList:[]
+      resourceList:[],
+      corruptionLevelList: [],
+      biomeList:[],
+      developmentLevelList:[]
     };
   },
   methods: {
+    addNewRegion(data){
+      console.log(data,'databefore')
+      window.ipcRenderer.send("Region:addRegion",JSON.stringify(data));
+      window.ipcRenderer.once("Region:addRegionOK", (e, res) => {
+        console.log(res,'legiun added')
+      });
+    },
     setLanding() {
       this.isLanded = true;
       localStorage.setItem("landed", true);
@@ -121,6 +135,30 @@ export default {
       window.ipcRenderer.once("Resource:getAllResourceTiersOK", (e,res) => {
         this.resourceList = res;
       });
+    },
+    getAllBiomes(){
+      window.ipcRenderer.send("Region:getBiomesForAdd");
+      window.ipcRenderer.once("Region:getBiomesForAddOK", (e,res) => {
+        this.biomeList = res;
+        console.log(this.biomeList,'biome')
+      });
+      
+
+    },
+    getAllDevelopmentLevel(){
+      window.ipcRenderer.send("Region:getDevelopmentForAdd");
+      window.ipcRenderer.once("Region:getDevelopmentForAddOK", (e,res) => {
+        this.developmentLevelList = res;
+       
+      });
+    },
+    getAllCorruptionLevel(){
+      window.ipcRenderer.send("Region:getCorruptionForAdd");
+      window.ipcRenderer.once("Region:getCorruptionForAddOK", (e,res) => {
+        this.corruptionLevelList = res;
+       
+      });
+ 
     },
     openState(id){
       window.ipcRenderer.send("State:openStatePage",id);
@@ -157,6 +195,9 @@ export default {
       this.getStateList();
       this.getAllRegions();
       this.getAllResources();
+      this.getAllBiomes()
+      this.getAllCorruptionLevel()
+      this.getAllDevelopmentLevel()
     }else{
       this.$router.push('region-list')
     }

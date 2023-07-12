@@ -115,7 +115,7 @@ const getCorruptionForAdd = (e) => {
  * Insert Region
  */
 const addRegion = (e, args) => {
-    let response = region.addRegion(args);
+    let response = region.addRegion(JSON.parse(args));
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);

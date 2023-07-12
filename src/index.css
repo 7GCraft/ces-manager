@@ -8,3 +8,10 @@
         @apply max-w-6xl mx-auto text-center;
     }
 }
+
+
+@layer components{
+    .regionList-form-control{
+        @apply  flex flex-row space-x-8 justify-between;
+    }
+}
