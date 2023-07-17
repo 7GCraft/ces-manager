@@ -1,0 +1,349 @@
+{
+    "Biome":
+    [
+        {
+            "biomeId": 1,
+            "name": "Plains"
+        },
+        {
+            "biomeId": 2,
+            "name": "Savannah"
+        },
+        {
+            "biomeId": 3,
+            "name": "Forest"
+        },
+        {
+            "biomeId": 4,
+            "name": "Birch Forest"
+        },
+        {
+            "biomeId": 5,
+            "name": "Roofed Forest"
+        },
+        {
+            "biomeId": 6,
+            "name": "Boreal Forest"
+        },
+        {
+            "biomeId": 7,
+            "name": "Jungle"
+        },
+        {
+            "biomeId": 8,
+            "name": "Desert"
+        },
+        {
+            "biomeId": 9,
+            "name": "Mesa"
+        },
+        {
+            "biomeId": 10,
+            "name": "Taiga"
+        },
+        {
+            "biomeId": 11,
+            "name": "Cold Taiga"
+        },
+        {
+            "biomeId": 12,
+            "name": "Swampland"
+        },
+        {
+            "biomeId": 13,
+            "name": "Mountains"
+        },
+        {
+            "biomeId": 14,
+            "name": "Extreme Hills"
+        },
+        {
+            "biomeId": 15,
+            "name": "Ice Plains"
+        },
+        {
+            "biomeId": 16,
+            "name": "Mushroom Island"
+        },
+        {
+            "biomeId": 17,
+            "name": "Ice Plains Spike"
+        },
+        {
+            "biomeId": 18,
+            "name": "Nether Wasteland"
+        }
+    ],
+    "ComponentType":
+    [
+        {
+            "componentTypeId": 1,
+            "name": "Population"
+        },
+        {
+            "componentTypeId": 2,
+            "name": "Building"
+        },
+        {
+            "componentTypeId": 3,
+            "name": "Resource"
+        },
+        {
+            "componentTypeId": 4,
+            "name": "Food"
+        },
+        {
+            "componentTypeId": 5,
+            "name": "Money"
+        },
+        {
+            "componentTypeId": 6,
+            "name": "Special"
+        }
+    ],
+    "Corruption":
+    [
+        {
+            "corruptionId": 1,
+            "name": "Nonexistent",
+            "rate": 0
+        },
+        {
+            "corruptionId": 2,
+            "name": "Petty",
+            "rate": 0.02
+        },
+        {
+            "corruptionId": 3,
+            "name": "Noticeable",
+            "rate": 0.05
+        },
+        {
+            "corruptionId": 4,
+            "name": "Moderate",
+            "rate": 0.1
+        },
+        {
+            "corruptionId": 5,
+            "name": "Significant",
+            "rate": 0.2
+        },
+        {
+            "corruptionId": 6,
+            "name": "Widespread",
+            "rate": 0.35
+        },
+        {
+            "corruptionId": 7,
+            "name": "Rampant",
+            "rate": 0.5
+        }
+    ],
+    "Development":
+    [
+        {
+            "developmentId": 1,
+            "name": "Hamlet",
+            "populationCap": 10,
+            "militaryTier": 1,
+            "growthModifier": 2,
+            "shrinkageModifier": 0.5
+        },
+        {
+            "developmentId": 2,
+            "name": "Village",
+            "populationCap": 20,
+            "militaryTier": 1,
+            "growthModifier": 2,
+            "shrinkageModifier": 0.5
+        },
+        {
+            "developmentId": 3,
+            "name": "Small Town",
+            "populationCap": 40,
+            "militaryTier": 2,
+            "growthModifier": 1,
+            "shrinkageModifier": 1
+        },
+        {
+            "developmentId": 4,
+            "name": "Town",
+            "populationCap": 60,
+            "militaryTier": 2,
+            "growthModifier": 1,
+            "shrinkageModifier": 1
+        },
+        {
+            "developmentId": 5,
+            "name": "City",
+            "populationCap": 80,
+            "militaryTier": 3,
+            "growthModifier": 1,
+            "shrinkageModifier": 1
+        },
+        {
+            "developmentId": 6,
+            "name": "Large City",
+            "populationCap": 100,
+            "militaryTier": 3,
+            "growthModifier": 1,
+            "shrinkageModifier": 1
+        }
+    ],
+    "ResourceTier":
+    [
+        {
+            "resourceTierId": 1,
+            "name": "Tier I",
+            "tradePower": 0.06
+        },
+        {
+            "resourceTierId": 2,
+            "name": "Tier II",
+            "tradePower": 0.05
+        },
+        {
+            "resourceTierId": 3,
+            "name": "Tier III",
+            "tradePower": 0.04
+        },
+        {
+            "resourceTierId": 4,
+            "name": "Tier IV",
+            "tradePower": 0.03
+        },
+        {
+            "resourceTierId": 5,
+            "name": "Tier V",
+            "tradePower": 0.025
+        },
+        {
+            "resourceTierId": 6,
+            "name": "Tier VI",
+            "tradePower": 0.02
+        }
+    ],
+    "Resource":
+    [
+        {
+            "resourceId": 1,
+            "name": "Diamond",
+            "resourceTierId": 1
+        },
+        {
+            "resourceId": 2,
+            "name": "Emerald",
+            "resourceTierId": 1
+        },
+        {
+            "resourceId": 3,
+            "name": "Ruby",
+            "resourceTierId": 1
+        },
+        {
+            "resourceId": 4,
+            "name": "Gold",
+            "resourceTierId": 2
+        },
+        {
+            "resourceId": 5,
+            "name": "Silk",
+            "resourceTierId": 2
+        },
+        {
+            "resourceId": 6,
+            "name": "Spices",
+            "resourceTierId": 2
+        },
+        {
+            "resourceId": 7,
+            "name": "Prismarine",
+            "resourceTierId": 2
+        },
+        {
+            "resourceId": 8,
+            "name": "Pearls",
+            "resourceTierId": 2
+        },
+        {
+            "resourceId": 9,
+            "name": "Silver",
+            "resourceTierId": 3
+        },
+        {
+            "resourceId": 10,
+            "name": "Quartz",
+            "resourceTierId": 3
+        },
+        {
+            "resourceId": 11,
+            "name": "Lapis Lazuli",
+            "resourceTierId": 3
+        },
+        {
+            "resourceId": 12,
+            "name": "Redstone",
+            "resourceTierId": 3
+        },
+        {
+            "resourceId": 13,
+            "name": "Glowstone",
+            "resourceTierId": 3
+        },
+        {
+            "resourceId": 14,
+            "name": "Ancient Tomes",
+            "resourceTierId": 3
+        },
+        {
+            "resourceId": 15,
+            "name": "Sugar",
+            "resourceTierId": 4
+        },
+        {
+            "resourceId": 16,
+            "name": "Wine",
+            "resourceTierId": 4
+        },
+        {
+            "resourceId": 17,
+            "name": "Tea",
+            "resourceTierId": 4
+        },
+        {
+            "resourceId": 18,
+            "name": "Oil",
+            "resourceTierId": 5
+        },
+        {
+            "resourceId": 19,
+            "name": "Furs",
+            "resourceTierId": 5
+        },
+        {
+            "resourceId": 20,
+            "name": "Iron",
+            "resourceTierId": 5
+        },
+        {
+            "resourceId": 21,
+            "name": "Fine Wood",
+            "resourceTierId": 5
+        },
+        {
+            "resourceId": 22,
+            "name": "Warhorses",
+            "resourceTierId": 5
+        },
+        {
+            "resourceId": 23,
+            "name": "Pottery",
+            "resourceTierId": 6
+        },
+        {
+            "resourceId": 24,
+            "name": "Coal",
+            "resourceTierId": 6
+        }
+    ]
+}
