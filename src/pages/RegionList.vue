@@ -116,9 +116,9 @@
             <div class="flex flex-col sm:flex-row space-y-4 sm:justify-between sm:space-y-0 sm:space-x-8">
            <button
           type="button"
-          data-modal-toggle="confirmation-modal"
+    
           href="#"
-          @click="$emit('add-region',addRegionFormData)"
+          @click="addRegion"
           class="inline-flex justify-center items-center py-4 px-6 text-base font-medium text-center text-white rounded-lg bg-green-700
            hover:text-green-700 hover:ring-4 hover:ring-green-700 hover:bg-white focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
         >
@@ -175,6 +175,11 @@ export default {
       }
     },
     methods:{
+      addRegion(){
+        this.$emit('add-region',this.addRegionFormData)
+        this.toggleAddRegionModal()
+        
+      },
       toggleOpen(stateName){
         this.isOpen[stateName] = !this.isOpen[stateName]
       },

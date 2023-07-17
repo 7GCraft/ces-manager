@@ -98,8 +98,18 @@ export default {
   },
   methods: {
     addNewRegion(data){
-      console.log(data,'databefore')
-      window.ipcRenderer.send("Region:addRegion",JSON.stringify(data));
+      const {regionName,stateId,corruptionId,biomeId,developmentId, population, taxRate, desc} = data
+      let addRegionObj = {
+        biome: {biomeId},
+        corruption: {corruptionId},
+        desc,
+        development: {developmentId},
+        population,
+        regionName,
+        state: {stateId},
+        taxRate
+      }
+      window.ipcRenderer.send("Region:addRegion",JSON.stringify(addRegionObj));
       window.ipcRenderer.once("Region:addRegionOK", (e, res) => {
         console.log(res,'legiun added')
       });
