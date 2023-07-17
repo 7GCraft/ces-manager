@@ -43,7 +43,7 @@
     </div>
       <!--Add State Button Container-->
     <div class="">
-            <button type="button" @click="$emit('advance-season')"
+            <button type="button" @click="toggleAddStateModal"
              href="#" class="inline-flex justify-center 
              items-center py-4 px-6 text-base font-medium 
              text-center text-white rounded-lg bg-blue-700
@@ -55,20 +55,91 @@
            
         </div>
   </div>
+  <modal-dialog v-if="showAddStateModal">
+        <template v-slot:header>
+            <div class="w-full h-full font-semibold text-xl p-5">
+                <h1>Add Region Modal</h1>
+            </div>
+        </template>
+        <template v-slot:body>
+             <div class="w-full h-full text-lg flex flex-col space-y-4 max-w-xl">
+               <form class="flex flex-col space-y-5 sm:w-3/4">
+                <div class="regionList-form-control">
+                  <label for="state-name">State Name</label>
+                   <input id="state-name" class="pl-2" v-model="addStateFormData.stateName" placeholder="Region Name"/>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="state-treasury">Treasury</label>
+                  <input id="state-treasury" type="number" class="pl-2" v-model="addStateFormData.treasuryAmt" placeholder="Treasury"/>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="state-expenses">Expenses</label>
+                  <input id="state-expenses" type="number" class="pl-2" v-model="addStateFormData.expenses" placeholder="Expenses"/>
+                 </div>
+                 <div class="regionList-form-control">
+                  <label for="state-desc">Description</label>
+                   <textarea id="state-desc" class="w-1/2 " v-model="addStateFormData.desc" placeholder="Description"/>
+                 </div>
+               </form>
+            </div>
+        </template>
+        <template v-slot:footer>
+            <div class="flex flex-col sm:flex-row space-y-4 sm:justify-between sm:space-y-0 sm:space-x-8">
+           <button
+          type="button"
+    
+          href="#"
+          @click="addState"
+          class="inline-flex justify-center items-center py-4 px-6 text-base font-medium text-center text-white rounded-lg bg-green-700
+           hover:text-green-700 hover:ring-4 hover:ring-green-700 hover:bg-white focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
+        >
+          Confirm
+         
+        </button>
+        <button
+          type="button"
+          data-modal-toggle="confirmation-modal"
+          href="#"
+          @click="toggleAddStateModal"
+          class="inline-flex justify-center items-center py-4 px-6 text-base font-medium text-center text-white rounded-lg bg-red-700 hover:text-red-700 hover:ring-4 hover:ring-red-700 hover:bg-white focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
+        >
+          Cancel
+         
+        </button>
+            </div>
+        </template>
+    </modal-dialog>
 
  
 </template>
 
 <script>
+
 export default {
   props: ["stateList"],
-  emits:['open-state'],
+  emits:['open-state','add-state'],
   mounted(){
     console.log(this.stateList,'rasukar')
   },
   data(){
     return{
-        stateFilter:''
+        stateFilter:'',
+        showAddStateModal: false,
+        addStateFormData:{
+          stateName:'',
+          treasuryAmt:null,
+          expenses: null,
+          desc:''
+        }
+    }
+  },
+  methods:{
+    toggleAddStateModal(){
+      this.showAddStateModal = !this.showAddStateModal
+    },
+    addState(){
+      this.$emit('add-state',this.addStateFormData)
+      this.toggleAddStateModal()
     }
   },
   computed:{

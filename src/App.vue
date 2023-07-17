@@ -41,6 +41,7 @@
           :development-list="developmentLevelList"
           @advance-season="advanceSeason"
           @add-region="addNewRegion"
+          @add-state="addNewState"
           @open-state="openState()"
         ></router-view>
       </div>
@@ -97,6 +98,14 @@ export default {
     };
   },
   methods: {
+    addNewState(data){
+      let addStateData = {...data}
+      console.log(addStateData,'report')
+      window.ipcRenderer.send("State:addState",addStateData);
+      window.ipcRenderer.once("State:addStateOK", (e, res) => {
+        console.log(res,'state added')
+      });
+    },
     addNewRegion(data){
       const {regionName,stateId,corruptionId,biomeId,developmentId, population, taxRate, desc} = data
       let addRegionObj = {
