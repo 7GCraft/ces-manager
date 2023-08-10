@@ -39,6 +39,7 @@
           :biome-list="biomeList"
           :corruption-list="corruptionLevelList"
           :development-list="developmentLevelList"
+          :trade-agreement-List="tradeAgreementList"
           @advance-season="advanceSeason"
           @add-region="addNewRegion"
           @add-state="addNewState"
@@ -94,7 +95,8 @@ export default {
       resourceList:[],
       corruptionLevelList: [],
       biomeList:[],
-      developmentLevelList:[]
+      developmentLevelList:[],
+      tradeAgreementList: []
     };
   },
   methods: {
@@ -133,6 +135,12 @@ export default {
         this.stateRegion = res;
         this.descendingPropertySort(this.stateRegion,'stateName')
         this.stateRegion.forEach(state=> this.descendingPropertySort(state.Regions,'RegionName'))
+      });
+    },
+    getAllTradeAgreements(){
+      window.ipcRenderer.send("Trade:getAllTradeAgreements");
+      window.ipcRenderer.once("Trade:getAllTradeAgreementsOK", (e, res) => {
+        this.tradeAgreementList = res;
       });
     },
     getCurrentSeason() {
@@ -217,6 +225,7 @@ export default {
       this.getAllBiomes()
       this.getAllCorruptionLevel()
       this.getAllDevelopmentLevel()
+      this.getAllTradeAgreements()
     }else{
       this.$router.push('region-list')
     }
