@@ -10,7 +10,7 @@
         @dragenter.prevent v-for=" (resourceTier, tierIndex) in resourceList" :key="resourceTier.ResourceTierID">
         <h2 class="text-xl font-semibold border py-4 px-3 bg-black text-white">{{ resourceTier.ResourceTierName }}</h2>
         <div @dragstart="startDrag(index,resourceTier,tierIndex)" @dragend="stopDrag" draggable="true" v-for="(resource, index) in resourceTier.Resources"
-          :key="resource.ResourceName" class="border p-3 bg-gray-100 cursor-pointer " :class="{'bg-yellow-200': resource.isChanged}">{{ resource.ResourceName }}</div>
+          :key="resource.ResourceName" class="border p-3 bg-gray-100 cursor-pointer " :class="{'bg-yellow-200': resource.isChanged && resourceTier.ResourceTierID !== resource.originTierIndex}">{{ resource.ResourceName }}</div>
       </div>
     </div>
     <!--Add State Button Container-->
@@ -47,6 +47,7 @@ export default {
       tier.isDraggedOver = false
       for(let resources of tier.Resources){
         resources.isChanged = false
+        resources.originTierIndex = tier.ResourceTierID
       }
     }
     this.tierResourceList = [...this.resourceList]
