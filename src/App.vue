@@ -43,7 +43,7 @@
           @add-region="addNewRegion"
           @add-state="addNewState"
           @open-state="openState()"
-          @save-new-resources="addNewResources"
+          @save-new-resources="saveNewResources"
         ></router-view>
       </div>
     </div>
@@ -124,9 +124,9 @@ export default {
         console.log(res,'legiun added')
       });
     },
-    addNewResources(newResourceList){
+    saveNewResources(newResourceList){
       console.log(newResourceList,'nueva resource list')
-      window.ipcRenderer.send("Resource:updateResourceAll",JSON.stringify(newResourceList));
+      window.ipcRenderer.send("Resource:updateResourceAll",newResourceList);
       window.ipcRenderer.once("Resource:updateResourceAllOK", (e, res) => {
         console.log(res,'legiun added')
       });
