@@ -5,12 +5,17 @@
     </h1>
     <!--Resource Tier Container-->
     <div class="md:grid-cols-6 sm:grid-cols-4 grid-cols-2 grid gap-4">
-      <div class="flex flex-col space-y-2 " :class="{ 'bg-blue-100': isDragging, 'bg-red-200': resourceTier.isDraggedOver}" @dragover.prevent="dragOverList(resourceTier)"
-      @drop="onDragDrop(resourceTier)" @dragleave="leaveDraggedOverList(resourceTier)"
-        @dragenter.prevent v-for=" (resourceTier, tierIndex) in resourceList" :key="resourceTier.ResourceTierID">
+      <div class="flex flex-col space-y-2 "
+        :class="{ 'bg-blue-100': isDragging, 'bg-red-200': resourceTier.isDraggedOver }"
+        @dragover.prevent="dragOverList(resourceTier)" @drop="onDragDrop(resourceTier, tierIndex)"
+        @dragleave="leaveDraggedOverList(resourceTier)" @dragenter.prevent
+        v-for=" (resourceTier, tierIndex) in resourceList" :key="resourceTier.ResourceTierID">
         <h2 class="text-xl font-semibold border py-4 px-3 bg-black text-white">{{ resourceTier.ResourceTierName }}</h2>
-        <div @dragstart="startDrag(index,resourceTier,tierIndex)" @dragend="stopDrag" draggable="true" v-for="(resource, index) in resourceTier.Resources"
-          :key="resource.ResourceName" class="border p-3 bg-gray-100 cursor-pointer " :class="{'bg-yellow-200': resource.isChanged && resourceTier.ResourceTierID !== resource.originTierIndex}">{{ resource.ResourceName }}</div>
+        <div @dragstart="startDrag(index, resourceTier, tierIndex)" @dragend="stopDrag" draggable="true"
+          v-for="(resource, index) in resourceTier.Resources" :key="resource.ResourceName"
+          class="border p-3 bg-gray-100 cursor-pointer "
+          :class="{ 'bg-yellow-200': resource.isChanged && resourceTier.ResourceTierID !== resource.originTierIndex }">{{
+            resource.ResourceName }}</div>
       </div>
     </div>
     <!--Add State Button Container-->
@@ -40,37 +45,38 @@
 
 export default {
   props: ["resourceList"],
-  emits:['save-new-resources'],
+  emits: ['save-new-resources'],
   mounted() {
-    console.log(this.resourceList,'resources');
-    for(let tier of this.resourceList){
+    console.log(this.resourceList, 'resources');
+    for (let tier of this.resourceList) {
       tier.isDraggedOver = false
-      for(let resources of tier.Resources){
+      for (let resources of tier.Resources) {
         resources.isChanged = false
         resources.originTierIndex = tier.ResourceTierID
       }
     }
-    this.tierResourceList = [...this.resourceList]
+    this.tierResourceList = structuredClone(this.resourceList);
+    console.log(this.tierResourceList, 'tier Resourcce list')
   },
   data() {
     return {
       isChanging: false,
       isDragging: false,
-      draggedResourceIdx:'',
+      draggedResourceIdx: '',
       originTierIdx: null,
-      targetTierIdx:null,
-      originTier:null,
+      targetTierIdx: null,
+      originTier: null,
       tierResourceList: [],
     }
   },
   methods: {
-    startDrag(resourceIndex,tier,tierIndex) {
+    startDrag(resourceIndex, tier, tierIndex) {
       this.isDragging = true
       this.draggedResourceIdx = resourceIndex
-  
+
       this.originTier = tier
       this.originTierIdx = tierIndex
-      
+
     },
     stopDrag() {
       this.isDragging = false
@@ -79,36 +85,52 @@ export default {
     dragOverList(tier) {
       tier.isDraggedOver = true
     },
-    leaveDraggedOverList(tier){
+    leaveDraggedOverList(tier) {
       tier.isDraggedOver = false
     },
-    onDragDrop(tier){
+    onDragDrop(tier, index) {
+      this.targetTierIdx = index
 
-  
       tier.isDraggedOver = false
-      if(this.originTier.ResourceTierID === tier.ResourceTierID){
+      if (this.originTier.ResourceTierID === tier.ResourceTierID) {
         return;
       }
 
-      let newOriginTier = {...this.originTier}
-      console.log(this.draggedResourceIdx,'television')
-      let targetElement = newOriginTier.Resources.splice(this.draggedResourceIdx,1)
+      let newOriginTier = { ...this.originTier }
+      console.log(this.draggedResourceIdx, 'television')
+      let targetElement = newOriginTier.Resources.splice(this.draggedResourceIdx, 1)
       targetElement[0].isChanged = true;
-      console.log(targetElement,'new guys')
+      targetElement[0].ResourceTierID = tier.ResourceTierID
+      console.log(targetElement, 'new guys')
 
-      let newTier = {...tier}
-      console.log(newTier,'before')
+      let newTier = { ...tier }
+      console.log(newTier, 'before')
       newTier.Resources.push(targetElement[0])
-   
+      console.log(newTier, 'after')
+      console.log(this.tierResourceList, 'lets see here')
+      let newResourceTierList = structuredClone(this.tierResourceList);
+      console.log(newResourceTierList, 'new resource tier')
+      newResourceTierList.splice(this.originTierIdx, 1, newOriginTier)
+      console.log(newResourceTierList, 'new resource tier after adding 1')
+      newResourceTierList.splice(this.targetTierIdx, 1, newTier)
 
-      let newResourceTierList = [...this.tierResourceList];
-      newResourceTierList.splice(this.originTierIdx,1,newOriginTier)
-      newResourceTierList.splice(this.targetTierIdx,1,newTier)
       this.tierResourceList = [...newResourceTierList]
       this.isChanging = true;
     },
-    onResourceSubmit(){
-      this.$emit('save-new-resources',this.tierResourceList)
+    onResourceSubmit() {
+      let newResources = []
+      for (let tier of this.tierResourceList) {
+        for (let resource of tier.Resources) {
+          console.log(resource,'nueva resource')
+          newResources.push({
+            ResourceID: resource.ResourceID.toString(),
+            ResourceName: resource.ResourceName.toString(),
+            ResourceTierID: resource.ResourceTierID.toString()
+          })
+        }
+      }
+      console.log(newResources,'new-result')
+      this.$emit('save-new-resources', newResources)
     }
   }
 };
