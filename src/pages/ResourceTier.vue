@@ -18,6 +18,12 @@
             resource.ResourceName }}</div>
       </div>
     </div>
+    <div class="relative py-12 mx-auto border-2 border-red-500 
+    bg-red-300 w-3/5"
+    @dragover.prevent="dragOverList(resourceTier)" @drop="onDragDrop(resourceTier, tierIndex)"
+        @dragleave="leaveDraggedOverList(resourceTier)" @dragenter.prevent>
+
+    </div>
     <!--Add State Button Container-->
     <div class="pt-2 flex justify-center space-x-2">
       <button type="button" @click="toggleAddStateModal" href="#" class="inline-flex justify-center 
@@ -38,6 +44,8 @@
       </button>
 
     </div>
+    <!---->
+   
   </div>
 </template>
 
@@ -104,18 +112,37 @@ export default {
       console.log(targetElement, 'new guys')
 
       let newTier = { ...tier }
-      console.log(newTier, 'before')
       newTier.Resources.push(targetElement[0])
-      console.log(newTier, 'after')
-      console.log(this.tierResourceList, 'lets see here')
       let newResourceTierList = structuredClone(this.tierResourceList);
-      console.log(newResourceTierList, 'new resource tier')
       newResourceTierList.splice(this.originTierIdx, 1, newOriginTier)
-      console.log(newResourceTierList, 'new resource tier after adding 1')
       newResourceTierList.splice(this.targetTierIdx, 1, newTier)
 
       this.tierResourceList = [...newResourceTierList]
       this.isChanging = true;
+    },
+    onDragDropDelete(){
+      // this.targetTierIdx = index
+
+      // tier.isDraggedOver = false
+      // if (this.originTier.ResourceTierID === tier.ResourceTierID) {
+      //   return;
+      // }
+
+      // let newOriginTier = { ...this.originTier }
+      // console.log(this.draggedResourceIdx, 'television')
+      // let targetElement = newOriginTier.Resources.splice(this.draggedResourceIdx, 1)
+      // targetElement[0].isChanged = true;
+      // targetElement[0].ResourceTierID = tier.ResourceTierID
+      // console.log(targetElement, 'new guys')
+
+      // let newTier = { ...tier }
+      // newTier.Resources.push(targetElement[0])
+      // let newResourceTierList = structuredClone(this.tierResourceList);
+      // newResourceTierList.splice(this.originTierIdx, 1, newOriginTier)
+      // newResourceTierList.splice(this.targetTierIdx, 1, newTier)
+
+      // this.tierResourceList = [...newResourceTierList]
+      // this.isChanging = true;
     },
     onResourceSubmit() {
       let newResources = []
