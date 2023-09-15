@@ -136,11 +136,10 @@ export default {
       });
     },
     getCurrentSeason() {
-      window.ipcRenderer.send("General:getCurrentSeason");
-      window.ipcRenderer.once("General:getCurrentSeasonOK", (e, res) => {
-        this.date.season = res.season;
-        this.date.year = res.year;
-      });
+      
+      this.$store.dispatch('getCurrentDate');
+      console.log(this.$store.getters)
+     
     },
     getStateList() {
       window.ipcRenderer.send("State:getStateList");
