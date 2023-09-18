@@ -3,9 +3,16 @@ export default {
         let resultantDate = {}
         window.ipcRenderer.send("General:getCurrentSeason");
         window.ipcRenderer.once("General:getCurrentSeasonOK", (e, res) => {
-         resultantDate.season = res.season;
-          resultantDate.year = res.year;
+           let {season,year} = res;
+           resultantDate.season = season;
+           resultantDate.year = year;
+            context.commit('setDate',resultantDate)
         });
-        context.commit('setDate',resultantDate)
+    },
+    advanceSeason(context){
+        window.ipcRenderer.send("General:advancingSeason");
+        window.ipcRenderer.once("General:advancingSeasonOK", () => {
+            context.dispatch('getCurrentDate');
+        });
     }
 }

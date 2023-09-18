@@ -1,6 +1,6 @@
 <template>
-  <div
-    class="px-8 mx-auto lg:w-3/4 w-full text-center py-24 pt-10 flex flex-col space-y-5"
+  <div 
+    class="px-8 mx-auto lg:w-3/4 w-full text-center py-24 pt-10 flex flex-col space-y-5" 
   >
   <h1 class="mb-4 text-4xl font-semibold tracking-tight leading-none ">
       Region List

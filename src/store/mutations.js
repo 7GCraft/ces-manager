@@ -1,5 +1,11 @@
 export default{
     setDate(state,payload){
-        state.date = {...payload}
+        console.log('payload hello',payload)
+        let {season,year} = {...payload}
+        console.log(season,'lasada')
+        state.date= {
+            season,year
+        }
+        
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <the-landing @landed="setLanding" v-if="!isLanded"></the-landing>
+  <the-landing @landed="setLanding" v-if="!hasLanded"></the-landing>
   <!--Background Container-->
   <div v-else class="min-h-screen w-screen bg-gray-100 p-10 px-16 z-0">
     <!--App Container-->
@@ -33,7 +33,7 @@
       <div class="md:w-4/5 w-full flex flex-col">
         <router-view
           :state-list="stateList"
-          :region-data="stateRegion"
+          :region-data="regionList"
           :resource-list="resourceList"
           :date="date"
           :biome-list="biomeList"
@@ -84,18 +84,31 @@ export default {
   },
   data() {
     return {
-      isLanded: false,
-      date: {
-        season: null,
-        year: null,
-      },
-      stateList: [],
-      stateRegion: [],
-      resourceList:[],
-      corruptionLevelList: [],
-      biomeList:[],
-      developmentLevelList:[]
+      hasLanded: false,
     };
+  },
+  computed:{
+    date(){
+      return this.$store.getters.getDate
+    },
+    regionList(){
+      return this.$store.getters.getRegionList
+    },
+    stateList(){
+      return this.$store.getters.getStateList
+    },
+    resourceList(){
+      return this.$store.getters.getResourceList
+    },  
+    biomeList(){
+      return this.$store.getters.getBiomeList
+    },
+    developmentLevelList(){
+      return this.$store.getters.getDevLevelList
+    },
+    corruptionLevelList(){
+      return this.$store.getters.getCorruptionLevelList
+    }
   },
   methods: {
     addNewState(data){
@@ -124,59 +137,30 @@ export default {
       });
     },
     setLanding() {
-      this.isLanded = true;
+      this.hasLanded = true;
       localStorage.setItem("landed", true);
     },
     getAllRegions(){
-      window.ipcRenderer.send("Region:getAllRegionsByStateId");
-      window.ipcRenderer.once("Region:getAllRegionsByStateIdOK", (e, res) => {
-        this.stateRegion = res;
-        this.descendingPropertySort(this.stateRegion,'stateName')
-        this.stateRegion.forEach(state=> this.descendingPropertySort(state.Regions,'RegionName'))
-      });
+     this.$store.dispatch('getAllRegions');
+      console.log(this.$store.getters,'get it all')
     },
     getCurrentSeason() {
-      
       this.$store.dispatch('getCurrentDate');
-      console.log(this.$store.getters)
-     
     },
     getStateList() {
-      window.ipcRenderer.send("State:getStateList");
-      window.ipcRenderer.once("State:getStateListOK", (e, res) => {
-        this.stateList = res;
-        this.descendingPropertySort(this.stateList,'stateName')
-      });
+      this.$store.dispatch('getAllStates')
     },
     getAllResources(){
-      window.ipcRenderer.send("Resource:getAllResourceTiers");
-      window.ipcRenderer.once("Resource:getAllResourceTiersOK", (e,res) => {
-        this.resourceList = res;
-      });
+      this.$store.dispatch('getAllResources')
     },
     getAllBiomes(){
-      window.ipcRenderer.send("Region:getBiomesForAdd");
-      window.ipcRenderer.once("Region:getBiomesForAddOK", (e,res) => {
-        this.biomeList = res;
-        console.log(this.biomeList,'biome')
-      });
-      
-
+      this.$store.dispatch('getAllBiomes');
     },
     getAllDevelopmentLevel(){
-      window.ipcRenderer.send("Region:getDevelopmentForAdd");
-      window.ipcRenderer.once("Region:getDevelopmentForAddOK", (e,res) => {
-        this.developmentLevelList = res;
-       
-      });
+      this.$store.dispatch('getAllDevLevel');
     },
     getAllCorruptionLevel(){
-      window.ipcRenderer.send("Region:getCorruptionForAdd");
-      window.ipcRenderer.once("Region:getCorruptionForAddOK", (e,res) => {
-        this.corruptionLevelList = res;
-       
-      });
- 
+      this.$store.dispatch('getAllCorruptionLevels')
     },
     openState(id){
       window.ipcRenderer.send("State:openStatePage",id);
@@ -198,15 +182,12 @@ export default {
         });
     },
     advanceSeason() {
-      window.ipcRenderer.send("General:advancingSeason");
-      window.ipcRenderer.once("General:advancingSeasonOK", () => {
-        this.getCurrentSeason();
-      });
+      this.$store.dispatch('advanceSeason');
     },
   },
   mounted() {
     if (localStorage.getItem("landed")) {
-      this.isLanded = true;
+      this.hasLanded = true;
     }
     if(window.ipcRenderer){
       this.getCurrentSeason();

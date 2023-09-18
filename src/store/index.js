@@ -25,7 +25,7 @@ export default createStore({
     actions : actions,
     mutations: mutations,
     getters: getters,
-    module:{
+    modules:{
         state: stateModule,
         region: regionModule,
         component: componentModule,
