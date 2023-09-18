@@ -113,11 +113,7 @@ export default {
   methods: {
     addNewState(data){
       let addStateData = {...data}
-      console.log(addStateData,'report')
-      window.ipcRenderer.send("State:addState",addStateData);
-      window.ipcRenderer.once("State:addStateOK", (e, res) => {
-        console.log(res,'state added')
-      });
+      this.$store.dispatch('addNewState',addStateData)
     },
     addNewRegion(data){
       const {regionName,stateId,corruptionId,biomeId,developmentId, population, taxRate, desc} = data
@@ -131,10 +127,7 @@ export default {
         state: {stateId},
         taxRate
       }
-      window.ipcRenderer.send("Region:addRegion",JSON.stringify(addRegionObj));
-      window.ipcRenderer.once("Region:addRegionOK", (e, res) => {
-        console.log(res,'legiun added')
-      });
+      this.$store.dispatch('addNewRegion',JSON.stringify(addRegionObj))
     },
     setLanding() {
       this.hasLanded = true;

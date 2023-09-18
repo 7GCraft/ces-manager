@@ -7,5 +7,12 @@ export default {
           });
           context.commit('setAllStates',stateList)
       });
+    },
+    addNewState(context,payload){
+      console.log(payload)
+      window.ipcRenderer.send("State:addState",payload);
+      window.ipcRenderer.once("State:addStateOK", () => {
+        context.commit('addNewState',payload)
+      });
     }
 }
