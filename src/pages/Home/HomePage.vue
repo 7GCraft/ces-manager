@@ -36,7 +36,7 @@
       @advance-season="advanceSeason"
       @add-region="addNewRegion"
       @add-state="addNewState"
-      @open-state="openState()"
+      @open-state="openState"
     ></router-view>
   </div>
 
@@ -76,7 +76,7 @@
 
 <script>
 export default {
-  emits: ["advance-season"],
+  emits: ["openStatePage","openRegionPage"],
   data() {
     return {
       showConfirmationModal: false,
@@ -106,6 +106,9 @@ export default {
     },
   },
   methods: {
+    openState(stateId){
+      this.$emit('openStatePage',stateId)
+    },
     
     advanceSeason() {
       this.$store.dispatch('advanceSeason');

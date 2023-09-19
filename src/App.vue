@@ -5,7 +5,9 @@
     <!--App Container-->
     <div class="flex flex-row text-center shadow-lg bg-white h-fit">
       <!--Sidebar -->
-      <router-view></router-view>
+      <router-view 
+      @openRegionPage="openRegionPage"
+      @openStatePage="openStatePage"></router-view>
       </div>
 
   </div>
@@ -51,6 +53,10 @@ export default {
     getAllCorruptionLevel() {
       this.$store.dispatch('getAllCorruptionLevels')
     },
+    getWindowTitle(){
+      console.log(window,'my friend the window')
+
+    },
     initializeData() {
       this.getCurrentSeason();
       this.getStateList();
@@ -60,12 +66,10 @@ export default {
       this.getAllCorruptionLevel()
       this.getAllDevelopmentLevel()
     },
-    openState(id) {
+    openStatePage(id) {
       window.ipcRenderer.send("State:openStatePage", id);
-      window.ipcRenderer.once("State:openStatePageOK", (e, res) => {
-        console.log(res)
-        this.$router.push('/region-list')
-      });
+    
+    
     }
     ,
     descendingPropertySort(arr, propertyName) {
@@ -82,17 +86,17 @@ export default {
     
   },
   mounted() {
+
+    console.log(document,'title mah friend')
     if (localStorage.getItem("landed")) {
       this.hasLanded = true;
-    }
-    if (window.ipcRenderer) {
       this.$router.push('/home/welcome')
-      this.initializeData();
-      console.log('routes', this.$router)
-    } else {
-      this.$router.push('region-list')
+     
     }
-
+    this.initializeData();
+   this.getWindowTitle()
+    
+   
   },
 };
 </script>
