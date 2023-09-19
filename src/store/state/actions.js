@@ -12,6 +12,7 @@ export default {
       console.log(payload)
       window.ipcRenderer.send("State:addState",payload);
       window.ipcRenderer.once("State:addStateOK", () => {
+        context.dispatch('getAllRegions')
         context.commit('addNewState',payload)
       });
     }

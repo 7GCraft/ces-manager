@@ -6,6 +6,7 @@ export default{
         state.date= {
             season,year
         }
+        console.log('nueva state of date',state)
         
     }
 }
