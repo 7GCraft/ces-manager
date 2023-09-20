@@ -67,6 +67,7 @@ export default {
       this.getAllDevelopmentLevel()
     },
     openStatePage(id) {
+      console.log('the id', id)
       window.ipcRenderer.send("State:openStatePage", id);
     
     
@@ -87,11 +88,20 @@ export default {
   },
   mounted() {
 
-    console.log(document,'title mah friend')
+    console.log(window.process.argv,'title mah friend')
     if (localStorage.getItem("landed")) {
       this.hasLanded = true;
-      this.$router.push('/home/welcome')
-     
+      const route = window.process.argv[window.process.argv.length-2];
+      if(route.includes('Home')){
+        this.$router.push('/home/welcome')
+      }else if(route.includes('State')){
+        const stateId = route.split('-')[1]
+        this.$router.push(`/state/${stateId}/info`);
+        console.log(this.$router,'nowadays')
+      }else{
+        const regionId = route.split('-')[1]
+        this.$router.push(`/region/${regionId}/info`);
+      }
     }
     this.initializeData();
    this.getWindowTitle()

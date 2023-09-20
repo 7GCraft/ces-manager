@@ -49,7 +49,7 @@ const openRegionPage = (e, arg) => {
         height: 720,
         webPreferences: {
             nodeIntegration: true,
-            additionalArguments: [arg]
+            additionalArguments: [`Region-${arg}`]
         },
         title: 'Region Info'
     })

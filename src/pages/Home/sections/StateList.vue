@@ -40,7 +40,7 @@
       class="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
     >
       <div
-        @click="$emit('open-state', state.stateId)"
+        @click="$emit('open-state', state.stateID)"
         class="border-gray-50 p-4 bg-black text-white cursor-pointer hover:bg-blue-500"
         v-for="state in availableStates"
         :key="state.stateId"
