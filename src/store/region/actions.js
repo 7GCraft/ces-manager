@@ -1,8 +1,8 @@
 export default {
     addNewRegion(context,payload){
-        window.ipcRenderer.send("Region:addRegion",payload);
+        window.ipcRenderer.send("Region:addRegion",JSON.stringify(payload));
         window.ipcRenderer.once("Region:addRegionOK", () => {
-          context.commit('addNewRegion',payload)
+          context.dispatch('getAllRegions')
         });
     },
     getAllRegions(context) {

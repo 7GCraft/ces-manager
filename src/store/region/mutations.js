@@ -1,6 +1,11 @@
 export default{
     addNewRegion(state,payload){
-        state.regionList.push(payload);
+        let stateRegions = [...state.regionList];
+        let targetState = stateRegions.find(state=> state.stateID === payload.state.stateId)
+        console.log(targetState,'designated bruh')
+        targetState.Regions !== null ? targetState.Regions.push(payload) : targetState.Regions = [payload]
+   
+        state.regionList = [...stateRegions]
     },
     setAllRegions(state,payload){
         state.regionList = [...payload]

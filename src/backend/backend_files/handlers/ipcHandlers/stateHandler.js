@@ -46,13 +46,19 @@ const openStatePage = (e, arg) => {
         height: 720,
         webPreferences: {
             nodeIntegration: true,
-            additionalArguments: [arg],
+            additionalArguments: [`State-${arg}`],
+            contextIsolation: false,
             preload:path.join(__dirname,'preload.js')
         },
+      
         title: 'State Info'
     })
+    stateWindow.tag='state'
     stateWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
 
+    ipcMain.on('get-title', (event) => {
+        event.returnValue = 'Listener 2';
+      });
     stateWindow.on('close', function () {
         stateWindow = null
     });
