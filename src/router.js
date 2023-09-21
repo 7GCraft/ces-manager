@@ -43,11 +43,11 @@ const router = createRouter({
       component: StatePage,
       props: true,
       children: [
-        { path: "/regions", component: stateRegions },
-        { path: "/facilities", component: stateFacilities },
-        { path: "/resources", component: stateResources },
-        { path: "/trade-agreement", component: stateTrade },
-        { path: "/info", component: stateInfo },
+        { path: "regions", component: stateRegions },
+        { path: "facilities", component: stateFacilities },
+        { path: "resources", component: stateResources },
+        { path: "trade-agreement", component: stateTrade },
+        { path: "info", component: stateInfo },
       ],
     },
     {

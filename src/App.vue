@@ -9,7 +9,6 @@
       @openRegionPage="openRegionPage"
       @openStatePage="openStatePage"></router-view>
       </div>
-
   </div>
 </template>
 
@@ -32,11 +31,9 @@ export default {
     },
     getAllRegions() {
       this.$store.dispatch('getAllRegions');
-      console.log(this.$store.getters, 'get it all')
     },
     getCurrentSeason() {
       this.$store.dispatch('getCurrentDate');
-      console.log(this.$store.getters.getDate,'new date')
     },
     getStateList() {
       this.$store.dispatch('getAllStates')
@@ -53,11 +50,7 @@ export default {
     getAllCorruptionLevel() {
       this.$store.dispatch('getAllCorruptionLevels')
     },
-    getWindowTitle(){
-      console.log(window,'my friend the window')
-
-    },
-    initializeData() {
+    initializeHomeData() {
       this.getCurrentSeason();
       this.getStateList();
       this.getAllRegions();
@@ -66,11 +59,28 @@ export default {
       this.getAllCorruptionLevel()
       this.getAllDevelopmentLevel()
     },
+    initializeStateInfoData(id){
+      this.$store.dispatch('getStateInfo',id)
+    },
+    navigateToPage(){
+      const route = window.process.argv[window.process.argv.length-2];
+      console.log(route,'isthis route')
+      if(route.includes('Home')){
+        this.initializeHomeData();
+        this.$router.push('/home/welcome')
+      }else if(route.includes('State')){
+        const stateId = route.split('-')[1]
+        this.$router.push(`/state/${stateId}/info`);
+        this.initializeStateInfoData(stateId);
+      }else{
+        const regionId = route.split('-')[1]
+        this.$router.push(`/region/${regionId}/info`);
+      }
+     
+    },
     openStatePage(id) {
       console.log('the id', id)
       window.ipcRenderer.send("State:openStatePage", id);
-    
-    
     }
     ,
     descendingPropertySort(arr, propertyName) {
@@ -88,23 +98,13 @@ export default {
   },
   mounted() {
 
-    console.log(window.process.argv,'title mah friend')
+  
     if (localStorage.getItem("landed")) {
       this.hasLanded = true;
-      const route = window.process.argv[window.process.argv.length-2];
-      if(route.includes('Home')){
-        this.$router.push('/home/welcome')
-      }else if(route.includes('State')){
-        const stateId = route.split('-')[1]
-        this.$router.push(`/state/${stateId}/info`);
-        console.log(this.$router,'nowadays')
-      }else{
-        const regionId = route.split('-')[1]
-        this.$router.push(`/region/${regionId}/info`);
-      }
     }
-    this.initializeData();
-   this.getWindowTitle()
+    this.initializeHomeData();
+
+   this.navigateToPage();
     
    
   },

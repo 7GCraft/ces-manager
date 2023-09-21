@@ -5,6 +5,10 @@ export default{
     },
     addNewState(state,payload){
         state.stateList.push(payload)
+    },
+    setViewedStateInfo(state,payload){
+        state.viewedStateInfo = payload;
+        console.log('yoo')
     }
 
 }

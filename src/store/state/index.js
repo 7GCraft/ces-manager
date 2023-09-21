@@ -6,7 +6,8 @@ import getters from './getters'
 export default {
     state(){
         return{
-            stateList: []
+            stateList: [],
+            viewedStateInfo: {},
         }
     },
     actions : actions,
