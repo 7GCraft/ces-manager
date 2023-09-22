@@ -7,7 +7,13 @@ export default {
     state(){
         return{
             stateList: [],
-            viewedStateInfo: {},
+            viewedState: {
+                info:{},
+                resources:[],
+                regions:[],
+                facilities:[],
+                trade:[]
+            },
         }
     },
     actions : actions,

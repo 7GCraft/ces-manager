@@ -3,18 +3,18 @@ export default {
         return state.stateList
     },
     getViewedStateInfo(state){
-        return state.viewedStateInfo;
+        return state.viewedState.info;
     },
     getViewedStateRegions(state){
-        return state.viewedStateInfo.regions
+        return state.viewedState.regions;
     },
     getViewedStateFacilities(state){
-        return state.viewedStateInfo.facilities;
+        return state.viewedState.facilities;
     },
     getViewedStateResources(state){
-        return state.viewedStateInfo.resources;
+        return state.viewedState.resources;
     },
     getViewedStateTradeAgreements(state){
-        return state.viewedStateInfo.tradeAgreements;
+        return state.viewedState.trade;
     }
 }

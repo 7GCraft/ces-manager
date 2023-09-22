@@ -7,8 +7,21 @@ export default{
         state.stateList.push(payload)
     },
     setViewedStateInfo(state,payload){
-        state.viewedStateInfo = payload;
+        state.viewedState.info = payload;
         console.log('yoo')
+    },
+    setViewedStateFacilities(state,payload){
+        state.viewedState.facilities = payload
+    },
+    setViewedStateResources(state,payload){
+        state.viewedState.resources = payload;
+    },
+    setViewedStateRegions(state,payload){
+        state.viewedState.regions = payload
+    },
+    setViewedStateTradeAgreements(state,payload){
+        state.viewedState.trade = payload;
     }
+
 
 }

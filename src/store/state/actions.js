@@ -20,7 +20,8 @@ export default {
       window.ipcRenderer.send("State:getStateInfo",payload);
       window.ipcRenderer.once("State:getStateInfoOK",(e,res)=>{
         context.commit('setViewedStateInfo',res)
-        console.log('we went this far',res)
+        context.commit('setViewedStateRegions',res.regions)
+        context.commit('setViewedStateResources',res.ProductiveResources);
       })
     }
 }

@@ -61,6 +61,8 @@ export default {
     },
     initializeStateInfoData(id){
       this.$store.dispatch('getStateInfo',id)
+      this.$store.dispatch('getStateFacilities',id)
+      this.$store.dispatch('getStateTrade',id)
     },
     navigateToPage(){
       const route = window.process.argv[window.process.argv.length-2];
