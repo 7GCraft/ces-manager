@@ -15,5 +15,13 @@ export default {
         context.dispatch('getAllRegions')
         context.commit('addNewState',payload)
       });
+    },
+    getStateInfo(context,payload){
+      window.ipcRenderer.send("State:getStateInfo",payload);
+      window.ipcRenderer.once("State:getStateInfoOK",(e,res)=>{
+        context.commit('setViewedStateInfo',res)
+        context.commit('setViewedStateRegions',res.regions)
+        context.commit('setViewedStateResources',res.ProductiveResources);
+      })
     }
 }

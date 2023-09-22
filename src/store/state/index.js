@@ -6,7 +6,14 @@ import getters from './getters'
 export default {
     state(){
         return{
-            stateList: []
+            stateList: [],
+            viewedState: {
+                info:{},
+                resources:[],
+                regions:[],
+                facilities:[],
+                trade:[]
+            },
         }
     },
     actions : actions,
