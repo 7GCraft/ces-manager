@@ -6,7 +6,7 @@
 <script>
 export default {
     mounted(){
-        let stateName = this.$route.params.stateId
+      
     },
     methods(){
 
