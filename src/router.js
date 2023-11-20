@@ -25,6 +25,7 @@ import stateResources from './pages/StateInfo/section/StateResources'
 
 const router = createRouter({
   history: createWebHistory(),
+  linkActiveClass:'active',
   routes: [
     {
       path: "/home",
