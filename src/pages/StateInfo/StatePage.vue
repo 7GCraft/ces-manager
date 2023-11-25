@@ -40,7 +40,8 @@
       </ul>
     </div>
     <router-view :state-info="stateInfo" 
-    :state-resources="groupedStateResources"
+    :state-resources-by-region="groupedStateResources"
+    :state-resource-count="stateResourceCount"
     :state-facilities="groupedStateFacilities"></router-view>
   </div>
 </template>
@@ -62,6 +63,16 @@ export default {
         groupedData[regionName].push(objEl)
       }
       return structuredClone(groupedData)
+    },
+    countResource(data){
+      let resourceCount = {};
+      for(let resource of data){
+        if(!resourceCount[resource.value]){
+          resourceCount[resource.value] = 0;
+        }
+        resourceCount[resource.value]++
+      }
+      return resourceCount;
     }
   },
   computed: {
@@ -73,6 +84,9 @@ export default {
     },
     groupedStateResources() {
       return this.groupDataByRegion(this.$store.getters.getViewedStateResources);
+    },
+    stateResourceCount(){
+      return this.countResource(this.$store.getters.getViewedStateResources)
     },
     stateRegions() {
       return this.$store.getters.getViewedStateRegions;
