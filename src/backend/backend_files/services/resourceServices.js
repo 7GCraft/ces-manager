@@ -109,7 +109,9 @@ const getAllResourcesByStateId = async function (stateId) {
         )
         .where(constants.COLUMN_COMPONENT_TYPE_ID, 3)
         .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, stateId)
-        .select(constants.COLUMN_COMPONENT_VALUE, constants.COLUMN_IS_FUNCTIONAL,)
+        .select(constants.COLUMN_COMPONENT_VALUE, constants.COLUMN_IS_FUNCTIONAL,
+             constants.TABLE_COMPONENT + '.' + constants.COLUMN_REGION_ID,
+             constants.TABLE_REGION + '.' + constants.COLUMN_NAME+' AS regionName')
         .catch(e => {
             console.error(e);
         });
@@ -117,8 +119,10 @@ const getAllResourcesByStateId = async function (stateId) {
     if (resourceIdWithFunctionals.length === 0) return null;
 
     let resourceWithProductiveCountDict = {};
+  
     resourceIdWithFunctionals.forEach(resource => {
         let resourceId = resource.value.split(';')[1];
+        
         if (!(resourceId in resourceWithProductiveCountDict)) {
             resourceWithProductiveCountDict[resourceId] = {
                 countAll: 0,
@@ -131,13 +135,28 @@ const getAllResourcesByStateId = async function (stateId) {
         }
     });
 
+
+ 
     let resources = await knex
-        .select('*')
-        .from(constants.TABLE_RESOURCE)
-        .whereIn(constants.COLUMN_RESOURCE_ID, Object.keys(resourceWithProductiveCountDict))
-        .catch(e => {
-            console.error(e);
-        });
+    .select('*')
+    .from(constants.TABLE_RESOURCE)
+    .whereIn(constants.COLUMN_RESOURCE_ID, Object.keys(resourceWithProductiveCountDict))
+    .catch(e => {
+        console.error(e);
+    });
+    for(resource of resourceIdWithFunctionals){
+        let resourceId = parseInt(resource.value.split(';')[1]);
+        for(let resourceRef of resources){
+            if(resourceId == resourceRef.resourceId){
+                resource.value= resourceRef.name
+            }
+        }
+    }
+   
+
+    return resourceIdWithFunctionals;
+
+   
 
     if (resources.length != Object.keys(resourceWithProductiveCountDict).length) 
         throw "Resource's component type count does not match with resource count at MsResource";
@@ -146,7 +165,6 @@ const getAllResourcesByStateId = async function (stateId) {
     for (let resource of resources) {
         // let resourceInfo = new Resource(resource.resourceId, resource.name, resource.resourceTierId)
         // results.push(resourceInfo);
-        
         results.push({
             ResourceID: resource.resourceId,
             ResourceName: resource.name,
