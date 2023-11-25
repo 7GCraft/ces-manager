@@ -39,7 +39,9 @@
         </li>
       </ul>
     </div>
-    <router-view :state-info="stateInfo"></router-view>
+    <router-view :state-info="stateInfo" 
+    :state-resources="groupedStateResources"
+    :state-facilities="groupedStateFacilities"></router-view>
   </div>
 </template>
 
@@ -49,16 +51,28 @@ export default {
   mounted() {
       console.log(this.stateInfo,'medusa')
   },
-  methods() {},
+  methods: {
+    groupDataByRegion(data){
+      const groupedData = {};
+      for(const objEl of data){
+        const regionName = objEl.regionName;
+        if(!groupedData[regionName]){
+          groupedData[regionName] =  []
+        }
+        groupedData[regionName].push(objEl)
+      }
+      return structuredClone(groupedData)
+    }
+  },
   computed: {
     stateInfo() {
       return this.$store.getters.getViewedStateInfo;
     },
-    stateFacilities() {
-      return this.$store.getters.getViewedStateFacilities;
+    groupedStateFacilities() {
+      return this.groupDataByRegion(this.$store.getters.getViewedStateFacilities);
     },
-    stateResources() {
-      return this.$store.getters.getViewedStateResources;
+    groupedStateResources() {
+      return this.groupDataByRegion(this.$store.getters.getViewedStateResources);
     },
     stateRegions() {
       return this.$store.getters.getViewedStateRegions;

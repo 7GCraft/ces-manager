@@ -21,7 +21,8 @@ export default {
       window.ipcRenderer.once("State:getStateInfoOK",(e,res)=>{
         context.commit('setViewedStateInfo',res)
         context.commit('setViewedStateRegions',res.regions)
-        context.commit('setViewedStateResources',res.ProductiveResources);
+        context.dispatch('getResourcesByStateId',payload)
       })
-    }
+    },
+   
 }

@@ -109,7 +109,7 @@ const getAllResourcesByStateId = async function (stateId) {
         )
         .where(constants.COLUMN_COMPONENT_TYPE_ID, 3)
         .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, stateId)
-        .select(constants.COLUMN_COMPONENT_VALUE, constants.COLUMN_IS_FUNCTIONAL)
+        .select(constants.COLUMN_COMPONENT_VALUE, constants.COLUMN_IS_FUNCTIONAL,)
         .catch(e => {
             console.error(e);
         });
