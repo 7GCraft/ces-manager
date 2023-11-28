@@ -7,7 +7,7 @@
                 <div class="flex flex-col justify-between items-center w-full " v-for="resource in resources" :key="resource">
                    <div class="flex flex-row justify-between w-full ">
                     <h4 class="border py-2 w-full text-lg "> {{ resource.value }}</h4>
-                    <h4 class="border py-2 w-full text-lg" :class="{'bg-red-200':resource.isFunctional === 0}">{{ resource.isFunctional === 1 ? 'Extracted' : 'Not Extracted' }}</h4>
+                    <h4 class="border py-2 w-full text-lg" :class="{'bg-green-200': resource.isFunctional === 1 ,'bg-red-200':resource.isFunctional === 0}">{{ resource.isFunctional === 1 ? 'Extracted' : 'Not Extracted' }}</h4>
                    </div>
 
                 </div>
