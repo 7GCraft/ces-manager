@@ -32,7 +32,7 @@
       </ul>
     </div>
     <router-view :state-info="stateInfo" :state-resources-by-region="groupedStateResources"
-      :state-resource-count="stateResourceCount" :state-facilities="groupedStateFacilities"></router-view>
+      :state-resource-count="stateResourceCount" :state-facility-data="groupedStateFacilities"></router-view>
   </div>
 </template>
 
@@ -120,31 +120,34 @@ export default {
   }
   },
   groupFacilitiesByCategory(facilityData){
-    let data = {...facilityData}
-    for(let regionName in data){
-      let regionFacilities = data[regionName];
-     
-      let newRegionFacility = {};
-      for(let facility of regionFacilities){
-        console.log(facility,'khalasar')
+   
+    let newFacilities = {};
+      for(let facility of facilityData){
+
         const facilityName = facility.facilityName.toLowerCase()
         let facilityCategory = this.getFacilityCategory(facilityName)
-        if(!newRegionFacility[facilityCategory]){
-          newRegionFacility[facilityCategory] = [];
+        if(!newFacilities[facilityCategory]){
+          newFacilities[facilityCategory] = [];
         }
-        newRegionFacility[facilityCategory].push(facility)
+        newFacilities[facilityCategory].push(facility)
       }
-      data[regionName] = newRegionFacility;
-    }
-    return data
-  }
+    
+    return newFacilities
   },
+  groupFacilityByRegion(facilityData){
+    let data = {...facilityData}
+    for(let category in data){
+      data[category] = this.groupDataByRegion(data[category])
+    }
+    return data;
+  },
+},
   computed: {
     stateInfo() {
       return this.$store.getters.getViewedStateInfo;
     },
     groupedStateFacilities() {
-      return this.groupFacilitiesByCategory(this.groupDataByRegion(this.$store.getters.getViewedStateFacilities));
+      return this.groupFacilityByRegion(this.groupFacilitiesByCategory(this.$store.getters.getViewedStateFacilities));
     },
     groupedStateResources() {
       return this.groupDataByRegion(this.$store.getters.getViewedStateResources);
