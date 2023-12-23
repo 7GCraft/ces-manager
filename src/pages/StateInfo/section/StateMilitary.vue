@@ -3,13 +3,19 @@
         <h4 class="text-2xl mb-4 font-bold border border-2 rounded-full w-1/3 mx-auto bg-havelockBlue text-white py-1 tracking-wider">State Military</h4>
         <div class="grid grid-cols-2 gap-5">
             <div v-for="(regionFacility,regionName) in stateMilitaryFacilities" :key="regionName">
-                <div class="flex flex-row ">
-                    <h4 className="bg-black text-white p-2 text-xl">{{ regionName }}</h4>
-                    <div  v-for="(facility,index) in regionFacility" :key="index" class="flex flex-col border  h-fit bg-gray-200    border border-3 border-gray-400 text-center bg-gray-100 ">
-                        <span class="px-2 p-1 flex">  {{ facility.facilityName }}</span>
+                <div class="flex flex-row">
+                    <h4 className="bg-black text-white p-3 text-2xl h-fit">{{ regionName }}</h4>
+                    <div class="flex-col flex border border-gray-400 bg-gray-100 ">
+                      <div v-for="(facility,index) in regionFacility" :key="index" class="border-y-2 border-gray-500 h-10">
+                        <h4 class="text-xl  border-b-2 bg-gray-500 text-white border-gray-400 h-full px-2 py-1">{{ facility.facilityName }}</h4>
+                       
+                      </div>
                     </div>
-                    <div  v-for="(facility,index) in regionFacility" :key="index" class="border  h-fit bg-gray-200    border border-3 border-gray-400 text-center bg-gray-100 flex flex-col space-x-4">
-                        <div class="  border-l border-r  border-gray-400 px-2 p-1 text-xs">{{ findEffect(facility.facilityName.toLowerCase()) }}</div>
+                    <div class="flex-col flex border border-gray-400 bg-gray-100 ">
+                      <div v-for="(facility,index) in regionFacility" :key="index" class="border-y-2 border-gray-400 h-10 px-4">
+                  
+                        <h4 class="text-xs">{{ findEffect(facility.facilityName.toLowerCase()) }}</h4>
+                      </div>
                     </div>
                   
                 </div>
