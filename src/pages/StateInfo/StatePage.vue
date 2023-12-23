@@ -21,6 +21,11 @@
         </li>
         <li class="">
           <router-link
+            class="py-4  mx-1 border-transparent active: rounded-t-lg hover:text-gray-600 hover:border-gray-300 active:dark:hover:text-gray-300"
+            to="military">Military</router-link>
+        </li>
+        <li class="">
+          <router-link
             class=" py-4  border-transparent mx-1 active: rounded-t-lg hover:text-gray-600 hover:border-gray-300 active:dark:hover:text-gray-300"
             to="resources">Resources</router-link>
         </li>
@@ -32,7 +37,9 @@
       </ul>
     </div>
     <router-view :state-info="stateInfo" :state-resources-by-region="groupedStateResources"
-      :state-resource-count="stateResourceCount" :state-facility-data="groupedStateFacilities"></router-view>
+      :state-resource-count="stateResourceCount" :state-facility-data="groupedStateFacilities"
+      :state-region-data="stateRegions" :state-trade-agreements="stateTradeAgreements"
+      ></router-view>
   </div>
 </template>
 
@@ -40,7 +47,7 @@
 
 export default {
   mounted() {
-    console.log(this.stateInfo, 'medusa')
+    console.log(this.stateTradeAgreements, 'medusa')
   },
   data(){
     return {
@@ -60,6 +67,7 @@ export default {
       return structuredClone(groupedData)
     },
     countResource(data) {
+      console.log('i wanna be with u',data)
       let resourceCount = {};
       for (let resource of data) {
         if (!resourceCount[resource.value]) {
@@ -72,36 +80,8 @@ export default {
 
   getFacilityCategory(item) {
     switch (true) {
-    case item.includes('barrack') ||
-         item.includes('archer') ||
-         item.includes('stable') ||
-         item.includes('blacksmith') ||
-         item.includes('drill') ||
-         item.includes('siege') ||
-         item.includes('port'):
-      return 'Military';
-
-    case item.includes('market') ||
-         item.includes('kiln') ||
-         item.includes('maker') ||
-         item.includes('pleasure') ||
-         item.includes('tavern') ||
-         item.includes('theatre') ||
-         item.includes('arena') ||
-         item.includes('smith'):
-      return 'Economy';
-
-    case item.includes('garden') ||
-         item.includes('region') ||
-         item.includes('monument') ||
-         item.includes('library') ||
-         item.includes('university') ||
-         item.includes('school') ||
-         item.includes('granary') ||
-         item.includes('canal'):
-      return 'Government';
-
     case item.includes('farm') ||
+         item.includes('chicken') ||
          item.includes('trader') ||
          item.includes('mine') ||
          item.includes('mill') ||
@@ -112,11 +92,46 @@ export default {
          item.includes('well') ||
          item.includes('vineyard') ||
          item.includes('translator') ||
-         item.includes('quarry'):
-      return 'Food and Resource';
+         item.includes('quarry')||
+         item.includes('fishing'):
+      return 'food and resource';
+
+      case item.includes('market') ||
+         item.includes('kiln') ||
+         item.includes('maker') ||
+         item.includes('pleasure') ||
+         item.includes('tavern') ||
+         item.includes('theatre') ||
+         item.includes('arena') ||
+         item.includes('smith') ||
+         item.includes('trade'):
+      return 'economy';
+
+    case item.includes('barrack') ||
+         item.includes('archer') ||
+         item.includes('stable') ||
+         item.includes('blacksmith') ||
+         item.includes('drill') ||
+         item.includes('siege') ||
+         item.includes('port'):
+      return 'military';
+
+  
+
+    case item.includes('garden') ||
+         item.includes('region') ||
+         item.includes('monument') ||
+         item.includes('library') ||
+         item.includes('university') ||
+         item.includes('school') ||
+         item.includes('granary') ||
+         item.includes('canal'):
+      return 'government';
+
+
 
     default:
-      return 'Misc';
+      return 'misc';
   }
   },
   groupFacilitiesByCategory(facilityData){

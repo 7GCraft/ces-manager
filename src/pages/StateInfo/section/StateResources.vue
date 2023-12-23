@@ -1,11 +1,11 @@
 <template>
     <div class="mt-4 flex flex-col space-y-3 max-w-3xl mx-auto my-1 mb-4 py-5 pb-10">
-        <h4 class="text-2xl mb-4 ">State Resources</h4>
+        <h4 class="text-2xl mb-4 font-bold border border-2 rounded-full w-1/3 mx-auto bg-havelockBlue text-white py-1 tracking-wider">State Resources</h4>
         <div class="grid grid-cols-3 gap-y-10 gap-x-5 pb-4">
             <div v-for="(resources,regionName) in stateResourcesByRegion" :key="regionName" class="flex flex-col h-fit border-gray-100 shadow-md ">
                 <div class="text-center text-lg font-semibold p-2 text-center border bg-ceruleanBlue text-white"  >{{ regionName }}</div>
                 <div class="flex flex-col justify-between items-center w-full " v-for="resource in resources" :key="resource">
-                   <div class="flex flex-row justify-between w-full ">
+                   <div class="flex flex-col justify-between w-full ">
                     <h4 class="border py-2 w-full text-lg "> {{ resource.value }}</h4>
                     <h4 class="border py-2 w-full text-lg" :class="{'bg-green-200': resource.isFunctional === 1 ,'bg-red-200':resource.isFunctional === 0}">{{ resource.isFunctional === 1 ? 'Extracted' : 'Not Extracted' }}</h4>
                    </div>

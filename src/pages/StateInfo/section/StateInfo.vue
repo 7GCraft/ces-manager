@@ -1,36 +1,36 @@
 <template>
     <div class="mt-4 flex flex-col space-y-2 max-w-3xl mx-auto my-1 mb-4">
-        <h4 class="text-2xl mb-4 ">State Info</h4>
+        <h4 class="text-2xl mb-4 font-bold border border-2 rounded-full w-1/4 mx-auto bg-havelockBlue text-white py-1 tracking-wider">State Info</h4>
         <div class="grid grid-cols-2 gap-y-10">
             <div class="text-left px-4 flex flex-col space-y-1">
                 <h4 class="text-xl font-semibold px-1">Finances</h4>
                 <div class="border-b-2 border-yellow-500 w-1/2 "></div>
                 <div class="leading-8 tracking-wider">
-                <p class="pt-1">Treasury: <span class="font-semibold">{{ treasury }}G</span></p>
-                <p class=" ">Total Income:<span class="font-semibold"> {{ totalIncome }}G</span></p>
-                <p class="">Next Season Income: {{ nextIncome }}</p>
-                <p class="pt-1">Administration Cost: {{ adminCost }}G</p>
-                <p class="">Admin Cost Modifier: {{ adminCostModifier }}%</p>
-                <p class="">Military, Diplomatic & Misc. Expenses: {{ expenses }}G</p>
-                <p class=""> Total Expenses: {{ totalExpenses }}G</p>
+                <p class="pt-1">Treasury: <span class="font-semibold">{{ treasury ? treasury.toFixed(2) :'' }}G</span></p>
+                <p class=" ">Total Income:<span class="font-semibold"> {{ totalIncome ? totalIncome.toFixed(2):'' }}G</span></p>
+                <p class="">Next Season Income:<span class="font-semibold">{{nextIncome ? nextIncome.toFixed(2):'' }}G</span> </p>
+                <p class="pt-1">Administration Cost:<span class="font-semibold">{{adminCost? adminCost.toFixed(2):'' }}G</span> </p>
+                <p class="">Admin Cost Modifier:<span class="font-semibold"> {{ adminCostModifier }}%</span></p>
+                <p class="">Military, Diplomatic & Misc. Expenses: <span class="font-semibold">{{ expenses ? expenses.toFixed(2):'' }}G</span></p>
+                <p class=""> Total Expenses:<span class="font-semibold"> {{totalExpenses? totalExpenses.toFixed(2):'' }}G</span></p>
             </div>
             </div>
             <div class="text-left px-4 flex flex-col space-y-1">
                 <h4 class="text-xl px-1 font-semibold">Development</h4>
                 <div class="border-b-2 border-blue-500 w-1/2 "></div>
                 <div class="leading-8 tracking-wider">
-                <p class="pt-1">Total Population: {{ population }} Pop</p>
-                <p class="pt-1">Average Development Level: {{ averageDevLevel }}</p>
-                <p class="pt-1">Facility Count:{{ facilityCount}} Facilities</p>
+                <p class="pt-1">Total Population:<span class="font-semibold"> {{ population }} Pop</span></p>
+                <p class="pt-1">Average Dev Level:<span class="font-semibold">Level {{ averageDevLevel }}</span> </p>
+                <p class="pt-1">Facility Count:<span class="font-semibold">{{ facilityCount}} Facilities</span></p>
                 </div>
             </div>
             <div class="text-left px-4 flex flex-col space-y-1">
                 <h4 class="text-xl px-1 font-semibold">Food</h4>
                 <div class="border-b-2 border-green-500 w-1/2 "></div>
                 <div class="leading-8 tracking-wider">
-                    <p class="pt-1">Total Food Produced:{{ totalFoodProduced }} Food</p>
-                    <p class="pt-1">Total Food Consumed: {{ totalFoodConsumed }}</p>
-                    <p class="pt-1">Total Food Available:{{ totalFoodBalance}} Facilities</p>
+                    <p class="pt-1">Total Food Produced:<span class="font-semibold">{{ totalFoodProduced }} Food</span></p>
+                    <p class="pt-1">Total Food Consumed: <span class="font-semibold">{{ totalFoodConsumed }} Food</span></p>
+                    <p class="pt-1">Total Food Available:<span class="font-semibold">{{ totalFoodBalance}} Food</span></p>
                 </div>
             </div>
         </div>
@@ -79,6 +79,9 @@ export default {
         },
         totalFoodBalance(){
             return this.stateInfo.TotalFoodAvailable
+        },
+        population(){
+            return this.stateInfo.TotalPopulation
         }
     }
 }

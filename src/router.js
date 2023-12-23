@@ -20,6 +20,7 @@ import stateRegions from './pages/StateInfo/section/StateRegions'
 import stateFacilities from './pages/StateInfo/section/StateFacilities'
 import stateTrade from './pages/StateInfo/section/StateTrade'
 import stateResources from './pages/StateInfo/section/StateResources'
+import stateMilitary from './pages/StateInfo/section/StateMilitary'
 
 
 
@@ -48,6 +49,7 @@ const router = createRouter({
         { path: "facilities", component: stateFacilities },
         { path: "resources", component: stateResources },
         { path: "trade-agreement", component: stateTrade },
+        { path: 'military', component: stateMilitary},
         { path: "info", component: stateInfo },
       ],
     },
