@@ -1,5 +1,5 @@
 export default {
-    getResourceList(state){
-        return state.resourceList
-    }
-}
+  getResourceList(state) {
+    return state.resourceList;
+  },
+};

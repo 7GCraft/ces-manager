@@ -9,8 +9,12 @@
         <th class="border-x-2 border-black">Used Pop</th>
       </tr>
     </thead>
-    <tbody >
-      <tr v-for="region in regions" :key="region.RegionID" class="border-2 border-black">
+    <tbody>
+      <tr
+        v-for="region in regions"
+        :key="region.RegionID"
+        class="border-2 border-black"
+      >
         <td class="border-x-2 border-black">{{ region.RegionName }}</td>
         <td class="border-x-2 border-black">{{ region.RegionTotalIncome }}</td>
         <td class="border-x-2 border-black">{{ region.RegionTotalFood }}</td>
@@ -23,6 +27,6 @@
 
 <script>
 export default {
-    props:['id','regions']
-}
+  props: ["id", "regions"],
+};
 </script>

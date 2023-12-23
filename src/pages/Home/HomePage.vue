@@ -63,12 +63,12 @@
       <div
         class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400"
       >
-      <router-link to="trade-agreement">Trade Agreement</router-link>
+        <router-link to="trade-agreement">Trade Agreement</router-link>
       </div>
       <div
         class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400"
       >
-      <router-link to="resource-tier">Resource Tier</router-link>
+        <router-link to="resource-tier">Resource Tier</router-link>
       </div>
     </div>
   </Teleport>
@@ -76,7 +76,7 @@
 
 <script>
 export default {
-  emits: ["openStatePage","openRegionPage"],
+  emits: ["openStatePage", "openRegionPage"],
   data() {
     return {
       showConfirmationModal: false,
@@ -106,20 +106,29 @@ export default {
     },
   },
   methods: {
-    openState(stateId){
-      this.$emit('openStatePage',stateId)
+    openState(stateId) {
+      this.$emit("openStatePage", stateId);
     },
-    
+
     advanceSeason() {
-      this.$store.dispatch('advanceSeason');
+      this.$store.dispatch("advanceSeason");
     },
-   
+
     addNewState(data) {
-      let addStateData = { ...data }
-      this.$store.dispatch('addNewState', addStateData)
+      let addStateData = { ...data };
+      this.$store.dispatch("addNewState", addStateData);
     },
     addNewRegion(data) {
-      const { regionName, stateId, corruptionId, biomeId, developmentId, population, taxRate, desc } = data
+      const {
+        regionName,
+        stateId,
+        corruptionId,
+        biomeId,
+        developmentId,
+        population,
+        taxRate,
+        desc,
+      } = data;
       let addRegionObj = {
         biome: { biomeId },
         corruption: { corruptionId },
@@ -128,11 +137,10 @@ export default {
         population,
         regionName,
         state: { stateId },
-        taxRate
-      }
-      this.$store.dispatch('addNewRegion', addRegionObj)
+        taxRate,
+      };
+      this.$store.dispatch("addNewRegion", addRegionObj);
     },
-   
   },
 };
 </script>

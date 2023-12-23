@@ -1,127 +1,128 @@
-const { ipcMain, BrowserWindow, webContents } = require('electron');
-const path = require('path');
-const state = require('../../services/stateServices');
-const region = require('../../services/regionServices');
-const facility = require('../../services/facilityServices'); 
+const { ipcMain, BrowserWindow, webContents } = require("electron");
+const path = require("path");
+const state = require("../../services/stateServices");
+const region = require("../../services/regionServices");
+const facility = require("../../services/facilityServices");
 
 const handle = () => {
-    ipcMain.on('State:getStateList', getStateList);
-    ipcMain.on('State:addState', addState);
-    ipcMain.on('State:openStatePage', openStatePage);
-    ipcMain.on('State:getStateInfo', getStateInfo);
-    ipcMain.on('State:getRegionsForState', getRegionsForState);
-    ipcMain.on('State:updateState', updateState);
-    ipcMain.on('State:deleteState', deleteState);
+  ipcMain.on("State:getStateList", getStateList);
+  ipcMain.on("State:addState", addState);
+  ipcMain.on("State:openStatePage", openStatePage);
+  ipcMain.on("State:getStateInfo", getStateInfo);
+  ipcMain.on("State:getRegionsForState", getRegionsForState);
+  ipcMain.on("State:updateState", updateState);
+  ipcMain.on("State:deleteState", deleteState);
 };
 module.exports = {
-    handle
+  handle,
 };
 
 /**
  * Get List of states
  */
 const getStateList = (e) => {
-    let response = state.getStateList();
-    response.then((result) => {
-        e.sender.send('State:getStateListOK', result)
-    })
-}
+  let response = state.getStateList();
+  response.then((result) => {
+    e.sender.send("State:getStateListOK", result);
+  });
+};
 
 /**
  * Insert State
  */
 const addState = (e, args) => {
-    let response = state.addState(args);
-    response.then((result) => {
-        e.sender.send('State:addStateOK', result)
-    })
-}
+  let response = state.addState(args);
+  response.then((result) => {
+    e.sender.send("State:addStateOK", result);
+  });
+};
 
 /**
  * Open new state window base on given state Id
  */
 const openStatePage = (e, arg) => {
-    stateWindow = new BrowserWindow({
-        width: 1080,
-        height: 720,
-        webPreferences: {
-            nodeIntegration: true,
-            additionalArguments: [`State-${arg}`],
-            contextIsolation: false,
-            preload:path.join(__dirname,'preload.js')
-        },
-      
-        title: 'State Info'
-    })
-    stateWindow.tag='state'
-    stateWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+  stateWindow = new BrowserWindow({
+    width: 1080,
+    height: 720,
+    webPreferences: {
+      nodeIntegration: true,
+      additionalArguments: [`State-${arg}`],
+      contextIsolation: false,
+      preload: path.join(__dirname, "preload.js"),
+    },
 
-    ipcMain.on('get-title', (event) => {
-        event.returnValue = 'Listener 2';
-      });
-    stateWindow.on('close', function () {
-        stateWindow = null
-    });
-}
+    title: "State Info",
+  });
+  stateWindow.tag = "state";
+  stateWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+
+  ipcMain.on("get-title", (event) => {
+    event.returnValue = "Listener 2";
+  });
+  stateWindow.on("close", function () {
+    stateWindow = null;
+  });
+};
 
 /**
  * Get state by ID
  */
 const getStateInfo = (e, arg) => {
-    let response = state.getStateById(arg);
-    response.then((result) => {
-        return facility.getFacilityCountByStateId(arg).then(res => {
-            result['facilityCount'] =  res;
-            return result;
-        })
+  let response = state.getStateById(arg);
+  response
+    .then((result) => {
+      return facility.getFacilityCountByStateId(arg).then((res) => {
+        result["facilityCount"] = res;
+        return result;
+      });
     })
-    .then(result2 => {
-        return state.getAdminCostByStateId(arg).then(res => {
-            result2['adminCost'] =  res
-            return result2;
-        });
+    .then((result2) => {
+      return state.getAdminCostByStateId(arg).then((res) => {
+        result2["adminCost"] = res;
+        return result2;
+      });
     })
-    .then(result3 => {
-        e.sender.send("State:getStateInfoOK", result3);
-    })
-}
+    .then((result3) => {
+      e.sender.send("State:getStateInfoOK", result3);
+    });
+};
 
 /**
  * Get all regions for one state
  */
 const getRegionsForState = (e, arg) => {
-    let response = region.getRegionListByStateId(arg);
-    response.then((result) => {
-        e.sender.send("State:getRegionsForStateOK", result);
-    });
-}
+  let response = region.getRegionListByStateId(arg);
+  response.then((result) => {
+    e.sender.send("State:getRegionsForStateOK", result);
+  });
+};
 
-/** 
+/**
  * Update state
  */
 const updateState = (e, args) => {
-    let response = state.updateState(args);
-    response.then((result) => {
-        let allWindows = webContents.getAllWebContents();
-        allWindows.sort((a, b) => b - a);
-        allWindows.forEach(win => {
-            win.send("State:updateStateOK", result);
-        });
-        // e.sender.send("State:updateStateOK", result);
+  let response = state.updateState(args);
+  response.then((result) => {
+    let allWindows = webContents.getAllWebContents();
+    allWindows.sort((a, b) => b - a);
+    allWindows.forEach((win) => {
+      win.send("State:updateStateOK", result);
     });
-}
+    // e.sender.send("State:updateStateOK", result);
+  });
+};
 
 /**
  * Delete state
  */
 const deleteState = (e, arg) => {
-    let response = state.deleteStateById(arg);
-    response.then((result) => {
-        // e.sender.send("State:deleteStateOK", result);
-        let allWindows = webContents.getAllWebContents();
-        allWindows.sort((a, b) => b - a);
-        allWindows.forEach(win => {
-            win.send("State:deleteStateOK", result);
-        });
+  let response = state.deleteStateById(arg);
+  response.then((result) => {
+    // e.sender.send("State:deleteStateOK", result);
+    let allWindows = webContents.getAllWebContents();
+    allWindows.sort((a, b) => b - a);
+    allWindows.forEach((win) => {
+      win.send("State:deleteStateOK", result);
     });
-}
+  });
+};

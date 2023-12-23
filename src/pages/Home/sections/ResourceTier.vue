@@ -12,8 +12,16 @@
         v-for="resourceTier in resourceList"
         :key="resourceTier.ResourceTierID"
       >
-        <h2 class="text-xl font-semibold border py-4 px-3 bg-black text-white">{{ resourceTier.ResourceTierName }}</h2>
-        <div v-for="resource in resourceTier.Resources" :key="resource.ResourceName" class="border p-3 bg-gray-100 ">{{ resource.ResourceName }}</div>
+        <h2 class="text-xl font-semibold border py-4 px-3 bg-black text-white">
+          {{ resourceTier.ResourceTierName }}
+        </h2>
+        <div
+          v-for="resource in resourceTier.Resources"
+          :key="resource.ResourceName"
+          class="border p-3 bg-gray-100"
+        >
+          {{ resource.ResourceName }}
+        </div>
       </div>
     </div>
   </div>

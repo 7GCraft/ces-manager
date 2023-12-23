@@ -2,16 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-
-@layer components{
-    .landing-section-container{
-        @apply max-w-6xl mx-auto text-center;
-    }
+@layer components {
+  .landing-section-container {
+    @apply max-w-6xl mx-auto text-center;
+  }
 }
 
-
-@layer components{
-    .regionList-form-control{
-        @apply  flex flex-row space-x-8 justify-between;
-    }
+@layer components {
+  .regionList-form-control {
+    @apply flex flex-row space-x-8 justify-between;
+  }
 }

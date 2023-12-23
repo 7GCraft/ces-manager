@@ -1,9 +1,9 @@
-const config = require('./config.json');
+const config = require("./config.json");
 const constants = config.constants;
 const facilityServices = require("./facilityServices");
-const regionServices = require('./regionServices');
-const tradeAgreementServices = require('./tradeAgreementServices');
-const dbContext = require('../repository/DbContext');
+const regionServices = require("./regionServices");
+const tradeAgreementServices = require("./tradeAgreementServices");
+const dbContext = require("../repository/DbContext");
 const knex = dbContext.getKnexObject();
 
 const StateListItem = require("../models/stateListItemModel");
@@ -14,63 +14,64 @@ const State = require("../models/stateModel");
  * @returns {Array} Array of state list item objects if successful, null otherwise.
  */
 const getStateList = async () => {
-    let rawStateList = await knex
-        .select([constants.COLUMN_STATE_ID, constants.COLUMN_NAME])
-        .from(constants.TABLE_STATE)
-        .catch(e => {
-            console.error(e);
-        });
+  let rawStateList = await knex
+    .select([constants.COLUMN_STATE_ID, constants.COLUMN_NAME])
+    .from(constants.TABLE_STATE)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    if (rawStateList.length === 0) return null;
+  if (rawStateList.length === 0) return null;
 
-    let stateList = [];
+  let stateList = [];
 
-    for (let rawState of rawStateList) {
-        let state = new StateListItem(rawState.stateId, rawState.name);
+  for (let rawState of rawStateList) {
+    let state = new StateListItem(rawState.stateId, rawState.name);
 
-        stateList.push(state);
-    }
+    stateList.push(state);
+  }
 
-    return stateList;
-}
+  return stateList;
+};
 
 /**
  * Gets all states.
  * @returns {Array} array of state objects if successful, null otherwise.
  */
 const getStateAll = async () => {
-    let rawStates = await knex
-        .select('*')
-        .from(constants.TABLE_STATE)
-        .catch(e => {
-            console.error(e);
-        });
+  let rawStates = await knex
+    .select("*")
+    .from(constants.TABLE_STATE)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    if (rawStates.length === 0) return null;
+  if (rawStates.length === 0) return null;
 
-    let states = [];
+  let states = [];
 
-    for (let rawState of rawStates) {
-        let state = new State(
-            rawState.stateId,
-            rawState.name,
-            rawState.treasuryAmt,
-            rawState.desc,
-            rawState.expenses,
-            rawState.adminRegionModifier
-        );
+  for (let rawState of rawStates) {
+    let state = new State(
+      rawState.stateId,
+      rawState.name,
+      rawState.treasuryAmt,
+      rawState.desc,
+      rawState.expenses,
+      rawState.adminRegionModifier,
+    );
 
-        let regions = await regionServices.getRegionByStateId(state.stateID);
+    let regions = await regionServices.getRegionByStateId(state.stateID);
 
-        let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
+    let tradeAgreements =
+      await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
 
-        state.summarise(regions, tradeAgreements);
+    state.summarise(regions, tradeAgreements);
 
-        states.push(state);
-    }
+    states.push(state);
+  }
 
-    return states;
-}
+  return states;
+};
 
 /**
  * Gets all states of the given IDs.
@@ -78,39 +79,40 @@ const getStateAll = async () => {
  * @returns {Array} array of state objects if successful, null otherwise.
  */
 const getStateAllByIds = async (ids) => {
-    let rawStates = await knex
-        .select('*')
-        .from(constants.TABLE_STATE)
-        .whereIn(constants.COLUMN_STATE_ID, ids)
-        .catch(e => {
-            console.error(e);
-        });
+  let rawStates = await knex
+    .select("*")
+    .from(constants.TABLE_STATE)
+    .whereIn(constants.COLUMN_STATE_ID, ids)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    if (rawStates.length === 0) return null;
+  if (rawStates.length === 0) return null;
 
-    let states = [];
+  let states = [];
 
-    for (let rawState of rawStates) {
-        let state = new State(
-            rawState.stateId,
-            rawState.name,
-            rawState.treasuryAmt,
-            rawState.desc,
-            rawState.expenses,
-            rawState.adminRegionModifier
-        );
+  for (let rawState of rawStates) {
+    let state = new State(
+      rawState.stateId,
+      rawState.name,
+      rawState.treasuryAmt,
+      rawState.desc,
+      rawState.expenses,
+      rawState.adminRegionModifier,
+    );
 
-        let regions = await regionServices.getRegionByStateId(state.stateID);
+    let regions = await regionServices.getRegionByStateId(state.stateID);
 
-        let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
+    let tradeAgreements =
+      await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
 
-        state.summarise(regions, tradeAgreements);
+    state.summarise(regions, tradeAgreements);
 
-        states.push(state);
-    }
+    states.push(state);
+  }
 
-    return states;
-}
+  return states;
+};
 
 /**
  * Gets all states of the given IDs.
@@ -119,37 +121,37 @@ const getStateAllByIds = async (ids) => {
  * @returns {Array} array of state objects if successful, null otherwise.
  */
 const getStateAllByIdsWithoutTrade = async (ids) => {
-    let rawStates = await knex
-        .select('*')
-        .from(constants.TABLE_STATE)
-        .whereIn(constants.COLUMN_STATE_ID, ids)
-        .catch(e => {
-            console.error(e);
-        });
+  let rawStates = await knex
+    .select("*")
+    .from(constants.TABLE_STATE)
+    .whereIn(constants.COLUMN_STATE_ID, ids)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    if (rawStates.length === 0) return null;
+  if (rawStates.length === 0) return null;
 
-    let states = [];
+  let states = [];
 
-    for (let rawState of rawStates) {
-        let state = new State(
-            rawState.stateId,
-            rawState.name,
-            rawState.treasuryAmt,
-            rawState.desc,
-            rawState.expenses,
-            rawState.adminRegionModifier
-        );
+  for (let rawState of rawStates) {
+    let state = new State(
+      rawState.stateId,
+      rawState.name,
+      rawState.treasuryAmt,
+      rawState.desc,
+      rawState.expenses,
+      rawState.adminRegionModifier,
+    );
 
-        let regions = await regionServices.getRegionByStateId(state.stateID);
+    let regions = await regionServices.getRegionByStateId(state.stateID);
 
-        state.summarise(regions);
+    state.summarise(regions);
 
-        states.push(state);
-    }
+    states.push(state);
+  }
 
-    return states;
-}
+  return states;
+};
 
 /**
  * Gets a state of a given ID.
@@ -157,28 +159,37 @@ const getStateAllByIdsWithoutTrade = async (ids) => {
  * @returns {State} State object if successful, null otherwise.
  */
 const getStateById = async (id) => {
-    let rawState = await knex
-        .select('*')
-        .from(constants.TABLE_STATE)
-        .where(constants.COLUMN_STATE_ID, id)
-        .catch(e => {
-            console.error(e);
-        });
+  let rawState = await knex
+    .select("*")
+    .from(constants.TABLE_STATE)
+    .where(constants.COLUMN_STATE_ID, id)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    if (rawState.length === 0) return null;
+  if (rawState.length === 0) return null;
 
-    rawState = rawState[0];
+  rawState = rawState[0];
 
-    let state = new State(rawState.stateId, rawState.name, rawState.treasuryAmt, rawState.desc, rawState.expenses, rawState.adminRegionModifier);
+  let state = new State(
+    rawState.stateId,
+    rawState.name,
+    rawState.treasuryAmt,
+    rawState.desc,
+    rawState.expenses,
+    rawState.adminRegionModifier,
+  );
 
-    let regions = await regionServices.getRegionByStateId(state.stateID);
+  let regions = await regionServices.getRegionByStateId(state.stateID);
 
-    let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(state.stateID);
+  let tradeAgreements = await tradeAgreementServices.getTradeAgreementByStateId(
+    state.stateID,
+  );
 
-    state.summarise(regions, tradeAgreements);
+  state.summarise(regions, tradeAgreements);
 
-    return state;
-}
+  return state;
+};
 
 /**
  * Gets the admin cost of the given state ID.
@@ -186,35 +197,36 @@ const getStateById = async (id) => {
  * @returns a positive number if successful, -1 otherwise.
  */
 const getAdminCostByStateId = async (id) => {
-    let resValue = 0;
+  let resValue = 0;
 
-    let modifier = await knex(constants.TABLE_STATE)
-        .select(constants.COLUMN_ADMIN_MODIFIER)
-        .where(constants.COLUMN_STATE_ID, id)
-        .catch(e => {
-            console.error(e);
-            resValue = -1;
-        });
-    modifier = modifier[0].adminRegionModifier
-    let facilityCount = await facilityServices.getFacilityCountByStateId(id);
-    let regionCount = await regionServices.getRegionCountByStateId(id);
-    
+  let modifier = await knex(constants.TABLE_STATE)
+    .select(constants.COLUMN_ADMIN_MODIFIER)
+    .where(constants.COLUMN_STATE_ID, id)
+    .catch((e) => {
+      console.error(e);
+      resValue = -1;
+    });
+  modifier = modifier[0].adminRegionModifier;
+  let facilityCount = await facilityServices.getFacilityCountByStateId(id);
+  let regionCount = await regionServices.getRegionCountByStateId(id);
 
-    if (facilityCount === -1) {
-        resValue = -1;
-        return resValue;
-    }
-    if (regionCount === -1) {
-        resValue = -1;
-        return resValue;
-    }
-
-    let adminCost = (0.28 * facilityCount * facilityCount) + (400 * (1.16) ** regionCount * (1 + modifier));
-
-    resValue = adminCost;
-
+  if (facilityCount === -1) {
+    resValue = -1;
     return resValue;
-}
+  }
+  if (regionCount === -1) {
+    resValue = -1;
+    return resValue;
+  }
+
+  let adminCost =
+    0.28 * facilityCount * facilityCount +
+    400 * 1.16 ** regionCount * (1 + modifier);
+
+  resValue = adminCost;
+
+  return resValue;
+};
 
 /**
  * Creates a new state.
@@ -222,22 +234,22 @@ const getAdminCostByStateId = async (id) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const addState = async (state) => {
-    let resStatus = true;
+  let resStatus = true;
 
-    await knex
-        .insert({
-            name: state.stateName,
-            treasuryAmt: state.treasuryAmt,
-            desc: state.desc,
-            expenses: state.expenses
-        })
-        .into(constants.TABLE_STATE)
-        .catch(e => {
-            console.error(e);
-            resStatus = false;
-        });
+  await knex
+    .insert({
+      name: state.stateName,
+      treasuryAmt: state.treasuryAmt,
+      desc: state.desc,
+      expenses: state.expenses,
+    })
+    .into(constants.TABLE_STATE)
+    .catch((e) => {
+      console.error(e);
+      resStatus = false;
+    });
 
-    return resStatus;
+  return resStatus;
 };
 
 /**
@@ -246,24 +258,24 @@ const addState = async (state) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const updateState = async (state) => {
-    let resStatus = true;
+  let resStatus = true;
 
-    await knex(constants.TABLE_STATE)
-        .where({ stateId: state.stateID })
-        .update({
-            name: state.stateName,
-            treasuryAmt: state.treasuryAmt,
-            desc: state.desc,
-            expenses: state.expenses,
-            adminRegionModifier: state.adminRegionModifier
-        })
-        .catch(e => {
-            console.error(e);
-            resStatus = false;
-        });
+  await knex(constants.TABLE_STATE)
+    .where({ stateId: state.stateID })
+    .update({
+      name: state.stateName,
+      treasuryAmt: state.treasuryAmt,
+      desc: state.desc,
+      expenses: state.expenses,
+      adminRegionModifier: state.adminRegionModifier,
+    })
+    .catch((e) => {
+      console.error(e);
+      resStatus = false;
+    });
 
-    return resStatus;
-}
+  return resStatus;
+};
 
 /**
  * Updates the treasury amount of the state of a given ID.
@@ -271,18 +283,18 @@ const updateState = async (state) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const updateStateTreasuryByStateId = async (id, treasuryAmt) => {
-    let resStatus = true;
+  let resStatus = true;
 
-    await knex(constants.TABLE_STATE)
-        .where({ stateId: id })
-        .update({ treasuryAmt: treasuryAmt })
-        .catch(e => {
-            console.error(e);
-            resStatus = false;
-        });
+  await knex(constants.TABLE_STATE)
+    .where({ stateId: id })
+    .update({ treasuryAmt: treasuryAmt })
+    .catch((e) => {
+      console.error(e);
+      resStatus = false;
+    });
 
-    return resStatus;
-}
+  return resStatus;
+};
 
 /**
  * Deletes the state of a given ID. Will fail if the state has regions.
@@ -290,31 +302,31 @@ const updateStateTreasuryByStateId = async (id, treasuryAmt) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const deleteStateById = async (id) => {
-    let resStatus = true;
+  let resStatus = true;
 
-    let hasRegions = await knex
-        .select(1)
-        .from(constants.TABLE_REGION)
-        .where(constants.COLUMN_STATE_ID, id)
-        .catch(e => {
-            console.log(e);
-            resStatus = false;
-        });
+  let hasRegions = await knex
+    .select(1)
+    .from(constants.TABLE_REGION)
+    .where(constants.COLUMN_STATE_ID, id)
+    .catch((e) => {
+      console.log(e);
+      resStatus = false;
+    });
 
-    if (hasRegions.length !== 0) {
+  if (hasRegions.length !== 0) {
+    resStatus = false;
+  } else {
+    await knex(constants.TABLE_STATE)
+      .where({ stateId: id })
+      .del()
+      .catch((e) => {
+        console.error(e);
         resStatus = false;
-    } else {
-        await knex(constants.TABLE_STATE)
-            .where({ stateId: id })
-            .del()
-            .catch(e => {
-                console.error(e);
-                resStatus = false;
-            });
-    }
+      });
+  }
 
-    return resStatus;
-}
+  return resStatus;
+};
 
 exports.getStateList = getStateList;
 exports.getStateById = getStateById;

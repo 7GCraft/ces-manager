@@ -1,10 +1,7 @@
 <template>
   <!-- Main modal -->
   <Teleport to="#app">
-    <div
-      :id="id"
-      class=" inset-0 fixed pt-4 z-20"
-    >
+    <div :id="id" class="inset-0 fixed pt-4 z-20">
       <div class="relative mx-auto w-full max-w-2xl max-h-full z-10">
         <!-- Modal content -->
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -27,13 +24,11 @@
         </div>
       </div>
     </div>
-    <div class="bg-black fixed  inset-0 opacity-50  z-10 ">
-    </div>
+    <div class="bg-black fixed inset-0 opacity-50 z-10"></div>
   </Teleport>
 </template>
 
-
-  <script>
+<script>
 export default {
   props: ["name", "id"],
 };

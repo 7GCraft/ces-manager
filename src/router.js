@@ -1,32 +1,30 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import HomePage from "./pages/Home/HomePage";
-import homeStart from './pages/Home/sections/HomeStart'
+import homeStart from "./pages/Home/sections/HomeStart";
 import stateList from "./pages/Home/sections/StateList";
 import regionList from "./pages/Home/sections/RegionList";
 import tradeAgreement from "./pages/Home/sections/TradeAgreement";
 import resourceTier from "./pages/Home/sections/ResourceTier";
 
-import RegionPage from './pages/RegionInfo/RegionPage'
-import regionComponents from './pages/RegionInfo/sections/RegionComponents'
-import regionDevelopment from './pages/RegionInfo/sections/RegionDevelopment'
-import regionFacilities from './pages/RegionInfo/sections/RegionFacilities'
-import regionInfo from './pages/RegionInfo/sections/RegionInfo'
-import regionCorruption from './pages/RegionInfo/sections/RegionCorruption'
+import RegionPage from "./pages/RegionInfo/RegionPage";
+import regionComponents from "./pages/RegionInfo/sections/RegionComponents";
+import regionDevelopment from "./pages/RegionInfo/sections/RegionDevelopment";
+import regionFacilities from "./pages/RegionInfo/sections/RegionFacilities";
+import regionInfo from "./pages/RegionInfo/sections/RegionInfo";
+import regionCorruption from "./pages/RegionInfo/sections/RegionCorruption";
 
-import StatePage from './pages/StateInfo/StatePage'
-import stateInfo from './pages/StateInfo/section/StateInfo'
-import stateRegions from './pages/StateInfo/section/StateRegions'
-import stateFacilities from './pages/StateInfo/section/StateFacilities'
-import stateTrade from './pages/StateInfo/section/StateTrade'
-import stateResources from './pages/StateInfo/section/StateResources'
-import stateMilitary from './pages/StateInfo/section/StateMilitary'
-
-
+import StatePage from "./pages/StateInfo/StatePage";
+import stateInfo from "./pages/StateInfo/section/StateInfo";
+import stateRegions from "./pages/StateInfo/section/StateRegions";
+import stateFacilities from "./pages/StateInfo/section/StateFacilities";
+import stateTrade from "./pages/StateInfo/section/StateTrade";
+import stateResources from "./pages/StateInfo/section/StateResources";
+import stateMilitary from "./pages/StateInfo/section/StateMilitary";
 
 const router = createRouter({
   history: createWebHistory(),
-  linkActiveClass:'active',
+  linkActiveClass: "active",
   routes: [
     {
       path: "/home",
@@ -49,7 +47,7 @@ const router = createRouter({
         { path: "facilities", component: stateFacilities },
         { path: "resources", component: stateResources },
         { path: "trade-agreement", component: stateTrade },
-        { path: 'military', component: stateMilitary},
+        { path: "military", component: stateMilitary },
         { path: "info", component: stateInfo },
       ],
     },
@@ -62,7 +60,7 @@ const router = createRouter({
         { path: "/corruption", component: regionCorruption },
         { path: "/facilities", component: regionFacilities },
         { path: "/components", component: regionComponents },
-        { path:'/',component: regionInfo}
+        { path: "/", component: regionInfo },
       ],
     },
   ],
