@@ -126,33 +126,29 @@
       </div>
     </template>
     <template v-slot:footer>
-        <div
-          class="flex mx-auto items-center w-full  sm:w-full flex-col sm:flex-row
-           space-y-4 justify-center sm:justify-end sm:space-y-0 
-           sm:space-x-8"
+      <div
+        class="flex mx-auto items-center w-full sm:w-full flex-col sm:flex-row space-y-4 justify-center sm:justify-end sm:space-y-0 sm:space-x-8"
+      >
+        <button
+          type="button"
+          data-modal-toggle="confirmation-modal"
+          href="#"
+          @click="addState()"
+          class="inline-flex w-1/2 mx-auto sm:w-fit sm:mx-0 justify-center items-center mx-auto py-4 sm:px-8 text-base font-medium text-center text-white rounded-lg bg-green-700 hover:text-green-700 hover:ring-4 hover:ring-green-700 hover:bg-white focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
         >
-          <button
-            type="button"
-            data-modal-toggle="confirmation-modal"
-            href="#"
-            @click="addState()"
-            class="inline-flex w-1/2 mx-auto sm:w-fit sm:mx-0 justify-center items-center  mx-auto py-4 sm:px-8 text-base font-medium text-center text-white rounded-lg bg-green-700 hover:text-green-700 hover:ring-4 hover:ring-green-700 hover:bg-white focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
-          >
-            Confirm
-          </button>
-          <button
-            type="button"
-            data-modal-toggle="confirmation-modal"
-            href="#"
-            @click="toggleAddStateModal"
-            class=" w-1/2 mx-auto inline-flex sm:mx-0 justify-center items-center px-10  
-            py-4 sm:px-8 text-base font-medium sm:w-fit
-            text-center text-white rounded-lg bg-red-700 hover:text-red-700 hover:ring-4 hover:ring-red-700 hover:bg-white focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
-          >
-            Cancel
-          </button>
-        </div>
-      </template>
+          Confirm
+        </button>
+        <button
+          type="button"
+          data-modal-toggle="confirmation-modal"
+          href="#"
+          @click="toggleAddStateModal"
+          class="w-1/2 mx-auto inline-flex sm:mx-0 justify-center items-center px-10 py-4 sm:px-8 text-base font-medium sm:w-fit text-center text-white rounded-lg bg-red-700 hover:text-red-700 hover:ring-4 hover:ring-red-700 hover:bg-white focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
+        >
+          Cancel
+        </button>
+      </div>
+    </template>
   </modal-dialog>
 </template>
 
@@ -187,7 +183,7 @@ export default {
   computed: {
     availableStates() {
       return this.stateList.filter((state) =>
-        state.stateName.includes(this.stateFilter)
+        state.stateName.includes(this.stateFilter),
       );
     },
   },

@@ -1,3 +1,3 @@
 // src/preload.js
-import { ipcRenderer } from 'electron'
-window.ipcRenderer = ipcRenderer
+import { ipcRenderer } from "electron";
+window.ipcRenderer = ipcRenderer;

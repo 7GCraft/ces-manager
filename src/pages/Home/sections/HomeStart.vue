@@ -63,16 +63,14 @@
       </template>
       <template v-slot:footer>
         <div
-          class="flex mx-auto items-center w-full  sm:w-full flex-col sm:flex-row
-           space-y-4 justify-center sm:justify-end sm:space-y-0 
-           sm:space-x-8"
+          class="flex mx-auto items-center w-full sm:w-full flex-col sm:flex-row space-y-4 justify-center sm:justify-end sm:space-y-0 sm:space-x-8"
         >
           <button
             type="button"
             data-modal-toggle="confirmation-modal"
             href="#"
             @click="advanceSeason"
-            class="inline-flex w-1/2 mx-auto sm:w-fit sm:mx-0 justify-center items-center  mx-auto py-4 sm:px-8 text-base font-medium text-center text-white rounded-lg bg-green-700 hover:text-green-700 hover:ring-4 hover:ring-green-700 hover:bg-white focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
+            class="inline-flex w-1/2 mx-auto sm:w-fit sm:mx-0 justify-center items-center mx-auto py-4 sm:px-8 text-base font-medium text-center text-white rounded-lg bg-green-700 hover:text-green-700 hover:ring-4 hover:ring-green-700 hover:bg-white focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900"
           >
             Confirm
           </button>
@@ -81,9 +79,7 @@
             data-modal-toggle="confirmation-modal"
             href="#"
             @click="toggleConfirmationModal"
-            class=" w-1/2 mx-auto inline-flex sm:mx-0 justify-center items-center px-10  
-            py-4 sm:px-8 text-base font-medium sm:w-fit
-            text-center text-white rounded-lg bg-red-700 hover:text-red-700 hover:ring-4 hover:ring-red-700 hover:bg-white focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
+            class="w-1/2 mx-auto inline-flex sm:mx-0 justify-center items-center px-10 py-4 sm:px-8 text-base font-medium sm:w-fit text-center text-white rounded-lg bg-red-700 hover:text-red-700 hover:ring-4 hover:ring-red-700 hover:bg-white focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
           >
             Cancel
           </button>
@@ -95,21 +91,21 @@
 
 <script>
 export default {
-  props: ['date'],
-  data(){
-      return{
-          showConfirmationModal: false
-      }
+  props: ["date"],
+  data() {
+    return {
+      showConfirmationModal: false,
+    };
   },
-  methods:{
+  methods: {
     advanceSeason() {
       this.$emit("advance-season");
       this.toggleConfirmationModal();
     },
     toggleConfirmationModal() {
-    console.log('bro mana ajg')
+      console.log("bro mana ajg");
       this.showConfirmationModal = !this.showConfirmationModal;
     },
-  }
+  },
 };
 </script>
