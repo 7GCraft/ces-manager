@@ -9,19 +9,20 @@
       <div
         v-for="(regionFacility, regionName) in stateMilitaryFacilities"
         :key="regionName"
+        className="flex flex-col space-y-2"
       >
         <div class="flex flex-row">
           <h4 className="bg-black text-white p-3 text-2xl h-fit">
             {{ regionName }}
           </h4>
-          <div class="flex-col flex border border-gray-400 bg-gray-100">
+          <div class="flex-col flex border border-gray-400 border-b-0 bg-gray-100">
             <div
               v-for="(facility, index) in regionFacility"
               :key="index"
-              class="border-y-2 border-gray-500 h-10"
+              class="border-y-2 border-gray-500 h-full"
             >
               <h4
-                class="text-xl border-b-2 bg-gray-500 text-white border-gray-400 h-full px-2 py-1"
+                class="text-md border-b-2 bg-gray-500 text-white border-gray-400 h-full px-2 "
               >
                 {{ facility.facilityName }}
               </h4>
@@ -31,7 +32,7 @@
             <div
               v-for="(facility, index) in regionFacility"
               :key="index"
-              class="border-y-2 border-gray-400 h-10 px-4"
+              class="border-y-2 border-gray-400 h-12 px-4"
             >
               <h4 class="text-xs">
                 {{ findEffect(facility.facilityName.toLowerCase()) }}
@@ -39,6 +40,12 @@
             </div>
           </div>
         </div>
+        <div class="text-left px-2 flex flex-col">
+          <h1>Total Recruitment {{regionName}}</h1>
+          <h1>Army: {{listRegionArmyRecruitment(regionFacility)}}</h1>
+          <h1>Navy: {{ processNavalFacilities(regionFacility)}}</h1>
+        </div>
+
       </div>
     </div>
   </div>
@@ -98,6 +105,130 @@ export default {
           return "Unlock Light, Medium, and Heavy Ships, +1 Naval Recruitment";
       }
     },
-  },
+
+    listRegionArmyRecruitment(facilities){
+    let recruitmentCount = 0;
+    let unlockInfantry = false;
+    let unlockCavalry = false;
+    let unlockArchers = false;
+    let unlockSiegeWeapons = false;
+    let unlockAllTier = false;
+
+    // Count the number of each facility
+    const facilityCounts = {
+        barracks: 0,
+        stables: 0,
+        archeryGround: 0,
+        siegeWorkshop: 0,
+        blacksmith: 0
+    };
+
+    facilities.forEach(facility => {
+      const facilityName = facility.facilityName.toLowerCase()
+            .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase())
+            .replace(/\s+/g, '');
+        if (Object.prototype.hasOwnProperty.call(facilityCounts, facilityName)) {
+            facilityCounts[facilityName]++;
+        }
+    });
+
+    // Calculate recruitment and unit unlocks
+    if (facilityCounts.barracks > 0 || facilityCounts.stables > 0 || facilityCounts.archeryGround > 0 || facilityCounts.siegeWorkshop > 0) {
+        recruitmentCount = 1; // base recruitment
+        if (facilityCounts.barracks > 0) {
+            recruitmentCount += facilityCounts.barracks;
+            unlockInfantry = true;
+        }
+        if (facilityCounts.stables > 0) {
+            recruitmentCount += facilityCounts.stables;
+            unlockCavalry = true;
+        }
+        if (facilityCounts.archeryGround > 0) {
+            recruitmentCount += facilityCounts.archeryGround;
+            unlockArchers = true;
+        }
+        if (facilityCounts.siegeWorkshop > 0) {
+            recruitmentCount += facilityCounts.siegeWorkshop;
+            unlockSiegeWeapons = true;
+        }
+    } else {
+        return "No Recruitment";
+    }
+
+    // Check for blacksmith
+    if (facilityCounts.blacksmith > 0) {
+        unlockAllTier = true;
+    }
+
+    // Build the summary string
+    let summary = `${recruitmentCount} Recruitment`;
+    if (unlockAllTier) {
+        summary += ", Unlock All Tier";
+    } else {
+        summary += ", Unlock Tier I Only";
+    }
+    if (unlockInfantry) {
+        summary += ", Unlock Infantry";
+    }
+    if (unlockCavalry) {
+        summary += ", Unlock Cavalry";
+    }
+    if (unlockArchers) {
+        summary += ", Unlock Archers";
+    }
+    if (unlockSiegeWeapons) {
+        summary += ", Unlock Siege Weapons";
+    }
+
+    return summary;
+},
+ processNavalFacilities(facilities) {
+    let navalRecruitmentCount = 0;
+    let canRecruitLightShips = false;
+    let canRecruitAllShips = false;
+
+    // Count the number of each facility
+    const navalFacilityCounts = {
+        fishingPort: 0,
+        tradePort: 0,
+        militaryPort: 0
+    };
+
+    facilities.forEach(facility => {
+
+      const facilityName = facility.facilityName.toLowerCase()
+            .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase())
+            .replace(/\s+/g, '');
+
+        if (Object.prototype.hasOwnProperty.call(navalFacilityCounts, facilityName)) {
+            navalFacilityCounts[facilityName]++;
+        }
+    });
+
+    // Calculate naval recruitment and ship unlocks
+    if (navalFacilityCounts.fishingPort > 0 || navalFacilityCounts.tradePort > 0 || navalFacilityCounts.militaryPort > 0) {
+        if (navalFacilityCounts.fishingPort > 0 || navalFacilityCounts.tradePort > 0) {
+            navalRecruitmentCount = 1; // base recruitment for fishing or trade port
+            canRecruitLightShips = true;
+        }
+        if (navalFacilityCounts.militaryPort > 0) {
+            navalRecruitmentCount += navalFacilityCounts.militaryPort; // additional recruitment for each military port
+            canRecruitAllShips = true;
+        }
+    } else {
+        return "No Naval Recruitment";
+    }
+
+    // Build the summary string
+    let summary = `${navalRecruitmentCount} Naval Recruitment`;
+    if (canRecruitAllShips) {
+        summary += ", can recruit all ships";
+    } else if (canRecruitLightShips) {
+        summary += ", only light ships";
+    }
+
+    return summary;
+}
+    }
 };
 </script>
