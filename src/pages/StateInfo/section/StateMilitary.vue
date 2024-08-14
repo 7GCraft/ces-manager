@@ -9,20 +9,20 @@
       <div
         v-for="(regionFacility, regionName) in stateMilitaryFacilities"
         :key="regionName"
-        className="flex flex-col space-y-2"
+        className="flex flex-col w-fit"
       >
         <div class="flex flex-row">
           <h4 className="bg-black text-white p-3 text-2xl h-fit">
             {{ regionName }}
           </h4>
-          <div class="flex-col flex border border-gray-400 border-b-0 bg-gray-100">
+          <div class="flex-col flex border border-black border-b-0 bg-gray-100">
             <div
               v-for="(facility, index) in regionFacility"
               :key="index"
-              class="border-y-2 border-gray-500 h-full"
+              class="border-y-1  border-gray-500 h-full flex items-center"
             >
               <h4
-                class="text-md border-b-2 bg-gray-500 text-white border-gray-400 h-full px-2 "
+                class=" flex items-center  justify-center text-md bg-gray-500 text-white border-gray-400 h-full px-2 "
               >
                 {{ facility.facilityName }}
               </h4>
@@ -32,20 +32,18 @@
             <div
               v-for="(facility, index) in regionFacility"
               :key="index"
-              class="border-y-2 border-gray-400 h-12 px-4"
+              class="border-2 border-gray-400 h-full"
             >
-              <h4 class="text-xs">
+              <h4 class="text-xs flex items-center justify-center h-full px-2">
                 {{ findEffect(facility.facilityName.toLowerCase()) }}
               </h4>
             </div>
           </div>
         </div>
-        <div class="text-left px-2 flex flex-col">
-          <h1>Total Recruitment {{regionName}}</h1>
-          <h1>Army: {{listRegionArmyRecruitment(regionFacility)}}</h1>
-          <h1>Navy: {{ processNavalFacilities(regionFacility)}}</h1>
+        <div class="border border-black flex flex-col text-left font-semibold text-sm w-full ">   
+          <h1 class="border border-b-black px-2">Army: {{listRegionArmyRecruitment(regionFacility)}}</h1>
+          <h1 class="px-2">Navy: {{ processNavalFacilities(regionFacility)}}</h1>
         </div>
-
       </div>
     </div>
   </div>
@@ -57,10 +55,7 @@ export default {
   props: ["state-facility-data"],
   mounted() {
     setTimeout(() => {
-      console.log(
-        this.stateMilitaryFacilities,
-        "WE DISCUSS HOW TO RESTORE A LEGION",
-      );
+     
     }, 500);
   },
   computed: {
