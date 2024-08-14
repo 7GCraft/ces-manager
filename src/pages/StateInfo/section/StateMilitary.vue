@@ -11,18 +11,18 @@
         :key="regionName"
         className="flex flex-col w-fit"
       >
-        <div class="flex flex-row">
-          <h4 className="bg-black text-white p-3 text-2xl h-fit">
+        <div class="flex flex-row h-fit">
+          <h4 className="bg-black text-white p-3 text-2xl items-center justify-center flex ">
             {{ regionName }}
           </h4>
           <div class="flex-col flex border border-black border-b-0 bg-gray-100">
             <div
               v-for="(facility, index) in regionFacility"
               :key="index"
-              class="border-y-1  border-gray-500 h-full flex items-center"
+              class=" h-full flex items-center"
             >
               <h4
-                class=" flex items-center  justify-center text-md bg-gray-500 text-white border-gray-400 h-full px-2 "
+                class=" flex items-center  justify-center text-md border-2 border-gray-600 bg-gray-500 text-white h-full px-2 "
               >
                 {{ facility.facilityName }}
               </h4>
@@ -128,7 +128,7 @@ export default {
     });
 
     // Calculate recruitment and unit unlocks
-    if (facilityCounts.barracks > 0 || facilityCounts.stables > 0 || facilityCounts.archeryGround > 0 || facilityCounts.siegeWorkshop > 0) {
+    if (facilityCounts.barracks > 0 ||  facilityCounts.stables > 0 || facilityCounts.archeryGround > 0 || facilityCounts.siegeWorkshop > 0) {
         recruitmentCount = 1; // base recruitment
         if (facilityCounts.barracks > 0) {
             recruitmentCount += facilityCounts.barracks;
