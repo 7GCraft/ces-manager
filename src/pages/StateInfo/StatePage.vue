@@ -74,6 +74,11 @@ export default {
   },
   methods: {
     groupDataByRegion(data) {
+        console.log(data,"tasadar")
+      if(data === null || !data){
+           console.log(data,"tasadar2")
+         return;
+      }
       const groupedData = {};
       for (const objEl of data) {
         const regionName = objEl.regionName;
@@ -82,7 +87,8 @@ export default {
         }
         groupedData[regionName].push(objEl);
       }
-      return structuredClone(groupedData);
+      console.log(groupedData,"lavatech")
+      return JSON.parse(JSON.stringify(groupedData))
     },
     countResource(data) {
       console.log("i wanna be with u", data);
