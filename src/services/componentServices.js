@@ -1,11 +1,41 @@
 const config = require('./config.json');
-const constants = config.constants;
-const resourceServices = require(config.paths.resourceServices);
+
+const { constants } = config;
+const resourceServices = require('./resourceServices');
 const dbContext = require('../repository/DbContext');
+
 const knex = dbContext.getKnexObject();
 
-const Component = require(config.paths.componentModel);
-const ComponentType = require(config.paths.componentTypeModel);
+const Component = require('../models/componentModel');
+const ComponentType = require('../models/componentTypeModel');
+
+/**
+ * Gets all component types.
+ * @returns {Array} array of component type objects if successful, null otherwise.
+ */
+const getComponentTypeAll = async () => {
+  const rawComponentTypes = await knex
+    .select('*')
+    .from(constants.TABLE_COMPONENT_TYPE)
+    .catch((e) => {
+      console.error(e);
+    });
+
+  if (rawComponentTypes.length === 0) return null;
+
+  const componentTypes = [];
+
+  rawComponentTypes.forEach((rawComponentType) => {
+    const componentType = new ComponentType(
+      rawComponentType.componentTypeId,
+      rawComponentType.name,
+    );
+
+    componentTypes.push(componentType);
+  });
+
+  return componentTypes;
+};
 
 /**
  * Gets all components of a given region.
@@ -13,56 +43,56 @@ const ComponentType = require(config.paths.componentTypeModel);
  * @returns {Array} array of component objects if successful, null otherwise.
  */
 const getComponentByRegionId = async (id) => {
-    const rawComponents = await knex
-        .select('*')
-        .from(constants.TABLE_COMPONENT)
-        .where(constants.COLUMN_REGION_ID, id)
-        .catch(e => {
-            console.error(e);
-        });
+  const rawComponents = await knex
+    .select('*')
+    .from(constants.TABLE_COMPONENT)
+    .where(constants.COLUMN_REGION_ID, id)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    const componentTypes = await getComponentTypeAll();
+  const componentTypes = await getComponentTypeAll();
 
-    const resources = await resourceServices.getResourceAll();
+  const resources = await resourceServices.getResourceAll();
 
-    if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
+  if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
-    let components = [];
+  const components = [];
 
-    for (let rawComponent of rawComponents) {
-        let componentValue = rawComponent.value;
+  for (const rawComponent of rawComponents) {
+    let componentValue = rawComponent.value;
 
-        if (rawComponent.componentTypeId === 3) {
-            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
-        }
-
-        let component = new Component(
-            rawComponent.componentId,
-            rawComponent.name,
-            componentTypes[rawComponent.componentTypeId - 1],
-            rawComponent.regionId,
-            rawComponent.facilityId,
-            componentValue,
-            rawComponent.activationTime,
-            rawComponent.isChild,
-            rawComponent.parentId
-        );
-
-        components.push(component);
+    if (rawComponent.componentTypeId === 3) {
+      componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
     }
 
-    for (let component of components) {
-        if (component.isChild) {
-            for (let parentComponent of components) {
-                if (component.parentId === parentComponent.componentId) {
-                    component.parent = parentComponent;
-                    break;
-                }
-            }
-        }
-    }
+    const component = new Component(
+      rawComponent.componentId,
+      rawComponent.name,
+      componentTypes[rawComponent.componentTypeId - 1],
+      rawComponent.regionId,
+      rawComponent.facilityId,
+      componentValue,
+      rawComponent.activationTime,
+      rawComponent.isChild,
+      rawComponent.parentId,
+    );
 
-    return components;
+    components.push(component);
+  }
+
+  for (const component of components) {
+    if (component.isChild) {
+      for (const parentComponent of components) {
+        if (component.parentId === parentComponent.componentId) {
+          component.parent = parentComponent;
+          break;
+        }
+      }
+    }
+  }
+
+  return components;
 };
 
 /**
@@ -71,191 +101,191 @@ const getComponentByRegionId = async (id) => {
  * @returns {Array} array of component objects if successful, null otherwise.
  */
 const getComponentByFacilityId = async (id) => {
-    const rawComponents = await knex
-        .select('*')
-        .from(constants.TABLE_COMPONENT)
-        .where(constants.COLUMN_FACILITY_ID, id)
-        .catch(e => {
-            console.error(e);
-        });
+  const rawComponents = await knex
+    .select('*')
+    .from(constants.TABLE_COMPONENT)
+    .where(constants.COLUMN_FACILITY_ID, id)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    const componentTypes = await getComponentTypeAll();
+  const componentTypes = await getComponentTypeAll();
 
-    const resources = await resourceServices.getResourceAll();
+  const resources = await resourceServices.getResourceAll();
 
-    if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
+  if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
-    let components = [];
+  const components = [];
 
-    for (let rawComponent of rawComponents) {
-        let componentValue = rawComponent.value;
+  for (const rawComponent of rawComponents) {
+    let componentValue = rawComponent.value;
 
-        if (rawComponent.componentTypeId === 3) {
-            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
-        }
-
-        let component = new Component(
-            rawComponent.componentId,
-            rawComponent.name,
-            componentTypes[rawComponent.componentTypeId - 1],
-            rawComponent.regionId,
-            rawComponent.facilityId,
-            componentValue,
-            rawComponent.activationTime,
-            rawComponent.isChild,
-            rawComponent.parentId
-        );
-
-        components.push(component);
+    if (rawComponent.componentTypeId === 3) {
+      componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
     }
 
-    for (let component of components) {
-        if (component.isChild) {
-            for (let parentComponent of components) {
-                if (component.parentId === parentComponent.componentId) {
-                    component.parent = parentComponent;
-                    break;
-                }
-            }
-        }
-    }
+    const component = new Component(
+      rawComponent.componentId,
+      rawComponent.name,
+      componentTypes[rawComponent.componentTypeId - 1],
+      rawComponent.regionId,
+      rawComponent.facilityId,
+      componentValue,
+      rawComponent.activationTime,
+      rawComponent.isChild,
+      rawComponent.parentId,
+    );
 
-    return components;
-}
+    components.push(component);
+  }
+
+  for (const component of components) {
+    if (component.isChild) {
+      for (const parentComponent of components) {
+        if (component.parentId === parentComponent.componentId) {
+          component.parent = parentComponent;
+          break;
+        }
+      }
+    }
+  }
+
+  return components;
+};
 
 /**
  * Gets all functional components of a given region.
  * @param {Number} id must be an integer.
- * @returns {Array} array of component objects if successful, null otherwise. 
+ * @returns {Array} array of component objects if successful, null otherwise.
  */
 const getComponentFunctionalByRegionId = async (id) => {
-    const rawComponents = await knex
-        .select(constants.TABLE_COMPONENT + '.' + '*')
-        .from(constants.TABLE_COMPONENT)
-        .innerJoin(
-            constants.TABLE_FACILITY,
-            constants.TABLE_COMPONENT + '.' + constants.COLUMN_FACILITY_ID,
-            constants.TABLE_FACILITY + '.' + constants.COLUMN_FACILITY_ID
-        )
-        .where(constants.TABLE_COMPONENT + '.' + constants.COLUMN_REGION_ID, id)
-        .andWhere(constants.TABLE_FACILITY + '.' + constants.COLUMN_IS_FUNCTIONAL, 1)
-        .catch(e => {
-            console.error(e);
-        });
+  const rawComponents = await knex
+    .select(`${constants.TABLE_COMPONENT}.` + '*')
+    .from(constants.TABLE_COMPONENT)
+    .innerJoin(
+      constants.TABLE_FACILITY,
+      `${constants.TABLE_COMPONENT}.${constants.COLUMN_FACILITY_ID}`,
+      `${constants.TABLE_FACILITY}.${constants.COLUMN_FACILITY_ID}`,
+    )
+    .where(`${constants.TABLE_COMPONENT}.${constants.COLUMN_REGION_ID}`, id)
+    .andWhere(`${constants.TABLE_FACILITY}.${constants.COLUMN_IS_FUNCTIONAL}`, 1)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    const componentTypes = await getComponentTypeAll();
+  const componentTypes = await getComponentTypeAll();
 
-    const resources = await resourceServices.getResourceAll();
+  const resources = await resourceServices.getResourceAll();
 
-    if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
+  if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
-    let components = [];
+  const components = [];
 
-    for (let rawComponent of rawComponents) {
-        let componentValue = rawComponent.value;
+  for (const rawComponent of rawComponents) {
+    let componentValue = rawComponent.value;
 
-        if (rawComponent.componentTypeId === 3) {
-            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
-        }
-
-        let component = new Component(
-            rawComponent.componentId,
-            rawComponent.name,
-            componentTypes[rawComponent.componentTypeId - 1],
-            rawComponent.regionId,
-            rawComponent.facilityId,
-            componentValue,
-            rawComponent.activationTime,
-            rawComponent.isChild,
-            rawComponent.parentId
-        );
-
-        components.push(component);
+    if (rawComponent.componentTypeId === 3) {
+      componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
     }
 
-    for (let component of components) {
-        if (component.isChild) {
-            for (let parentComponent of components) {
-                if (component.parentId === parentComponent.componentId) {
-                    component.parent = parentComponent;
-                    break;
-                }
-            }
-        }
-    }
+    const component = new Component(
+      rawComponent.componentId,
+      rawComponent.name,
+      componentTypes[rawComponent.componentTypeId - 1],
+      rawComponent.regionId,
+      rawComponent.facilityId,
+      componentValue,
+      rawComponent.activationTime,
+      rawComponent.isChild,
+      rawComponent.parentId,
+    );
 
-    return components;
-}
+    components.push(component);
+  }
+
+  for (const component of components) {
+    if (component.isChild) {
+      for (const parentComponent of components) {
+        if (component.parentId === parentComponent.componentId) {
+          component.parent = parentComponent;
+          break;
+        }
+      }
+    }
+  }
+
+  return components;
+};
 
 /**
  * Gets all functional resource components of a given state.
  * @param {Number} id must be an integer.
- * @returns {Array} array of component objects if successful, null otherwise. 
+ * @returns {Array} array of component objects if successful, null otherwise.
  */
 const getComponentResourceFunctionalByStateId = async (id) => {
-    const rawComponents = await knex
-        .select(constants.TABLE_COMPONENT + '.' + '*')
-        .from(constants.TABLE_COMPONENT)
-        .innerJoin(
-            constants.TABLE_FACILITY,
-            constants.TABLE_COMPONENT + '.' + constants.COLUMN_FACILITY_ID,
-            constants.TABLE_FACILITY + '.' + constants.COLUMN_FACILITY_ID
-        )
-        .leftJoin(
-            constants.TABLE_REGION,
-            constants.TABLE_COMPONENT + '.' + constants.COLUMN_REGION_ID,
-            constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID
-        )
-        .where(constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID, id)
-        .andWhere(constants.TABLE_FACILITY + '.' + constants.COLUMN_IS_FUNCTIONAL, 1)
-        .andWhere(constants.COLUMN_COMPONENT_TYPE_ID, 3)
-        .catch(e => {
-            console.error(e);
-        });
+  const rawComponents = await knex
+    .select(`${constants.TABLE_COMPONENT}.` + '*')
+    .from(constants.TABLE_COMPONENT)
+    .innerJoin(
+      constants.TABLE_FACILITY,
+      `${constants.TABLE_COMPONENT}.${constants.COLUMN_FACILITY_ID}`,
+      `${constants.TABLE_FACILITY}.${constants.COLUMN_FACILITY_ID}`,
+    )
+    .leftJoin(
+      constants.TABLE_REGION,
+      `${constants.TABLE_COMPONENT}.${constants.COLUMN_REGION_ID}`,
+      `${constants.TABLE_REGION}.${constants.COLUMN_REGION_ID}`,
+    )
+    .where(`${constants.TABLE_REGION}.${constants.COLUMN_STATE_ID}`, id)
+    .andWhere(`${constants.TABLE_FACILITY}.${constants.COLUMN_IS_FUNCTIONAL}`, 1)
+    .andWhere(constants.COLUMN_COMPONENT_TYPE_ID, 3)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    const componentTypes = await getComponentTypeAll();
+  const componentTypes = await getComponentTypeAll();
 
-    const resources = await resourceServices.getResourceAll();
+  const resources = await resourceServices.getResourceAll();
 
-    if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
+  if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
-    let components = [];
+  const components = [];
 
-    for (let rawComponent of rawComponents) {
-        let componentValue = rawComponent.value;
+  for (const rawComponent of rawComponents) {
+    let componentValue = rawComponent.value;
 
-        if (rawComponent.componentTypeId === 3) {
-            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
-        }
-
-        let component = new Component(
-            rawComponent.componentId,
-            rawComponent.name,
-            componentTypes[rawComponent.componentTypeId - 1],
-            rawComponent.regionId,
-            rawComponent.facilityId,
-            componentValue,
-            rawComponent.activationTime,
-            rawComponent.isChild,
-            rawComponent.parentId
-        );
-
-        components.push(component);
+    if (rawComponent.componentTypeId === 3) {
+      componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
     }
 
-    for (let component of components) {
-        if (component.isChild) {
-            for (let parentComponent of components) {
-                if (component.parentId === parentComponent.componentId) {
-                    component.parent = parentComponent;
-                    break;
-                }
-            }
-        }
-    }
+    const component = new Component(
+      rawComponent.componentId,
+      rawComponent.name,
+      componentTypes[rawComponent.componentTypeId - 1],
+      rawComponent.regionId,
+      rawComponent.facilityId,
+      componentValue,
+      rawComponent.activationTime,
+      rawComponent.isChild,
+      rawComponent.parentId,
+    );
 
-    return components;
-}
+    components.push(component);
+  }
+
+  for (const component of components) {
+    if (component.isChild) {
+      for (const parentComponent of components) {
+        if (component.parentId === parentComponent.componentId) {
+          component.parent = parentComponent;
+          break;
+        }
+      }
+    }
+  }
+
+  return components;
+};
 
 /**
  * Gets all functional components of the given IDs.
@@ -263,63 +293,63 @@ const getComponentResourceFunctionalByStateId = async (id) => {
  * @returns {Array} array of component objects if successful, null otherwise.
  */
 const getComponentFunctionalByIds = async (ids) => {
-    const rawComponents = await knex
-        .select(constants.TABLE_COMPONENT + '.' + '*')
-        .from(constants.TABLE_COMPONENT)
-        .innerJoin(
-            constants.TABLE_FACILITY,
-            constants.TABLE_COMPONENT + '.' + constants.COLUMN_FACILITY_ID,
-            constants.TABLE_FACILITY + '.' + constants.COLUMN_FACILITY_ID
-        )
-        .whereIn(constants.COLUMN_COMPONENT_ID, ids)
-        .andWhere(constants.TABLE_FACILITY + '.' + constants.COLUMN_IS_FUNCTIONAL, 1)
-        .catch(e => {
-            console.error(e);
-        });
+  const rawComponents = await knex
+    .select(`${constants.TABLE_COMPONENT}.` + '*')
+    .from(constants.TABLE_COMPONENT)
+    .innerJoin(
+      constants.TABLE_FACILITY,
+      `${constants.TABLE_COMPONENT}.${constants.COLUMN_FACILITY_ID}`,
+      `${constants.TABLE_FACILITY}.${constants.COLUMN_FACILITY_ID}`,
+    )
+    .whereIn(constants.COLUMN_COMPONENT_ID, ids)
+    .andWhere(`${constants.TABLE_FACILITY}.${constants.COLUMN_IS_FUNCTIONAL}`, 1)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    const componentTypes = await getComponentTypeAll();
+  const componentTypes = await getComponentTypeAll();
 
-    const resources = await resourceServices.getResourceAll();
+  const resources = await resourceServices.getResourceAll();
 
-    if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
+  if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
-    let components = [];
+  const components = [];
 
-    for (let rawComponent of rawComponents) {
-        let componentValue = rawComponent.value;
+  for (const rawComponent of rawComponents) {
+    let componentValue = rawComponent.value;
 
-        if (rawComponent.componentTypeId === 3) {
-            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
-        }
-
-        let component = new Component(
-            rawComponent.componentId,
-            rawComponent.name,
-            componentTypes[rawComponent.componentTypeId - 1],
-            rawComponent.regionId,
-            rawComponent.facilityId,
-            componentValue,
-            rawComponent.activationTime,
-            rawComponent.isChild,
-            rawComponent.parentId
-        );
-
-        components.push(component);
+    if (rawComponent.componentTypeId === 3) {
+      componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
     }
 
-    for (let component of components) {
-        if (component.isChild) {
-            for (let parentComponent of components) {
-                if (component.parentId === parentComponent.componentId) {
-                    component.parent = parentComponent;
-                    break;
-                }
-            }
-        }
-    }
+    const component = new Component(
+      rawComponent.componentId,
+      rawComponent.name,
+      componentTypes[rawComponent.componentTypeId - 1],
+      rawComponent.regionId,
+      rawComponent.facilityId,
+      componentValue,
+      rawComponent.activationTime,
+      rawComponent.isChild,
+      rawComponent.parentId,
+    );
 
-    return components;
-}
+    components.push(component);
+  }
+
+  for (const component of components) {
+    if (component.isChild) {
+      for (const parentComponent of components) {
+        if (component.parentId === parentComponent.componentId) {
+          component.parent = parentComponent;
+          break;
+        }
+      }
+    }
+  }
+
+  return components;
+};
 
 /**
  * Gets all components that don't belong to a facility in a given region.
@@ -327,58 +357,58 @@ const getComponentFunctionalByIds = async (ids) => {
  * @returns {Array} array of component objects if successful, null otherwise.
  */
 const getComponentUnusedByRegionId = async (id) => {
-    const rawComponents = await knex
-        .select('*')
-        .from(constants.TABLE_COMPONENT)
-        .where(constants.COLUMN_REGION_ID, id)
-        .whereNull(constants.COLUMN_FACILITY_ID)
-        .catch(e => {
-            console.error(e);
-        });
+  const rawComponents = await knex
+    .select('*')
+    .from(constants.TABLE_COMPONENT)
+    .where(constants.COLUMN_REGION_ID, id)
+    .whereNull(constants.COLUMN_FACILITY_ID)
+    .catch((e) => {
+      console.error(e);
+    });
 
-    const componentTypes = await getComponentTypeAll();
+  const componentTypes = await getComponentTypeAll();
 
-    const resources = await resourceServices.getResourceAll();
+  const resources = await resourceServices.getResourceAll();
 
-    if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
+  if (rawComponents.length === 0 || componentTypes === null || resources === null) return null;
 
-    let components = [];
+  const components = [];
 
-    for (let rawComponent of rawComponents) {
-        let componentValue = rawComponent.value;
+  for (const rawComponent of rawComponents) {
+    let componentValue = rawComponent.value;
 
-        if (rawComponent.componentTypeId === 3) {
-            componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1]
-        }
-
-        let component = new Component(
-            rawComponent.componentId,
-            rawComponent.name,
-            componentTypes[rawComponent.componentTypeId - 1],
-            rawComponent.regionId,
-            rawComponent.facilityId,
-            componentValue,
-            rawComponent.activationTime,
-            rawComponent.isChild,
-            rawComponent.parentId
-        );
-
-        components.push(component);
+    if (rawComponent.componentTypeId === 3) {
+      componentValue = resources[parseInt(rawComponent.value.split(';')[1]) - 1];
     }
 
-    for (let component of components) {
-        if (component.isChild) {
-            for (let parentComponent of components) {
-                if (component.parentId === parentComponent.componentId) {
-                    component.parent = parentComponent;
-                    break;
-                }
-            }
-        }
-    }
+    const component = new Component(
+      rawComponent.componentId,
+      rawComponent.name,
+      componentTypes[rawComponent.componentTypeId - 1],
+      rawComponent.regionId,
+      rawComponent.facilityId,
+      componentValue,
+      rawComponent.activationTime,
+      rawComponent.isChild,
+      rawComponent.parentId,
+    );
 
-    return components;
-}
+    components.push(component);
+  }
+
+  for (const component of components) {
+    if (component.isChild) {
+      for (const parentComponent of components) {
+        if (component.parentId === parentComponent.componentId) {
+          component.parent = parentComponent;
+          break;
+        }
+      }
+    }
+  }
+
+  return components;
+};
 
 /**
  * Creates a new component.
@@ -386,50 +416,50 @@ const getComponentUnusedByRegionId = async (id) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const addComponent = async (component) => {
-    let resStatus = "OK";
+  let resStatus = 'OK';
 
-    let newValue = null;
+  let newValue = null;
 
-    if (component.value !== null) {
-        if (typeof (component.value) === 'number') newValue = `i;${component.value}`;
-        else if (typeof (component.value) === 'string') newValue = `s;${component.value}`;
-        else if (typeof (component.value) === 'object') newValue = `i;${component.value.resourceId}`;
-    }
+  if (component.value !== null) {
+    if (typeof (component.value) === 'number') newValue = `i;${component.value}`;
+    else if (typeof (component.value) === 'string') newValue = `s;${component.value}`;
+    else if (typeof (component.value) === 'object') newValue = `i;${component.value.resourceId}`;
+  }
 
-    let newIsChild = 0;
-    let newParentId = null;
+  let newIsChild = 0;
+  let newParentId = null;
 
-    if (component.isChild) {
-        newIsChild = 1;
-        newParentId = component.parentId;
-    }
+  if (component.isChild) {
+    newIsChild = 1;
+    newParentId = component.parentId;
+  }
 
-    let costCalcReturn = await calculateComponentCost(component.cost, component.regionId)
+  const costCalcReturn = await calculateComponentCost(component.cost, component.regionId);
 
-    if(costCalcReturn === "Cost exceeding treasury amount"){
-        resStatus = costCalcReturn;
-        return resStatus
-    }
-
-    await knex
-        .insert({
-            name: component.componentName,
-            componentTypeId: component.componentType.componentTypeId,
-            regionId: component.regionId,
-            facilityId: component.facilityId,
-            value: newValue,
-            parentId: newParentId,
-            activationTime: component.activationTime,
-            isChild: newIsChild
-        })
-        .into(constants.TABLE_COMPONENT)
-        .catch(e => {
-            console.error(e);
-            resStatus = "SQL Error. Something went wrong when inserting component";
-        });
-
+  if (costCalcReturn === 'Cost exceeding treasury amount') {
+    resStatus = costCalcReturn;
     return resStatus;
-}
+  }
+
+  await knex
+    .insert({
+      name: component.componentName,
+      componentTypeId: component.componentType.componentTypeId,
+      regionId: component.regionId,
+      facilityId: component.facilityId,
+      value: newValue,
+      parentId: newParentId,
+      activationTime: component.activationTime,
+      isChild: newIsChild,
+    })
+    .into(constants.TABLE_COMPONENT)
+    .catch((e) => {
+      console.error(e);
+      resStatus = 'SQL Error. Something went wrong when inserting component';
+    });
+
+  return resStatus;
+};
 
 /**
  * Calculates component cost by subtracting treasury amount by cost
@@ -438,34 +468,34 @@ const addComponent = async (component) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const calculateComponentCost = async (cost, regionId) => {
-    let resStatus = "OK";
-    let stateTreasury = await knex
-        .select(constants.COLUMN_TREASURY_AMT, constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID)
-        .from(constants.TABLE_REGION)
-        .join(
-            constants.TABLE_STATE,
-            constants.TABLE_REGION + '.' + constants.COLUMN_STATE_ID,
-            constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID
-        )
-        .where(constants.TABLE_REGION + '.' + constants.COLUMN_REGION_ID, regionId);
+  let resStatus = 'OK';
+  const stateTreasury = await knex
+    .select(constants.COLUMN_TREASURY_AMT, `${constants.TABLE_STATE}.${constants.COLUMN_STATE_ID}`)
+    .from(constants.TABLE_REGION)
+    .join(
+      constants.TABLE_STATE,
+      `${constants.TABLE_REGION}.${constants.COLUMN_STATE_ID}`,
+      `${constants.TABLE_STATE}.${constants.COLUMN_STATE_ID}`,
+    )
+    .where(`${constants.TABLE_REGION}.${constants.COLUMN_REGION_ID}`, regionId);
 
-    let newTreasuryAmt = stateTreasury[0].treasuryAmt - cost;
-    
-    if(newTreasuryAmt < 0){
-        resStatus = "Cost exceeding treasury amount";
-        return resStatus;
-    }
+  const newTreasuryAmt = stateTreasury[0].treasuryAmt - cost;
 
-    await knex(constants.TABLE_STATE)
-        .update({ treasuryAmt: newTreasuryAmt })
-        .where(constants.TABLE_STATE + '.' + constants.COLUMN_STATE_ID, stateTreasury[0].stateId)
-        .catch(e => {
-            console.error(e);
-            resStatus = "SQL Error. Something went wrong when updating Treasury";
-        });
-    //console.log(resStatus);
+  if (newTreasuryAmt < 0) {
+    resStatus = 'Cost exceeding treasury amount';
     return resStatus;
-}
+  }
+
+  await knex(constants.TABLE_STATE)
+    .update({ treasuryAmt: newTreasuryAmt })
+    .where(`${constants.TABLE_STATE}.${constants.COLUMN_STATE_ID}`, stateTreasury[0].stateId)
+    .catch((e) => {
+      console.error(e);
+      resStatus = 'SQL Error. Something went wrong when updating Treasury';
+    });
+  // console.log(resStatus);
+  return resStatus;
+};
 
 /**
  * Updates the information of a component.
@@ -473,43 +503,43 @@ const calculateComponentCost = async (cost, regionId) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const updateComponent = async (component) => {
-    let resStatus = true;
+  let resStatus = true;
 
-    let newValue = null;
+  let newValue = null;
 
-    if (component.value !== null) {
-        if (typeof (component.value) === 'number') newValue = `i;${component.value}`;
-        else if (typeof (component.value) === 'string') newValue = `s;${component.value}`;
-        else if (typeof (component.value) === 'object') newValue = `i;${component.value.resourceId}`;
-    }
+  if (component.value !== null) {
+    if (typeof (component.value) === 'number') newValue = `i;${component.value}`;
+    else if (typeof (component.value) === 'string') newValue = `s;${component.value}`;
+    else if (typeof (component.value) === 'object') newValue = `i;${component.value.resourceId}`;
+  }
 
-    let newIsChild = 0;
-    let newParentId = null;
+  let newIsChild = 0;
+  let newParentId = null;
 
-    if (component.isChild) {
-        newIsChild = 1;
-        newParentId = component.parentId;
-    }
+  if (component.isChild) {
+    newIsChild = 1;
+    newParentId = component.parentId;
+  }
 
-    await knex(constants.TABLE_COMPONENT)
-        .where({ componentId: component.componentId })
-        .update({
-            name: component.componentName,
-            componentTypeId: component.componentType.componentTypeId,
-            regionId: component.regionId,
-            facilityId: component.facilityId,
-            value: newValue,
-            parentId: newParentId,
-            activationTime: component.activationTime,
-            isChild: newIsChild
-        })
-        .catch(e => {
-            console.error(e);
-            resStatus = false;
-        });
+  await knex(constants.TABLE_COMPONENT)
+    .where({ componentId: component.componentId })
+    .update({
+      name: component.componentName,
+      componentTypeId: component.componentType.componentTypeId,
+      regionId: component.regionId,
+      facilityId: component.facilityId,
+      value: newValue,
+      parentId: newParentId,
+      activationTime: component.activationTime,
+      isChild: newIsChild,
+    })
+    .catch((e) => {
+      console.error(e);
+      resStatus = false;
+    });
 
-    return resStatus;
-}
+  return resStatus;
+};
 
 /**
  * Deletes the component of a given ID.
@@ -518,67 +548,42 @@ const updateComponent = async (component) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const deleteComponentById = async (id) => {
-    let resStatus = true;
+  let resStatus = true;
 
-    let facility = await knex
-        .select(constants.COLUMN_FACILITY_ID)
-        .from(constants.TABLE_COMPONENT)
-        .where(constants.COLUMN_COMPONENT_ID, id)
-        .catch(e => {
-            console.error(e);
-            resStatus = false;
-        });
+  const facility = await knex
+    .select(constants.COLUMN_FACILITY_ID)
+    .from(constants.TABLE_COMPONENT)
+    .where(constants.COLUMN_COMPONENT_ID, id)
+    .catch((e) => {
+      console.error(e);
+      resStatus = false;
+    });
 
-    let facilityId;
+  let facilityId;
 
-    if (facility.length !== 0) facilityId = facility[0].facilityId;
+  if (facility.length !== 0) facilityId = facility[0].facilityId;
 
-    await knex(constants.TABLE_COMPONENT)
-        .where({ componentId: id })
-        .del()
-        .catch(e => {
-            console.error(e);
-            resStatus = false;
-        });
+  await knex(constants.TABLE_COMPONENT)
+    .where({ componentId: id })
+    .del()
+    .catch((e) => {
+      console.error(e);
+      resStatus = false;
+    });
 
-    if (resStatus) {
-        await knex(constants.TABLE_FACILITY)
-            .where(constants.COLUMN_FACILITY_ID, facilityId)
-            .update({
-                isFunctional: 0
-            })
-            .catch(e => {
-                console.error(e);
-                resStatus = false;
-            });
-    }
+  if (resStatus) {
+    await knex(constants.TABLE_FACILITY)
+      .where(constants.COLUMN_FACILITY_ID, facilityId)
+      .update({
+        isFunctional: 0,
+      })
+      .catch((e) => {
+        console.error(e);
+        resStatus = false;
+      });
+  }
 
-    return resStatus;
-}
-
-/**
- * Gets all component types.
- * @returns {Array} array of component type objects if successful, null otherwise.
- */
-const getComponentTypeAll = async () => {
-    const rawComponentTypes = await knex
-        .select('*')
-        .from(constants.TABLE_COMPONENT_TYPE)
-        .catch(e => {
-            console.error(e);
-        });
-
-    if (rawComponentTypes.length === 0) return null;
-
-    let componentTypes = [];
-
-    for (let rawComponentType of rawComponentTypes) {
-        let componentType = new ComponentType(rawComponentType.componentTypeId, rawComponentType.name);
-
-        componentTypes.push(componentType);
-    }
-
-    return componentTypes;
+  return resStatus;
 };
 
 /**
@@ -588,42 +593,42 @@ const getComponentTypeAll = async () => {
  * @returns {Array} array of component objects if successful, false otherwise.
  */
 const sortChildComponents = async (components) => {
-    let parentComponents = [];
-    let childComponents = [];
+  let parentComponents = [];
+  const childComponents = [];
 
-    if (components == null) {
-        return null;
-    }
+  if (components == null) {
+    return null;
+  }
 
-    // separate parent and child components
-    for (let component of components) {
-        if (component.isChild) childComponents.push(component);
-        else parentComponents.push(component);
-    }
+  // separate parent and child components
+  for (const component of components) {
+    if (component.isChild) childComponents.push(component);
+    else parentComponents.push(component);
+  }
 
-    // console.log(parentComponents);
-    // console.log(childComponents);
+  // console.log(parentComponents);
+  // console.log(childComponents);
 
-    while (childComponents.length > 0) {
-        let newParentComponents = [];
+  while (childComponents.length > 0) {
+    const newParentComponents = [];
 
-        for (let parentComponent of parentComponents) {
-            let childComponentsNum = childComponents.length;
+    for (const parentComponent of parentComponents) {
+      let childComponentsNum = childComponents.length;
 
-            for (let i = 0; i < childComponentsNum; i++) {
-                if (childComponents[i].parentId === parentComponent.componentId) {
-                    newParentComponents.push(childComponents[i]);
-                    childComponents.splice(i, 1);
-                    childComponentsNum = childComponents.length;
-                }
-            }
+      for (let i = 0; i < childComponentsNum; i++) {
+        if (childComponents[i].parentId === parentComponent.componentId) {
+          newParentComponents.push(childComponents[i]);
+          childComponents.splice(i, 1);
+          childComponentsNum = childComponents.length;
         }
-
-        parentComponents = parentComponents.concat(newParentComponents);
+      }
     }
 
-    return parentComponents;
-}
+    parentComponents = parentComponents.concat(newParentComponents);
+  }
+
+  return parentComponents;
+};
 
 /**
  * Creates multiple components at once
@@ -631,85 +636,85 @@ const sortChildComponents = async (components) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 const addMultipleComponents = async (components) => {
-    let resStatus = true;
+  let resStatus = true;
 
-    // First, transform array of components into two insertable components arrays
-    // Parent component(s) array and Child component(s) array
-    let parentArray = [];
-    let childrenArray = [];
-    let mapUniqueIDwithComponentIDDict = {};
-    let totalCost = 0;
-    components.forEach((component) => {
-        let tempValue = null;
-        if (component.value !== null) {
-            if (typeof (component.value) === 'number') tempValue = `i;${component.value}`;
-            else if (typeof (component.value) === 'string') tempValue = `s;${component.value}`;
-            else if (typeof (component.value) === 'object') tempValue = `i;${component.value.resourceId}`;
-        }
-
-        let tempComponent = {
-            name: component.componentName,
-            componentTypeId: component.componentType.componentTypeId,
-            regionId: component.regionId,
-            facilityId: component.facilityId,
-            value: tempValue,
-            activationTime: component.activationTime,
-        };
-
-        if (component.isChild) {
-            tempComponent.isChild = 1;
-            tempComponent.parentUniqueID = component.parentId;
-            childrenArray.push(tempComponent);
-        } else {
-            tempComponent.isChild = 0;
-            tempComponent.parentId = null;
-            parentArray.push(tempComponent);
-            mapUniqueIDwithComponentIDDict[component.uniqueID] = null;
-        }
-
-        totalCost += parseInt(component.cost);
-    });
-
-    let costCalcReturn = await calculateComponentCost(totalCost, components[0].regionId)
-
-    if(costCalcReturn === "Cost exceeding treasury amount"){
-        resStatus = false;
-        return resStatus
+  // First, transform array of components into two insertable components arrays
+  // Parent component(s) array and Child component(s) array
+  const parentArray = [];
+  let childrenArray = [];
+  const mapUniqueIDwithComponentIDDict = {};
+  let totalCost = 0;
+  components.forEach((component) => {
+    let tempValue = null;
+    if (component.value !== null) {
+      if (typeof (component.value) === 'number') tempValue = `i;${component.value}`;
+      else if (typeof (component.value) === 'string') tempValue = `s;${component.value}`;
+      else if (typeof (component.value) === 'object') tempValue = `i;${component.value.resourceId}`;
     }
 
-    try {
-        await knex.transaction(async trx => {
-            await trx.insert(parentArray).into(constants.TABLE_COMPONENT);
+    const tempComponent = {
+      name: component.componentName,
+      componentTypeId: component.componentType.componentTypeId,
+      regionId: component.regionId,
+      facilityId: component.facilityId,
+      value: tempValue,
+      activationTime: component.activationTime,
+    };
 
-            // Get last n inserted components to get their ids
-            const insertedParentComponents = await trx(constants.TABLE_COMPONENT)
-                .orderBy(constants.COLUMN_COMPONENT_ID, 'desc')
-                .limit(parentArray.length)
-                .pluck(constants.COLUMN_COMPONENT_ID);
-
-            let i = parentArray.length - 1;
-            for (const uniqueID in mapUniqueIDwithComponentIDDict) {
-                mapUniqueIDwithComponentIDDict[uniqueID] = insertedParentComponents[i];
-                i--;
-            }
-
-            childrenArray = childrenArray.map(child => {
-                child.parentId = mapUniqueIDwithComponentIDDict[child.parentUniqueID];
-                delete child.parentUniqueID;
-                return child;
-            });
-
-            if(childrenArray.length){
-                await trx.insert(childrenArray).into(constants.TABLE_COMPONENT);
-            }
-        })
-    } catch (error) {
-        console.error(error);
-        resStatus = false;
+    if (component.isChild) {
+      tempComponent.isChild = 1;
+      tempComponent.parentUniqueID = component.parentId;
+      childrenArray.push(tempComponent);
+    } else {
+      tempComponent.isChild = 0;
+      tempComponent.parentId = null;
+      parentArray.push(tempComponent);
+      mapUniqueIDwithComponentIDDict[component.uniqueID] = null;
     }
 
+    totalCost += parseInt(component.cost);
+  });
+
+  const costCalcReturn = await calculateComponentCost(totalCost, components[0].regionId);
+
+  if (costCalcReturn === 'Cost exceeding treasury amount') {
+    resStatus = false;
     return resStatus;
-}
+  }
+
+  try {
+    await knex.transaction(async (trx) => {
+      await trx.insert(parentArray).into(constants.TABLE_COMPONENT);
+
+      // Get last n inserted components to get their ids
+      const insertedParentComponents = await trx(constants.TABLE_COMPONENT)
+        .orderBy(constants.COLUMN_COMPONENT_ID, 'desc')
+        .limit(parentArray.length)
+        .pluck(constants.COLUMN_COMPONENT_ID);
+
+      let i = parentArray.length - 1;
+      for (const uniqueID in mapUniqueIDwithComponentIDDict) {
+        mapUniqueIDwithComponentIDDict[uniqueID] = insertedParentComponents[i];
+        i--;
+      }
+
+      childrenArray = childrenArray.map((child) => {
+        child.parentId = mapUniqueIDwithComponentIDDict[child.parentUniqueID];
+        delete child.parentUniqueID;
+        return child;
+      });
+
+      if (childrenArray.length) {
+        await trx.insert(childrenArray).into(constants.TABLE_COMPONENT);
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    resStatus = false;
+  }
+
+  return resStatus;
+};
 
 exports.getComponentByRegionId = getComponentByRegionId;
 exports.getComponentByFacilityId = getComponentByFacilityId;
@@ -731,11 +736,11 @@ exports.addMultipleComponents = addMultipleComponents;
 //    sortChildComponents(data)
 //   .then(test => console.dir(test));
 // })
-//getComponentByFacilityId(1).then(data => console.dir(data));
-//getComponentTypeAll().then(data => console.log(data));
+// getComponentByFacilityId(1).then(data => console.dir(data));
+// getComponentTypeAll().then(data => console.log(data));
 // deleteComponentById(5)
 //     .then(data => console.log(data));
-//getComponentFunctionalByRegionId(1).then(data => console.log(data));
- //getComponentUnusedByRegionId(1).then(data => console.log(data));
+// getComponentFunctionalByRegionId(1).then(data => console.log(data));
+// getComponentUnusedByRegionId(1).then(data => console.log(data));
 // getComponentResourceFunctionalByStateId(8).then(data => console.log(data));
-//calculateComponentCost(8000, 1);
+// calculateComponentCost(8000, 1);

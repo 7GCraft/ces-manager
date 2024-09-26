@@ -1,4 +1,11 @@
 {
+    "environment": {
+        "name": {
+            "Development": "dev",
+            "Test": "test",
+            "Production": "prod"
+        }
+    },
     "knexConfig": {
         "client": "sqlite3",
         "connection": {
@@ -7,9 +14,11 @@
     },
     "sqlite_config": {
         "filepath": [
-            "db/ces.db",
-            "resources/app/db/ces.db"
-        ]
+            "db/",
+            "resources/app/db/"
+        ],
+        "production_db": "ces.db",
+        "test_db": "ces.test.db"
     },
     "constants": {
         "TABLE_BIOME": "MsBiome",
@@ -25,6 +34,7 @@
         "TABLE_STATE": "MsState",
         "TABLE_TRADE_AGREEMENT_DETAIL": "DetailTradeAgreement",
         "TABLE_TRADE_AGREEMENT_HEADER": "HeaderTradeAgreement",
+        "TABLE_SQLITE_SEQUENCE": "sqlite_sequence",
         "COLUMN_NAME": "name",
         "COLUMN_POPULATION": "population",
         "COLUMN_DESC": "desc",
