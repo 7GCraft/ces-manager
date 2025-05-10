@@ -157,14 +157,12 @@ export default {
       }
 
       let newOriginTier = { ...this.originTier };
-      console.log(this.draggedResourceIdx, "television");
+
       let targetElement = newOriginTier.Resources.splice(
-        this.draggedResourceIdx,
-      
-      );
+        this.draggedResourceIdx,1);
       targetElement[0].isChanged = true;
       targetElement[0].ResourceTierID = tier.ResourceTierID;
-      console.log(targetElement, "new guys");
+    
 
       let newTier = { ...tier };
       newTier.Resources.push(targetElement[0]);
@@ -176,11 +174,9 @@ export default {
       this.isChanging = true;
     },
     onDeleteResource(){
-      console.log('annyeong',this.tierResourceList[this.originTierIdx])
+  
       let deletedResource = this.tierResourceList[this.originTierIdx].Resources.splice(this.draggedResourceIdx,1)[0];
-      console.log(deletedResource,'dayo')
       this.deletedResourceList.push(deletedResource);
-      console.log(this.deletedResourceList[0],'haseyo')
     },
     onDragDropDelete() {
       // this.targetTierIdx = index
