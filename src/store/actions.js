@@ -15,4 +15,10 @@ export default {
       context.dispatch("getCurrentDate");
     });
   },
+  openRegionPage(context){
+         window.ipcRenderer.send("Region:openRegionPage", context.id);
+          window.ipcRenderer.once("General:advancingSeasonOK", () => {
+      context.dispatch("getCurrentDate");
+    });
+  }
 };
