@@ -83,6 +83,9 @@ export default {
     openStatePage(id) {
       console.log("the id", id);
       window.ipcRenderer.send("State:openStatePage", id);
+      window.ipcRenderer.once("Region:openStatePageOK", () => {
+        console.log('state has been opened')
+    });
     },
     descendingPropertySort(arr, propertyName) {
       arr.sort(function (x, y) {
