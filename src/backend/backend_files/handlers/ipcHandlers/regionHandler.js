@@ -1,6 +1,7 @@
 const { ipcMain, BrowserWindow, webContents } = require("electron");
 const state = require("../../services/stateServices");
 const region = require("../../services/regionServices");
+const path = require("path");
 
 const handle = () => {
   ipcMain.on("Region:getAllRegionsByStateId", getAllRegionsByStateId);
@@ -49,21 +50,30 @@ const getAllRegionsByStateId = (e) => {
  * Open a new Region window by given Region Id
  */
 const openRegionPage = (e, arg) => {
-  regionWindow = new BrowserWindow({
+   regionWindow = new BrowserWindow({
     width: 1080,
     height: 720,
     webPreferences: {
       nodeIntegration: true,
       additionalArguments: [`Region-${arg}`],
+       contextIsolation: false,
+        preload: path.join(__dirname, "preload.js"),
     },
     title: "Region Info",
   });
 
-  regionWindow.loadFile("src/views/regionInfo.html");
+    regionWindow.tag = "region";
+    regionWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+  
+    ipcMain.on("get-title", (event) => {
+      event.returnValue = "";
+    });
+    regionWindow.on("close", function () {
+      regionWindow = null;
+    });
 
-  regionWindow.on("close", function () {
-    regionWindow = null;
-  });
+
+
 };
 
 /**
