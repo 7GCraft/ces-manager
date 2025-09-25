@@ -15,10 +15,11 @@ export default {
       context.dispatch("getCurrentDate");
     });
   },
-  openRegionPage(context){
-         window.ipcRenderer.send("Region:openRegionPage", context.id);
-          window.ipcRenderer.once("General:advancingSeasonOK", () => {
-      context.dispatch("getCurrentDate");
+  openRegionPage(context,id) {
+    console.log(context,'he who is alexander')
+    window.ipcRenderer.send("Region:openRegionPage",id);
+    window.ipcRenderer.once("Region:openRegionPageOK", () => {
+      console.log("Open Region Success")
     });
   }
 };

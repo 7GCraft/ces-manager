@@ -90,7 +90,7 @@
             </svg>
           </button>
         </div>
-        <region-table :regions="state.Regions"></region-table>
+        <region-table :regions="state.Regions" @open-region-page="openRegionPage"></region-table>
       </div>
     </div>
     <modal-dialog v-if="showAddRegionModal">
@@ -268,6 +268,9 @@ export default {
     addRegion() {
       this.$emit("add-region", this.addRegionFormData);
       this.toggleAddRegionModal();
+    },
+    openRegionPage(id){
+      this.$store.dispatch('openRegionPage',id)
     },
     toggleOpen(stateName) {
       this.isOpen[stateName] = !this.isOpen[stateName];
