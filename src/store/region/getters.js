@@ -1,14 +1,17 @@
 export default {
-  getRegionList(state) {
-    return state.regionList;
+  getRegionList(region) {
+    return region.regionList;
   },
-  getBiomeList(state) {
-    return state.biomeList;
+  getBiomeList(region) {
+    return region.biomeList;
   },
-  getDevLevelList(state) {
-    return state.developmentLevelList;
+  getDevLevelList(region) {
+    return region.developmentLevelList;
   },
-  getCorruptionLevelList(state) {
-    return state.corruptionLevelList;
+  getCorruptionLevelList(region) {
+    return region.corruptionLevelList;
   },
+  getViewedRegionInfo(region){
+    return region.viewedRegion.info;
+  }
 };
