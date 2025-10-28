@@ -1,9 +1,16 @@
 <template>
-  <div>Hello</div>
+  <div>Region : {{ regionInfo.regionName }}</div>
 </template>
 
 <script>
 export default {
-  mounted() {},
+  mounted() {
+    
+  },
+  computed:{
+        regionInfo(){
+            return this.$store.getters.getViewedRegionInfo;
+        },
+    }
 };
 </script>

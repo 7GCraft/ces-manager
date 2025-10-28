@@ -60,6 +60,12 @@ export default {
       this.getAllCorruptionLevel();
       this.getAllDevelopmentLevel();
     },
+    initializeRegionInfoData(id){
+     this.$store.dispatch('getRegionInfo',id) 
+     console.log('did this happen')
+      
+
+    },
     initializeStateInfoData(id) {
       this.$store.dispatch("getStateInfo", id);
       this.$store.dispatch("getStateFacilities", id);
@@ -77,7 +83,10 @@ export default {
         this.initializeStateInfoData(stateId);
       } else {
         const regionId = route.split("-")[1];
+        console.log('test this out region opened')
         this.$router.push(`/region/${regionId}/info`);
+        this.initializeRegionInfoData(regionId);
+
       }
     },
     openStatePage(id) {

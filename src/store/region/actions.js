@@ -32,4 +32,14 @@ export default {
       context.commit("setAllCorruptionLevels", res);
     });
   },
+  getRegionInfo(context, payload) {
+    console.log('the beginning of a new region',payload)
+    window.ipcRenderer.send("Region:getRegionInfo",payload);
+    window.ipcRenderer.once("Region:getRegionInfoOK", (e, res) => {
+      console.log(res,'we celebrate region diversity');
+      context.commit("setViewedRegionInfo", res);
+
+    });
+
+  },
 };

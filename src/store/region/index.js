@@ -9,6 +9,12 @@ export default {
       biomeList: [],
       developmentLevelList: [],
       corruptionLevelList: [],
+      viewedRegion: {
+        info: {},
+        resources: [],
+        facilities: [],
+        components:[],
+      },
     };
   },
   actions: actions,

@@ -37,6 +37,7 @@ const getAllRegionsByStateId = (e) => {
               stateRegionObj["Regions"] = regions;
 
               return stateRegionObj;
+              
             });
         }),
       );

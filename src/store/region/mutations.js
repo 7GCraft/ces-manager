@@ -25,4 +25,7 @@ export default {
     state.corruptionLevelList = payload;
     console.log("state", state);
   },
+  setViewedRegionInfo(state,payload){
+    state.viewedRegion.info = payload;
+  }
 };
