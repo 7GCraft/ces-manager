@@ -9,10 +9,10 @@ import resourceTier from "./pages/Home/sections/ResourceTier";
 
 import RegionPage from "./pages/RegionInfo/RegionPage";
 import regionComponents from "./pages/RegionInfo/sections/RegionComponents";
-import regionDevelopment from "./pages/RegionInfo/sections/RegionDevelopment";
+
 import regionFacilities from "./pages/RegionInfo/sections/RegionFacilities";
 import regionInfo from "./pages/RegionInfo/sections/RegionInfo";
-import regionCorruption from "./pages/RegionInfo/sections/RegionCorruption";
+
 
 import StatePage from "./pages/StateInfo/StatePage";
 import stateInfo from "./pages/StateInfo/section/StateInfo";
@@ -56,8 +56,6 @@ const router = createRouter({
       component: RegionPage,
       props: true,
       children: [
-        { path: "development", component: regionDevelopment },
-        { path: "corruption", component: regionCorruption },
         { path: "facilities", component: regionFacilities },
         { path: "components", component: regionComponents },
         { path: "info", component: regionInfo },

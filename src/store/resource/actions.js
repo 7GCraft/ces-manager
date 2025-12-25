@@ -12,4 +12,12 @@ export default {
       context.commit("setViewedStateResources", res);
     });
   },
+  getResourceByRegionId(context,payload){
+      console.log('lapis la la la',payload)
+       window.ipcRenderer.send("Resource:getAllResourcesByRegionId", {stateId :payload.stateId, regionId:payload.regionId});
+        window.ipcRenderer.once("Resource:getAllResourcesByRegionIdOK", (e, res) => {
+          console.log('lapis la la la',res)
+          context.commit("setViewedRegionResources",res)
+    });
+  }
 };

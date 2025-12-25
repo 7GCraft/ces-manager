@@ -32,4 +32,16 @@ export default {
       context.commit("setAllCorruptionLevels", res);
     });
   },
+  getRegionInfo(context, payload) {
+    console.log('the beginning of a new region',payload)
+    window.ipcRenderer.send("Region:getRegionInfo",payload);
+    window.ipcRenderer.once("Region:getRegionInfoOK", (e, res) => {
+  
+      context.commit("setViewedRegionInfo", res);
+      console.log(res,'the end of everything')
+      context.dispatch("getResourceByRegionId",{regionId:payload,stateId:res.state.stateID})
+      
+    });
+
+  },
 };
