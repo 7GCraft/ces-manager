@@ -11,7 +11,10 @@ export default {
   getCorruptionLevelList(state) {
     return state.corruptionLevelList;
   },
-  getViewedRegionInfo(state){
+  getViewedRegionInfo(state) {
     return state.viewedRegion.info;
-  }
+  },
+  getViewedRegionFacilities(state) {
+    return state.viewedRegion.facilities;
+  },
 };
