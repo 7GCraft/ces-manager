@@ -2,7 +2,7 @@ export default {
   addNewRegion(state, payload) {
     let stateRegions = [...state.regionList];
     let targetState = stateRegions.find(
-      (state) => state.stateID === payload.state.stateId,
+      (state) => state.stateID === payload.state.stateId
     );
     console.log(targetState, "designated bruh");
     targetState.Regions !== null
@@ -25,7 +25,10 @@ export default {
     state.corruptionLevelList = payload;
     console.log("state", state);
   },
-  setViewedRegionInfo(state,payload){
+  setViewedRegionInfo(state, payload) {
     state.viewedRegion.info = payload;
-  }
+  },
+  setViewedRegionFacilities(state, payload) {
+    state.viewedRegion.facilities = payload;
+  },
 };
