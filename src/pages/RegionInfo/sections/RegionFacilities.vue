@@ -34,11 +34,12 @@
         <div class="grid grid-cols-1 gap-x-2 gap-y-2 mx-auto w-full">
           <div class="grid">
             <div class="flex flex-row mb-1 w-full">
-              <div class="flex flex-col w-2/3 mx-auto">
+              <div class="flex flex-col w-2/3 mx-auto space-y-1">
                 <div
-                  class="p-1 border border-3 border-gray-400 text-center bg-gray-100"
+                  class="bg-gray-700 hover:bg-red-700 cursor-pointer text-gray-200 font-semibold hover:text-white text-center py-2 px-auto border-2 border-gray-600 hover:border-transparent rounded"
                   v-for="facility in regionFacilities"
                   :key="facility"
+                  @click="$emit('toggleDeleteFacility', facility)"
                 >
                   {{ facility.facilityName }}
                 </div>
@@ -54,6 +55,7 @@
 <script>
 export default {
   props: ["region-facility-data"],
+  emits: ["toggleDeleteFacility"],
   mounted() {
     setTimeout(() => {
       console.log("THIS IS LIFE", this.regionFacilityData);

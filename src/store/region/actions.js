@@ -45,4 +45,14 @@ export default {
       context.dispatch("getRegionFacilities", payload);
     });
   },
+  deleteRegionFacility(context, payload) {
+    window.ipcRenderer.send("Facility:deleteFacility", {
+      deleteOnly: true,
+      facilityId: payload,
+    });
+    window.ipcRenderer.once("Facility:deleteFacilityOK", () => {
+      context.commit("deleteRegionFacility", payload);
+      console.log("deletion complete");
+    });
+  },
 };

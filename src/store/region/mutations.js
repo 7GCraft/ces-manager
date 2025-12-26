@@ -31,4 +31,9 @@ export default {
   setViewedRegionFacilities(state, payload) {
     state.viewedRegion.facilities = payload;
   },
+  deleteRegionFacility(state, payload) {
+    state.viewedRegion.facilities = state.viewedRegion.facilities.filter(
+      (facility) => facility.facilityId !== payload
+    );
+  },
 };
