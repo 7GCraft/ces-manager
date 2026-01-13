@@ -3,8 +3,8 @@ export default {
     return state.resourceList;
   },
 
-  getRegionResource(state){
-    console.log("explin how sttes work",state)
+  getRegionResource(state) {
+    console.log("explin how sttes work", state);
     return state.viewedRegionResources;
-  }
+  },
 };
