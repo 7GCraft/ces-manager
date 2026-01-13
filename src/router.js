@@ -13,7 +13,6 @@ import regionComponents from "./pages/RegionInfo/sections/RegionComponents";
 import regionFacilities from "./pages/RegionInfo/sections/RegionFacilities";
 import regionInfo from "./pages/RegionInfo/sections/RegionInfo";
 
-
 import StatePage from "./pages/StateInfo/StatePage";
 import stateInfo from "./pages/StateInfo/section/StateInfo";
 import stateRegions from "./pages/StateInfo/section/StateRegions";
