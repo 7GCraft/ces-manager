@@ -4,7 +4,7 @@ const resource = require("../../services/resourceServices");
 const handle = () => {
   ipcMain.on("Resource:getAllResourceTiers", getAllResourceTiers);
   ipcMain.on("Resource:getAllResourcesByStateId", getAllResourcesByStateId);
-    ipcMain.on("Resource:getAllResourcesByRegionId", getAllResourcesByRegionId);
+  ipcMain.on("Resource:getAllResourcesByRegionId", getAllResourcesByRegionId);
   ipcMain.on("Resource:updateResourceAll", updateResourceAll);
   ipcMain.on("Resource:addResource", addResource);
   ipcMain.on("Resource:deleteResourceById", deleteResourceById);
@@ -33,14 +33,15 @@ const getAllResourcesByStateId = (e, arg) => {
   });
 };
 
-const getAllResourcesByRegionId = (e,arg) => {
+const getAllResourcesByRegionId = (e, arg) => {
   let response = resource.getAllResourcesByStateId(arg.stateId);
-  response.then(function (results){
-    let newResult = results.filter((result)=>   result.regionId == arg.regionId && result.isFunctional == 1 )
-     e.sender.send("Resource:getAllResourcesByRegionIdOK", newResult);
-
-  } )
-}
+  response.then(function (results) {
+    let newResult = results.filter(
+      (result) => result.regionId == arg.regionId && result.isFunctional == 1
+    );
+    e.sender.send("Resource:getAllResourcesByRegionIdOK", newResult);
+  });
+};
 
 /**
  * Update many resources
