@@ -5,10 +5,69 @@
     <!--App Container-->
     <div class="flex flex-row text-center shadow-lg bg-white h-fit">
       <!--Sidebar -->
-      <router-view
-        @openRegionPage="openRegionPage"
-        @openStatePage="openStatePage"
-      ></router-view>
+      <div
+        class="hidden w-1/5 md:flex flex-col justify-between bg-gray-300 text-blue-400 border border-white border-x-2"
+      >
+      <div class="sticky left-0 top-0">
+        <div class="p-2 border-white border flex justify-center">
+          <img src="./assets/ces_logo.png" class="h-24 hover:scale-110" />
+        </div>
+        <div class="p-6 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="/">Home</router-link>
+        </div>
+        <div class="p-6 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="state-list">State List</router-link>
+        </div>
+        <div class="p-6 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="region-list">Region List</router-link>
+        </div>
+        <div class="p-6 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="trade-agreement">Trade Agreement</router-link>
+        </div>
+        <div class="p-6 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="resource-tier">Resource Tier</router-link>
+        </div>
+      </div>
+      </div>
+      <!--Content-->
+      <div class="md:w-4/5 w-full flex flex-col">
+        <router-view
+          :state-list="stateList"
+          :region-data="stateRegion"
+          :resource-list="resourceList"
+          :date="date"
+          :biome-list="biomeList"
+          :corruption-list="corruptionLevelList"
+          :development-list="developmentLevelList"
+          @advance-season="advanceSeason"
+          @add-region="addNewRegion"
+          @add-state="addNewState"
+          @open-state="openState()"
+          @save-new-resources="saveNewResources"
+        ></router-view>
+      </div>
+    </div>
+    <!--Sidebar Menu for small screen-->
+    <Teleport to="#app">
+    <div class="md:hidden flex flex-row 
+  justify-between sticky text-center bottom-0
+  bg-gray-200 mx-810 text-blue-400 border-2 border-white space-x-0">
+    
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="/">Home</router-link>
+        </div>
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="state-list">State List</router-link>
+        </div>
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <router-link to="region-list">Region List</router-link>
+        </div>
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <a href="">Trade Agreement</a>
+        </div>
+        <div class="flex-1 py-4 border-white border hover:text-white hover:bg-blue-400">
+          <a href="">Resource Tiers</a>
+        </div>
     </div>
   </div>
 </template>
@@ -26,6 +85,38 @@ export default {
     };
   },
   methods: {
+    addNewState(data){
+      let addStateData = {...data}
+      console.log(addStateData,'report')
+      window.ipcRenderer.send("State:addState",addStateData);
+      window.ipcRenderer.once("State:addStateOK", (e, res) => {
+        console.log(res,'state added')
+      });
+    },
+    addNewRegion(data){
+      const {regionName,stateId,corruptionId,biomeId,developmentId, population, taxRate, desc} = data
+      let addRegionObj = {
+        biome: {biomeId},
+        corruption: {corruptionId},
+        desc,
+        development: {developmentId},
+        population,
+        regionName,
+        state: {stateId},
+        taxRate
+      }
+      window.ipcRenderer.send("Region:addRegion",JSON.stringify(addRegionObj));
+      window.ipcRenderer.once("Region:addRegionOK", (e, res) => {
+        console.log(res,'legiun added')
+      });
+    },
+    saveNewResources(newResourceList){
+      console.log(newResourceList,'nueva resource list')
+      window.ipcRenderer.send("Resource:updateResourceAll",newResourceList);
+      window.ipcRenderer.once("Resource:updateResourceAllOK", (e, res) => {
+        console.log(res,'legiun added')
+      });
+    },
     setLanding() {
       this.hasLanded = true;
       localStorage.setItem("landed", true);
