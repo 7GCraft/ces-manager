@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const config = require('./config.json');
 const constants = config.constants;
 const dbContext = require('../repository/DbContext');
@@ -5,10 +7,9 @@ const knex = dbContext.getKnexObject();
 
 const Season = require(config.paths.seasonModel);
 
-const stateServices = require(config.paths.stateServices);
 const regionServices = require(config.paths.regionServices);
-const tradeAgreementServices = require(config.paths.tradeAgreementServices);
-const facility = require('./facilityServices');
+const stateServices = require(config.paths.stateServices);
+const seasonSnapshotServices = require('./seasonSnapshotServices');
 
 const formulaHelper = require(config.paths.formulaHelper);
 
@@ -38,8 +39,9 @@ function getPopulationCap(developmentId) {
  */
 const advanceSeason = async () => {
     let resStatus = true;
-    const states = await stateServices.getStateAll();
-    if (states === null) resStatus = false;
+    const initialSnapshot = await seasonSnapshotServices.getSeasonAdvancementSnapshot();
+    const states = initialSnapshot.states;
+    if (states.length === 0) return false;
 
     for (let state of states) {
         let seasonalIncome = state.TotalIncome;
@@ -54,17 +56,13 @@ const advanceSeason = async () => {
         //     }
         // }
 
-        let adminCost = await stateServices.getAdminCostByStateId(state.stateID);
-        if (adminCost === -1) adminCost = 0;
-
-        seasonalIncome -= state.expenses + adminCost;
+        seasonalIncome -= state.expenses + state.adminCost;
 
         await stateServices.updateStateTreasuryByStateId(state.stateID, state.treasuryAmt + seasonalIncome);
 
         let stateRegions = state.regions;
 
         for (let stateRegion of stateRegions) {
-            stateRegion.calculateGrowth(state.BaseGrowth, stateRegions.length);
             await regionServices.updateRegionPopulation(stateRegion);
         }
     }
@@ -104,10 +102,17 @@ const advanceSeason = async () => {
             resStatus = false;
         });
     
-    const advancedStates= await stateServices.getStateAll();
+    const advancedSnapshot = await seasonSnapshotServices.getSeasonAdvancementSnapshot();
+    const advancedStates = advancedSnapshot.states;
     const currSeasonYear = [season, year];
     
-    let buffer = exportToExcel(states, advancedStates, prevSeasonYear, currSeasonYear)
+    const buffer = await exportToExcel(
+        states,
+        advancedStates,
+        advancedSnapshot.tradeAgreements,
+        prevSeasonYear,
+        currSeasonYear
+    );
     if(!resStatus){
         return resStatus;
     }
@@ -212,11 +217,11 @@ const initializeExcelColumns = async () => {
 };
 
 
-const populateStateInfo = async(initialState, updatedState, i) => {
+const populateStateInfo = (initialState, updatedState, i) => {
     let initialStateInfo = [];
     let updatedStateInfo = [];
-    let facilityCount = await facility.getFacilityCountByStateId(updatedState[i].stateID)
-    let adminCost = await stateServices.getAdminCostByStateId(updatedState[i].stateID);
+    const facilityCount = updatedState[i].facilityCount;
+    const adminCost = updatedState[i].adminCost;
     let updatedExpectedIncome = parseFloat(parseFloat(updatedState[i].TotalIncome).toFixed(2) - parseFloat(updatedState[i].expenses).toFixed(2) - parseFloat(adminCost).toFixed(2)).toFixed(2);
 
     initialStateInfo = [
@@ -314,7 +319,7 @@ const formatCell = async(sheet, baseCell, targetCell, value, cellColor) => {
  * @returns {Boolean} true if successful, false otherwise.
  */
 
-const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSeasonYear) => {
+const exportToExcel = async (initialState, updatedState, tradeAgreements, prevSeasonYear, currSeasonYear) => {
     let resStatus = true;
     const workbook = new excel.Workbook();
     let stateInfoRowNames = [
@@ -339,12 +344,11 @@ const exportToExcel = async (initialState, updatedState, prevSeasonYear, currSea
         const RED = 'C85C5C';
         const ORANGE = 'F9975D'
         const LIGHT_BLUE = '96C8FB'
-        const tradeAgreements = await tradeAgreementServices.getTradeAgreementAll();
         for(let i = 0; i < initialState.length; i++){
             let sheet = workbook.addWorksheet(initialState[i].stateName);
             sheet.columns = await initializeExcelColumns();
 
-            let stateInfos = await populateStateInfo(initialState, updatedState, i)
+            let stateInfos = populateStateInfo(initialState, updatedState, i)
             initialStateInfo = stateInfos[0];
             updatedStateInfo = stateInfos[1];
 
