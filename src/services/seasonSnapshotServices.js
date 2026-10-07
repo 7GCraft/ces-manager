@@ -273,10 +273,10 @@ const buildSeasonAdvancementSnapshot = (rows) => {
   return { states: Object.keys(statesById).map((stateId) => statesById[stateId]), tradeAgreements };
 };
 
-const fetchSeasonAdvancementRows = async () => {
+const fetchSeasonAdvancementRows = async (executor = knex) => {
   const [states, regions, facilities, components, resources, resourceTiers, tradeAgreementHeaders, tradeAgreementDetails] = await Promise.all([
-    knex(constants.TABLE_STATE).select('*').orderBy(constants.COLUMN_STATE_ID),
-    knex(constants.TABLE_REGION)
+    executor(constants.TABLE_STATE).select('*').orderBy(constants.COLUMN_STATE_ID),
+    executor(constants.TABLE_REGION)
       .select([
         `${constants.TABLE_REGION}.${constants.COLUMN_REGION_ID} as regionId`,
         `${constants.TABLE_REGION}.${constants.COLUMN_STATE_ID} as stateId`,
@@ -293,12 +293,12 @@ const fetchSeasonAdvancementRows = async () => {
       .leftJoin(constants.TABLE_CORRUPTION, `${constants.TABLE_REGION}.${constants.COLUMN_CORRUPTION_ID}`, `${constants.TABLE_CORRUPTION}.${constants.COLUMN_CORRUPTION_ID}`)
       .orderBy(`${constants.TABLE_REGION}.${constants.COLUMN_STATE_ID}`)
       .orderBy(`${constants.TABLE_REGION}.${constants.COLUMN_REGION_ID}`),
-    knex(constants.TABLE_FACILITY).select('*').orderBy(constants.COLUMN_FACILITY_ID),
-    knex(constants.TABLE_COMPONENT).select('*').orderBy(constants.COLUMN_COMPONENT_ID),
-    knex(constants.TABLE_RESOURCE).select('*').orderBy(constants.COLUMN_RESOURCE_ID),
-    knex(constants.TABLE_RESOURCE_TIER).select('*').orderBy(constants.COLUMN_RESOURCE_TIER_ID),
-    knex(constants.TABLE_TRADE_AGREEMENT_HEADER).select('*').orderBy(constants.COLUMN_TRADE_AGREEMENT_ID),
-    knex(constants.TABLE_TRADE_AGREEMENT_DETAIL).select('*').orderBy(constants.COLUMN_TRADE_AGREEMENT_ID),
+    executor(constants.TABLE_FACILITY).select('*').orderBy(constants.COLUMN_FACILITY_ID),
+    executor(constants.TABLE_COMPONENT).select('*').orderBy(constants.COLUMN_COMPONENT_ID),
+    executor(constants.TABLE_RESOURCE).select('*').orderBy(constants.COLUMN_RESOURCE_ID),
+    executor(constants.TABLE_RESOURCE_TIER).select('*').orderBy(constants.COLUMN_RESOURCE_TIER_ID),
+    executor(constants.TABLE_TRADE_AGREEMENT_HEADER).select('*').orderBy(constants.COLUMN_TRADE_AGREEMENT_ID),
+    executor(constants.TABLE_TRADE_AGREEMENT_DETAIL).select('*').orderBy(constants.COLUMN_TRADE_AGREEMENT_ID),
   ]);
 
   return {
@@ -306,7 +306,9 @@ const fetchSeasonAdvancementRows = async () => {
   };
 };
 
-const getSeasonAdvancementSnapshot = async () => buildSeasonAdvancementSnapshot(await fetchSeasonAdvancementRows());
+const getSeasonAdvancementSnapshot = async (executor = knex) => buildSeasonAdvancementSnapshot(
+  await fetchSeasonAdvancementRows(executor),
+);
 
 exports.buildSeasonAdvancementSnapshot = buildSeasonAdvancementSnapshot;
 exports.fetchSeasonAdvancementRows = fetchSeasonAdvancementRows;

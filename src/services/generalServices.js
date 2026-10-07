@@ -10,6 +10,7 @@ const Season = require(config.paths.seasonModel);
 const regionServices = require(config.paths.regionServices);
 const stateServices = require(config.paths.stateServices);
 const seasonSnapshotServices = require('./seasonSnapshotServices');
+const seasonAdvancementPersistenceServices = require('./seasonAdvancementPersistenceServices');
 
 const formulaHelper = require(config.paths.formulaHelper);
 
@@ -32,93 +33,75 @@ function getPopulationCap(developmentId) {
             return 100;
     }
 }
-/**
- * Advances the economy by one season.
- * Calculates the change in income and population of each state and region.
- * @returns {Boolean} true if successful, false otherwise.
- */
-const advanceSeason = async () => {
-    let resStatus = true;
-    const initialSnapshot = await seasonSnapshotServices.getSeasonAdvancementSnapshot();
-    const states = initialSnapshot.states;
-    if (states.length === 0) return false;
+const getNextSeason = (currentSeason) => {
+    const seasons = { Spring: 'Summer', Summer: 'Autumn', Autumn: 'Winter', Winter: 'Spring' };
+    return {
+        season: seasons[currentSeason.season],
+        year: currentSeason.year + (currentSeason.season === 'Winter' ? 1 : 0),
+    };
+};
 
-    for (let state of states) {
-        let seasonalIncome = state.TotalIncome;
+const createSeasonAdvancementPlan = (snapshot) => {
+    const treasuryUpdates = [];
+    const populationUpdates = [];
 
-        // if (tradeAgreements != null) {
-        //     for (let tradeAgreement of tradeAgreements) {
-        //         for (let trader of tradeAgreement.traders) {
-        //             if (trader.state.stateID === state.stateID) {
-        //                 seasonalIncome += trader.tradeValue;
-        //             }
-        //         }
-        //     }
-        // }
-
-        seasonalIncome -= state.expenses + state.adminCost;
-
-        await stateServices.updateStateTreasuryByStateId(state.stateID, state.treasuryAmt + seasonalIncome);
-
-        let stateRegions = state.regions;
-
-        for (let stateRegion of stateRegions) {
-            await regionServices.updateRegionPopulation(stateRegion);
-        }
-    }
-
-    resStatus = await reduceActivationTimeAll();
-
-    let currSeason = await getCurrentSeason();
-
-    let season = '';
-    let year = currSeason.year;
-    const prevSeasonYear = [currSeason.season, currSeason.year];
-
-    switch (currSeason.season) {
-        case 'Spring':
-            season = 'Summer';
-            break;
-        case 'Summer':
-            season = 'Autumn';
-            break;
-        case 'Autumn':
-            season = 'Winter';
-            break;
-        case 'Winter':
-            season = 'Spring';
-            year++;
-            break;
-    }
-
-    await knex
-        .insert({
-            season: season,
-            year: year
-        })
-        .into(constants.TABLE_SEASON)
-        .catch(e => {
-            console.error(e);
-            resStatus = false;
+    snapshot.states.forEach((state) => {
+        treasuryUpdates.push({
+            stateId: state.stateID,
+            treasuryAmt: state.treasuryAmt + state.TotalIncome - state.expenses - state.adminCost,
         });
-    
-    const advancedSnapshot = await seasonSnapshotServices.getSeasonAdvancementSnapshot();
-    const advancedStates = advancedSnapshot.states;
-    const currSeasonYear = [season, year];
-    
-    const buffer = await exportToExcel(
-        states,
-        advancedStates,
-        advancedSnapshot.tradeAgreements,
-        prevSeasonYear,
-        currSeasonYear
+        state.regions.forEach((region) => {
+            populationUpdates.push({
+                regionId: region.regionId,
+                population: Math.min(
+                    region.development.populationCap,
+                    region.population + region.expectedPopulationGrowth,
+                ),
+            });
+        });
+    });
+
+    return { treasuryUpdates, populationUpdates };
+};
+
+const advanceSeasonTransaction = async (trx) => {
+    const initialSnapshot = await seasonSnapshotServices.getSeasonAdvancementSnapshot(trx);
+    if (initialSnapshot.states.length === 0) return null;
+
+    const currentSeason = await getCurrentSeason(trx);
+    if (currentSeason === null) throw new Error('No current season exists.');
+
+    const nextSeason = getNextSeason(currentSeason);
+    const plan = createSeasonAdvancementPlan(initialSnapshot);
+    await seasonAdvancementPersistenceServices.applySeasonAdvancementPlan(plan, nextSeason, trx);
+
+    return {
+        initialSnapshot,
+        advancedSnapshot: await seasonSnapshotServices.getSeasonAdvancementSnapshot(trx),
+        previousSeason: [currentSeason.season, currentSeason.year],
+        currentSeason: [nextSeason.season, nextSeason.year],
+    };
+};
+
+const advanceSeason = async () => {
+    let advancement;
+
+    try {
+        advancement = await knex.transaction(advanceSeasonTransaction);
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+
+    if (advancement === null) return false;
+
+    return exportToExcel(
+        advancement.initialSnapshot.states,
+        advancement.advancedSnapshot.states,
+        advancement.advancedSnapshot.tradeAgreements,
+        advancement.previousSeason,
+        advancement.currentSeason,
     );
-    if(!resStatus){
-        return resStatus;
-    }
-    else{
-        return buffer;
-    }
 };
 
 const advanceSeasonByStateId = async (id) => {
@@ -160,34 +143,15 @@ const advanceSeasonByStateId = async (id) => {
 };
 
 /**
- * Reduces the activation time of all components by 1 if it's not 0.
- * @returns {Boolean} true if successful, false otherwise.
- */
-const reduceActivationTimeAll = async () => {
-    let resStatus = true;
-
-    await knex(constants.TABLE_COMPONENT)
-        .where(constants.COLUMN_ACTIVATION_TIME, '>', 0)
-        .decrement(constants.COLUMN_ACTIVATION_TIME, 1)
-        .catch(e => {
-            console.error(e);
-            resStatus = false;
-        });
-
-    return resStatus;
-}
-
-/**
  * Gets the current season.
  * @returns {Season} season object if successful, null otherwise.
  */
-const getCurrentSeason = async () => {
-    let rawSeason = await knex
+const getCurrentSeason = async (executor = knex) => {
+    let rawSeason = await executor
         .select('*')
         .from(constants.TABLE_SEASON)
         .orderBy(constants.COLUMN_SEASON_ID, 'desc')
-        .limit(1)
-        .catch(e => console.error(e));
+        .limit(1);
     
     if (rawSeason.length === 0) return null;
 
@@ -536,3 +500,6 @@ const getFormula = async (formulaName) => {
 exports.advanceSeason = advanceSeason;
 exports.getCurrentSeason = getCurrentSeason;
 exports.getFormula = getFormula;
+exports.getNextSeason = getNextSeason;
+exports.createSeasonAdvancementPlan = createSeasonAdvancementPlan;
+exports.advanceSeasonTransaction = advanceSeasonTransaction;
