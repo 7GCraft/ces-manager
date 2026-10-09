@@ -4,7 +4,10 @@ jest.mock('../src/repository/DbContext', () => ({
   getKnexObject: () => () => ({}),
 }));
 
-const { buildSeasonAdvancementSnapshot } = require('../src/services/seasonSnapshotServices');
+const {
+  buildSeasonAdvancementSnapshot,
+  projectSeasonAdvancementRows,
+} = require('../src/services/seasonSnapshotServices');
 
 const buildRows = () => ({
   states: [
@@ -112,5 +115,40 @@ describe('buildSeasonAdvancementSnapshot', () => {
 
     expect(snapshot.states[0].adminCost).toBeCloseTo(510.68);
     expect(snapshot.states[1].adminCost).toBeCloseTo(464);
+  });
+});
+
+describe('projectSeasonAdvancementRows', () => {
+  it('applies a plan without mutating the fetched rows', () => {
+    const rows = buildRows();
+    rows.components[0].activationTime = 2;
+    rows.components[1].activationTime = 0;
+
+    const projectedRows = projectSeasonAdvancementRows(rows, {
+      treasuryUpdates: [{ stateId: 1, treasuryAmt: 1200 }],
+      populationUpdates: [{ regionId: 1, population: 9 }],
+    });
+
+    expect(rows.states[0].treasuryAmt).toBe(1000);
+    expect(rows.regions[0].population).toBe(10);
+    expect(rows.components[0].activationTime).toBe(2);
+    expect(projectedRows.states[0].treasuryAmt).toBe(1200);
+    expect(projectedRows.regions[0].population).toBe(9);
+    expect(projectedRows.components[0].activationTime).toBe(1);
+    expect(projectedRows.components[1].activationTime).toBe(0);
+  });
+
+  it('builds report-ready post-advance values from projected rows', () => {
+    const rows = buildRows();
+    const projectedRows = projectSeasonAdvancementRows(rows, {
+      treasuryUpdates: [{ stateId: 1, treasuryAmt: 1200 }],
+      populationUpdates: [{ regionId: 1, population: 9 }],
+    });
+
+    const snapshot = buildSeasonAdvancementSnapshot(projectedRows);
+
+    expect(snapshot.states[0].treasuryAmt).toBe(1200);
+    expect(snapshot.states[0].regions[0].population).toBe(9);
+    expect(snapshot.states[0].regions[0].totalIncome).toBe(105);
   });
 });

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 $(function () {
     //Get Current Season
     getCurrentSeason();
@@ -25,15 +27,20 @@ function btnNextSeason_onclick() {
         ipcRenderer.send('General:advancingSeason');
         ipcRenderer.once('General:advancingSeasonOK', (e, res) => {
             $('#mdlAdvanceSeason').modal('hide');
-            if (res !== false) {
-                let blob = new Blob([res[1]], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", })
+            if (res && res.advanced) {
+                if (res.report) {
+                    let blob = new Blob([res.report.buffer], {type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", })
                 let link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
-                let fileName = res[0];
+                    let fileName = res.report.fileName;
                 link.download = fileName;
                 link.click();
                 link.remove();
+                }
                 $('#nextSeasonMessage').append('<div class="alert alert-success alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Successfully advanced to next season</div>');
+                if (res.reportError) {
+                    $('#nextSeasonMessage').append('<div class="alert alert-warning alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Season advanced, but the report could not be generated</div>');
+                }
             }
             else {
                 $('#nextSeasonMessage').append('<div class="alert alert-danger alert-dismissible"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Something went wrong when advancing season</div>');
