@@ -306,10 +306,44 @@ const fetchSeasonAdvancementRows = async (executor = knex) => {
   };
 };
 
+const projectSeasonAdvancementRows = (rows, plan) => {
+  const treasuryByStateId = {};
+  plan.treasuryUpdates.forEach((update) => {
+    treasuryByStateId[update.stateId] = update.treasuryAmt;
+  });
+  const populationByRegionId = {};
+  plan.populationUpdates.forEach((update) => {
+    populationByRegionId[update.regionId] = update.population;
+  });
+
+  return {
+    ...rows,
+    states: rows.states.map((state) => ({
+      ...state,
+      treasuryAmt: treasuryByStateId[state.stateId] === undefined
+        ? state.treasuryAmt
+        : treasuryByStateId[state.stateId],
+    })),
+    regions: rows.regions.map((region) => ({
+      ...region,
+      population: populationByRegionId[region.regionId] === undefined
+        ? region.population
+        : populationByRegionId[region.regionId],
+    })),
+    components: rows.components.map((component) => ({
+      ...component,
+      activationTime: component.activationTime > 0
+        ? component.activationTime - 1
+        : component.activationTime,
+    })),
+  };
+};
+
 const getSeasonAdvancementSnapshot = async (executor = knex) => buildSeasonAdvancementSnapshot(
   await fetchSeasonAdvancementRows(executor),
 );
 
 exports.buildSeasonAdvancementSnapshot = buildSeasonAdvancementSnapshot;
 exports.fetchSeasonAdvancementRows = fetchSeasonAdvancementRows;
+exports.projectSeasonAdvancementRows = projectSeasonAdvancementRows;
 exports.getSeasonAdvancementSnapshot = getSeasonAdvancementSnapshot;
