@@ -1,5 +1,5 @@
 const { ipcMain, webContents } = require('electron');
-const resource = require('../../services/resourceServices');
+const getResourceService = () => require('../../services/resourceServices');
 
 const handle = () => {
     ipcMain.on('Resource:getAllResourceTiers', getAllResourceTiers);
@@ -16,7 +16,7 @@ module.exports = {
  * Get Resource Tiers
  */
 const getAllResourceTiers = (e) => {
-    let response = resource.getResourceTierAll();
+    let response = getResourceService().getResourceTierAll();
     response.then(function (result) {
         e.sender.send('Resource:getAllResourceTiersOk', result);
     });
@@ -26,7 +26,7 @@ const getAllResourceTiers = (e) => {
  * Get All resources inside a state by given state id
  */
 const getAllResourcesByStateId = (e, arg) => {
-    let response = resource.getAllResourcesByStateId(arg);
+    let response = getResourceService().getAllResourcesByStateId(arg);
     response.then(function (result) {
         e.sender.send('Resource:getAllResourcesByStateIdOk', result);
     });
@@ -36,7 +36,7 @@ const getAllResourcesByStateId = (e, arg) => {
  * Update many resources
  */
 const updateResourceAll = (e, args) => {
-    let response = resource.updateResourceAll(args);
+    let response = getResourceService().updateResourceAll(args);
     response.then((result) => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -50,7 +50,7 @@ const updateResourceAll = (e, args) => {
  * Insert Resource
  */
 const addResource = (e, args) => {
-    let response = resource.addResource(args.ResourceName, args.ResourceTierID);
+    let response = getResourceService().addResource(args.ResourceName, args.ResourceTierID);
     response.then((result) => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -66,7 +66,7 @@ const addResource = (e, args) => {
 const deleteResourceById = (e, args) => {
     okDeleteResource = true;
     args.forEach(arg => {
-        let response = resource.deleteResourceById(arg);
+        let response = getResourceService().deleteResourceById(arg);
         response.then((result) => {
             if (!result) {
                 okDeleteResource = false;

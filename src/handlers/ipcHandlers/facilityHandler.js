@@ -1,5 +1,5 @@
 const { ipcMain, webContents } = require('electron');
-const facility = require('../../services/facilityServices');
+const getFacilityService = () => require('../../services/facilityServices');
 
 const handle = () => {
     ipcMain.on('Facility:getFacilitiesByRegion', getFacilitiesByRegion);
@@ -16,14 +16,14 @@ module.exports = {
  * Get facilities by Region Id
  */
 const getFacilitiesByRegion = (e, arg) => {
-    let response = facility.getFacilitiesByRegionId(arg);
+    let response = getFacilityService().getFacilitiesByRegionId(arg);
     response.then(result => {
         e.sender.send("Facility:getFacilitiesByRegionOK", result);
     });
 }
 
 const getFacilitiesByState = (e,arg) => {
-    let response = facility.getFacilitiesByStateId(arg);
+    let response = getFacilityService().getFacilitiesByStateId(arg);
     response.then((result) => {
         e.sender.send("Facility:getFacilitiesByStateOK", result);
     });
@@ -33,7 +33,7 @@ const getFacilitiesByState = (e,arg) => {
  * Insert Facility
  */
 const addFacility = (e, args) => {
-    let response = facility.addFacility(args);
+    let response = getFacilityService().addFacility(args);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -47,7 +47,7 @@ const addFacility = (e, args) => {
  * Update Facility
  */
 const updateFacility = (e, args) => {
-    let response = facility.updateFacility(args);
+    let response = getFacilityService().updateFacility(args);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -62,7 +62,7 @@ const updateFacility = (e, args) => {
  */
 const deleteFacility = (e, args) => {
     if (args['deleteOnly']) {
-        let response = facility.deleteFacilityById(args['facilityId']);
+        let response = getFacilityService().deleteFacilityById(args['facilityId']);
         response.then(result => {
             let allWindows = webContents.getAllWebContents();
             allWindows.sort((a, b) => b - a);
@@ -72,7 +72,7 @@ const deleteFacility = (e, args) => {
         });
     }
     else {
-        let response = facility.destroyFacilityById(args['facilityId']);
+        let response = getFacilityService().destroyFacilityById(args['facilityId']);
         response.then(result => {
             let allWindows = webContents.getAllWebContents();
             allWindows.sort((a, b) => b - a);

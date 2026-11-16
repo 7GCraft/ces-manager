@@ -1,7 +1,7 @@
 const { ipcMain, BrowserWindow, webContents } = require('electron');
-const state = require('../../services/stateServices');
-const region = require('../../services/regionServices');
-const facility = require('../../services/facilityServices'); 
+const getStateService = () => require('../../services/stateServices');
+const getRegionService = () => require('../../services/regionServices');
+const getFacilityService = () => require('../../services/facilityServices');
 
 const handle = () => {
     ipcMain.on('State:getStateList', getStateList);
@@ -20,7 +20,7 @@ module.exports = {
  * Get List of states
  */
 const getStateList = (e) => {
-    let response = state.getStateList();
+    let response = getStateService().getStateList();
     response.then((result) => {
         e.sender.send('State:getStateListOK', result)
     })
@@ -30,7 +30,7 @@ const getStateList = (e) => {
  * Insert State
  */
 const addState = (e, args) => {
-    let response = state.addState(args);
+    let response = getStateService().addState(args);
     response.then((result) => {
         e.sender.send('State:addStateOK', result)
     })
@@ -61,15 +61,15 @@ const openStatePage = (e, arg) => {
  * Get state by ID
  */
 const getStateInfo = (e, arg) => {
-    let response = state.getStateById(arg);
+    let response = getStateService().getStateById(arg);
     response.then((result) => {
-        return facility.getFacilityCountByStateId(arg).then(res => {
+        return getFacilityService().getFacilityCountByStateId(arg).then(res => {
             result['facilityCount'] =  res;
             return result;
         })
     })
     .then(result2 => {
-        return state.getAdminCostByStateId(arg).then(res => {
+        return getStateService().getAdminCostByStateId(arg).then(res => {
             result2['adminCost'] =  res
             return result2;
         });
@@ -83,7 +83,7 @@ const getStateInfo = (e, arg) => {
  * Get all regions for one state
  */
 const getRegionsForState = (e, arg) => {
-    let response = region.getRegionListByStateId(arg);
+    let response = getRegionService().getRegionListByStateId(arg);
     response.then((result) => {
         e.sender.send("State:getRegionsForStateOK", result);
     });
@@ -93,7 +93,7 @@ const getRegionsForState = (e, arg) => {
  * Update state
  */
 const updateState = (e, args) => {
-    let response = state.updateState(args);
+    let response = getStateService().updateState(args);
     response.then((result) => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -108,7 +108,7 @@ const updateState = (e, args) => {
  * Delete state
  */
 const deleteState = (e, arg) => {
-    let response = state.deleteStateById(arg);
+    let response = getStateService().deleteStateById(arg);
     response.then((result) => {
         // e.sender.send("State:deleteStateOK", result);
         let allWindows = webContents.getAllWebContents();

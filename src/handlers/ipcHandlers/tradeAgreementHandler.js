@@ -1,5 +1,5 @@
 const { ipcMain, webContents } = require('electron');
-const trade = require('../../services/tradeAgreementServices');
+const getTradeAgreementService = () => require('../../services/tradeAgreementServices');
 
 const handle = () => {
     ipcMain.on('Trade:getAllTradeAgreements', getAllTradeAgreements);
@@ -16,7 +16,7 @@ module.exports = {
  * Get All trade agreements
  */
 const getAllTradeAgreements = (e) => {
-    let response = trade.getTradeAgreementAll();
+    let response = getTradeAgreementService().getTradeAgreementAll();
     response.then((result) => {
         e.sender.send('Trade:getAllTradeAgreementsOK', result);
     }).catch((err) => {
@@ -28,7 +28,7 @@ const getAllTradeAgreements = (e) => {
  * Get All trade agreements by state id
  */
 const getTradeAgreementsByStateId = (e, arg) => {
-    let response = trade.getTradeAgreementByStateId(arg);
+    let response = getTradeAgreementService().getTradeAgreementByStateId(arg);
     response.then((result) => {
         e.sender.send('Trade:getTradeAgreementsByStateIdOK', result);
     }).catch((err) => {
@@ -40,7 +40,7 @@ const getTradeAgreementsByStateId = (e, arg) => {
  * Insert a trade agreement
  */
 const addTradeAgreement = (e, args) => {
-    let response = trade.addTradeAgreement(args);
+    let response = getTradeAgreementService().addTradeAgreement(args);
     response.then((result) => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -56,7 +56,7 @@ const addTradeAgreement = (e, args) => {
  * Update an existing trade agreement
  */
 const updateTradeAgreement = (e, args) => {
-    let response = trade.updateTradeAgreement(args);
+    let response = getTradeAgreementService().updateTradeAgreement(args);
     response.then((result) => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -74,7 +74,7 @@ const updateTradeAgreement = (e, args) => {
  * @param {Number} arg must be an integer.
  */
 const deleteTradeAgreement = (e, arg) => {
-    let response = trade.deleteTradeAgreementById(arg);
+    let response = getTradeAgreementService().deleteTradeAgreementById(arg);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);

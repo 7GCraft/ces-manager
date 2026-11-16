@@ -1,6 +1,6 @@
 const { ipcMain, BrowserWindow, webContents } = require('electron');
-const state = require('../../services/stateServices');
-const region = require('../../services/regionServices');
+const getStateService = () => require('../../services/stateServices');
+const getRegionService = () => require('../../services/regionServices');
 
 const handle = () => {
     ipcMain.on('Region:getAllRegionsByStateId', getAllRegionsByStateId);
@@ -22,10 +22,10 @@ module.exports = {
  * Get Regions by State Id
  */
 const getAllRegionsByStateId = (e) => {
-    let response = state.getStateList();
+    let response = getStateService().getStateList();
     response.then((result) => {
         return Promise.all(result.map((state) => {
-            return region.getRegionListByStateId(state.stateID).then((regions) => {
+            return getRegionService().getRegionListByStateId(state.stateID).then((regions) => {
                 stateRegionObj = {};
                 stateRegionObj["stateID"] = state.stateID;
                 stateRegionObj["stateName"] = state.stateName;
@@ -65,7 +65,7 @@ const openRegionPage = (e, arg) => {
  * Get Region data by Id
  */
 const getRegionInfo = (e, arg) => {
-    let response = region.getRegionById(arg)
+    let response = getRegionService().getRegionById(arg)
     response.then(result => {
         e.sender.send('Region:getRegionInfoOK', result);
     });
@@ -75,7 +75,7 @@ const getRegionInfo = (e, arg) => {
  * Get all states
  */
 const getStatesForAdd = (e) => {
-    let response = state.getStateList();
+    let response = getStateService().getStateList();
     response.then(result => {
         e.sender.send("Region:getStatesForAddOK", result);
     });
@@ -85,7 +85,7 @@ const getStatesForAdd = (e) => {
  * Get all biomes
  */
 const getBiomesForAdd = (e) => {
-    let response = region.getBiomeAll();
+    let response = getRegionService().getBiomeAll();
     response.then(result => {
         e.sender.send("Region:getBiomesForAddOK", result);
     });
@@ -95,7 +95,7 @@ const getBiomesForAdd = (e) => {
  * Get all developments
  */
 const getDevelopmentForAdd = (e) => {
-    let response = region.getDevelopmentAll();
+    let response = getRegionService().getDevelopmentAll();
     response.then(result => {
         e.sender.send("Region:getDevelopmentForAddOK", result);
     });
@@ -105,7 +105,7 @@ const getDevelopmentForAdd = (e) => {
  * Get all corruptions
  */
 const getCorruptionForAdd = (e) => {
-    let response = region.getCorruptionAll();
+    let response = getRegionService().getCorruptionAll();
     response.then(result => {
         e.sender.send("Region:getCorruptionForAddOK", result);
     });
@@ -115,7 +115,7 @@ const getCorruptionForAdd = (e) => {
  * Insert Region
  */
 const addRegion = (e, args) => {
-    let response = region.addRegion(args);
+    let response = getRegionService().addRegion(args);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -129,7 +129,7 @@ const addRegion = (e, args) => {
  * Update Region
  */
 const updateRegion = (e, args) => {
-    let response = region.updateRegion(args);
+    let response = getRegionService().updateRegion(args);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -143,7 +143,7 @@ const updateRegion = (e, args) => {
  * Delete Region
  */
 const deleteRegion = (e, arg) => {
-    let response = region.deleteRegionById(arg);
+    let response = getRegionService().deleteRegionById(arg);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
