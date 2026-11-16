@@ -1,5 +1,5 @@
 const { ipcMain } = require('electron');
-const general = require('../../services/generalServices');
+const getGeneralService = () => require('../../services/generalServices');
 
 const handle = () => {
     ipcMain.on('General:advancingSeason', advanceSeason);
@@ -11,7 +11,7 @@ module.exports = {
 };
 
 const advanceSeason = (e) => {
-    let response = general.advanceSeason();
+    let response = getGeneralService().advanceSeason();
     response.then(result => {
         e.sender.send("General:advancingSeasonOK", result);
     })
@@ -22,7 +22,7 @@ const advanceSeason = (e) => {
 }
 
 const getCurrentSeason = (e) => {
-    let response = general.getCurrentSeason();
+    let response = getGeneralService().getCurrentSeason();
     response.then(result => {
         e.sender.send("General:getCurrentSeasonOK", result);
     })
@@ -33,7 +33,7 @@ const getCurrentSeason = (e) => {
 }
 
 const getFormula = (e, formulaName) => {
-    let response = general.getFormula(formulaName);
+    let response = getGeneralService().getFormula(formulaName);
     response.then(result => {
         e.sender.send("General:getFormulaOK", result);
     })

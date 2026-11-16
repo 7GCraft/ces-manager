@@ -14,8 +14,6 @@ const seasonAdvancementPersistenceServices = require('./seasonAdvancementPersist
 
 const formulaHelper = require(config.paths.formulaHelper);
 
-const excel = require('exceljs')
-
 //helper functions
 function getPopulationCap(developmentId) {
     switch (developmentId) {
@@ -284,6 +282,7 @@ const formatCell = async(sheet, baseCell, targetCell, value, cellColor) => {
  */
 
 const exportToExcel = async (initialState, updatedState, tradeAgreements, prevSeasonYear, currSeasonYear) => {
+    const excel = require('exceljs');
     let resStatus = true;
     const workbook = new excel.Workbook();
     let stateInfoRowNames = [

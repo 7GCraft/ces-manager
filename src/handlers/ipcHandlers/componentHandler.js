@@ -1,6 +1,6 @@
 const { ipcMain, webContents, BrowserWindow } = require('electron');
-const facility = require('../../services/facilityServices');
-const component = require('../../services/componentServices');
+const getFacilityService = () => require('../../services/facilityServices');
+const getComponentService = () => require('../../services/componentServices');
 
 const handle = () => {
     ipcMain.on('Component:getComponentList', getComponentList);
@@ -24,9 +24,9 @@ module.exports = {
  * Get components by Region Id
  */
 const getComponentList = (e, arg) => {
-    let response = component.getComponentByRegionId(arg);
+    let response = getComponentService().getComponentByRegionId(arg);
     response.then(result => {
-        return component.sortChildComponents(result);
+        return getComponentService().sortChildComponents(result);
     })
         .then(result2 => {
             e.sender.send("Component:getComponentListOK", result2);
@@ -37,13 +37,13 @@ const getComponentList = (e, arg) => {
  * Get Components by Facility Id
  */
 const getComponentByFacilityId = (e, arg) => {
-    let response = facility.getFacilitiesByRegionId(arg);
+    let response = getFacilityService().getFacilitiesByRegionId(arg);
     response.then(result => {
         if (result != null) {
             return Promise.all((result.map(facility => {
-                return component.getComponentByFacilityId(facility.facilityId)
+                return getComponentService().getComponentByFacilityId(facility.facilityId)
                     .then(components => {
-                        return component.sortChildComponents(components)
+                        return getComponentService().sortChildComponents(components)
                             .then(sortedComponents => {
                                 return sortedComponents;
                             })
@@ -64,7 +64,7 @@ const getComponentByFacilityId = (e, arg) => {
  * Get used resource components by State Id
  */
 const getUsedResourceComponentListByState = (e, arg) => {
-    let response = component.getComponentResourceFunctionalByStateId(arg);
+    let response = getComponentService().getComponentResourceFunctionalByStateId(arg);
     response.then(result => {
         e.sender.send("Component:getUsedResourceComponentListByStateOK", result);
     })
@@ -76,7 +76,7 @@ const getUsedResourceComponentListByState = (e, arg) => {
 const getMultipleUsedResourceComponentListByState = (e, args) => {
     let response = () => {
         return Promise.all(args.map(stateId => {
-            return component.getComponentResourceFunctionalByStateId(stateId);
+            return getComponentService().getComponentResourceFunctionalByStateId(stateId);
         }))
     }
     response().then(result => {
@@ -90,7 +90,7 @@ const getMultipleUsedResourceComponentListByState = (e, args) => {
  * Get component types
  */
 const getAllComponentTypes = (e) => {
-    let response = component.getComponentTypeAll();
+    let response = getComponentService().getComponentTypeAll();
     response.then(result => {
         e.sender.send("Component:getAllComponentTypesOK", result);
     })
@@ -100,7 +100,7 @@ const getAllComponentTypes = (e) => {
  * Insert Component
  */
 const addComponent = (e, args) => {
-    let response = component.addComponent(args);
+    let response = getComponentService().addComponent(args);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -114,7 +114,7 @@ const addComponent = (e, args) => {
  * Update Component
  */
 const updateComponent = (e, args) => {
-    let response = component.updateComponent(args);
+    let response = getComponentService().updateComponent(args);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -128,7 +128,7 @@ const updateComponent = (e, args) => {
  * Delete Component
  */
 const deleteComponent = (e, arg) => {
-    let response = component.deleteComponentById(arg);
+    let response = getComponentService().deleteComponentById(arg);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
@@ -163,7 +163,7 @@ const openBulkInsertPage = (e, arg) => {
  * Add multiple components, primarily from bulk insert page
  */
 const addMultipleComponents = (e, args) => {
-    let response = component.addMultipleComponents(args);
+    let response = getComponentService().addMultipleComponents(args);
     response.then(result => {
         let allWindows = webContents.getAllWebContents();
         allWindows.sort((a, b) => b - a);
